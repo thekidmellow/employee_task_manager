@@ -99,6 +99,27 @@ class Task(models.Model):
             return 0
         delta = self.due_date - timezone.now()
         return delta.days if delta.days > 0 else 0
+    
+    def get_priority_color(self):
+        """Return CSS class for priority display"""
+        priority_colors = {
+            'low': 'success',
+            'medium': 'warning',
+            'high': 'danger',
+            'urgent': 'dark'
+        }
+        return priority_colors.get(self.priority, 'secondary')
+    
+    def get_status_color(self):
+        """Return CSS class for status display"""
+        status_colors = {
+            'pending': 'secondary',
+            'in_progress': 'primary',
+            'completed': 'success',
+            'cancelled': 'danger'
+        }
+        return status_colors.get(self.status, 'secondary')
+
 
 
 
