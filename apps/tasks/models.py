@@ -69,5 +69,21 @@ class Task(models.Model):
     
     def __str__(self):
         return f"{self.title} - {self.get_status_display()}"
+    
+    def save(self, *args, **kwargs):
+        """
+        Custom save method to handle business logic
+        Demonstrates compound statements and custom logic (LO1.8, LO1.9)
+        """
+        # If task is being marked as completed, set completed_at timestamp
+        if self.status == 'completed' and not self.completed_at:
+            self.completed_at = timezone.now()
+        
+        # If task status is changed from completed, clear completed_at
+        if self.status != 'completed' and self.completed_at:
+            self.completed_at = None
+            
+        super().save(*args, **kwargs)
+
 
 
