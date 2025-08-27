@@ -152,3 +152,18 @@
         </div>
     </div>
 </div>
+
+<!-- Call to Action -->
+{% if not user.is_authenticated %}
+<div class="bg-light rounded-3 p-5 text-center">
+    <h3 class="mb-3">Ready to Get Started?</h3>
+    <p class="lead mb-4">
+        Join hundreds of teams already using our task management system to boost productivity.
+    </p>
+    <a href="{% url 'accounts:register' %}" class="btn btn-primary btn-lg">
+        <i class="bi bi-person-plus"></i> Create Your Account
+    </a>
+</div>
+{% endif %}
+{% endblock %}
+
