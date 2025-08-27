@@ -57,3 +57,45 @@ def register_view(request):
     
     return render(request, 'registration/register.html', {'form': form})
 
+
+@login_required
+def profile_view(request):
+    """
+    User profile management
+    Demonstrates CRUD operations (LO2.2)
+    """
+    user_profile = request.user.userprofile
+    
+    if request.method == 'POST':
+        form = UserProfileForm(request.POST, instance=user_profile)
+        if form.is_valid():
+            form.save()
+            
+            # Update user's first and last name
+            request.user.first_name = form.cleaned_data.get('first_name', '')
+            request.user.last_name = form.cleaned_data.get('last_name', '')
+            request.user.email = form.cleaned_data.get('email', '')
+            request.user.save()
+            
+            messages.success(request, 'Profile updated successfully!')
+            return redirect('accounts:profile')
+        else:
+            for field, errors in form.errors.items():
+                for error in errors:
+                    messages.error(request, f"{field.title()}: {error}")
+    else:
+        # Initialize form with current user data
+        initial_data = {
+            'first_name': request.user.first_name,
+            'last_name': request.user.last_name,
+            'email': request.user.email,
+            'phone_number': user_profile.phone_number,
+            'department': user_profile.department,
+        }
+        form = UserProfileForm(instance=user_profile, initial=initial_data)
+    
+    context = {
+        'form': form,
+        'user_profile': user_profile,
+    }
+    return render(request, 'accounts/profile.html', context)
