@@ -85,5 +85,21 @@ class Task(models.Model):
             
         super().save(*args, **kwargs)
 
+    @property
+    def is_overdue(self):
+        """Check if task is overdue"""
+        if self.status == 'completed':
+            return False
+        return timezone.now() > self.due_date
+    
+    @property
+    def days_until_due(self):
+        """Calculate days until due date"""
+        if self.status == 'completed':
+            return 0
+        delta = self.due_date - timezone.now()
+        return delta.days if delta.days > 0 else 0
+
+
 
 
