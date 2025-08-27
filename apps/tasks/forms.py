@@ -74,5 +74,24 @@ class TaskCreationForm(forms.ModelForm):
                 raise ValidationError("Please allow at least 2 hours for task completion.")
     
         return due_date
+    
+    def clean_title(self):
+        title = self.cleaned_data.get('title')
+    
+        if title:
+            title = title.strip()
+        
+            if len(title) < 5:
+                raise ValidationError("Task title must be at least 5 characters long.")
+        
+            if len(title) > 200:
+                raise ValidationError("Task title must be less than 200 characters.")
+        
+            inappropriate_words = ['spam', 'test123', 'dummy']
+            if any(word in title.lower() for word in inappropriate_words):
+                raise ValidationError("Please use a professional task title.")
+    
+        return title
+
 
 
