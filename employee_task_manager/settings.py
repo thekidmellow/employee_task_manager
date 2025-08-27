@@ -16,3 +16,16 @@ SECRET_KEY = config('SECRET_KEY', default='django-insecure-your-secret-key-here'
 DEBUG = config('DEBUG', default=True, cast=bool)
 
 ALLOWED_HOSTS = ['localhost', '127.0.0.1', '.herokuapp.com']
+
+# Application definition
+INSTALLED_APPS = [
+    'django.contrib.admin',
+    'django.contrib.auth',
+    'django.contrib.contenttypes',
+    'django.contrib.sessions',
+    'django.contrib.messages',
+    'django.contrib.staticfiles',
+    'accounts',
+    'tasks',
+    'core',
+]
