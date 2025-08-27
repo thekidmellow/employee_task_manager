@@ -114,3 +114,47 @@
     </div>
 </div>
 {% endblock %}
+
+{% block extra_js %}
+<script>
+// Password visibility toggle (LO4.2 - JavaScript functionality)
+document.getElementById('togglePassword').addEventListener('click', function() {
+    const passwordField = document.getElementById('id_password');
+    const toggleIcon = document.getElementById('toggleIcon');
+    
+    if (passwordField.type === 'password') {
+        passwordField.type = 'text';
+        toggleIcon.className = 'bi bi-eye-slash';
+    } else {
+        passwordField.type = 'password';
+        toggleIcon.className = 'bi bi-eye';
+    }
+});
+
+// Form validation enhancement
+document.getElementById('loginForm').addEventListener('submit', function(e) {
+    const username = document.getElementById('id_username').value.trim();
+    const password = document.getElementById('id_password').value;
+    
+    if (username.length < 3) {
+        e.preventDefault();
+        alert('Username must be at least 3 characters long.');
+        return false;
+    }
+    
+    if (password.length < 6) {
+        e.preventDefault();
+        alert('Password must be at least 6 characters long.');
+        return false;
+    }
+    
+    // Show loading state
+    const submitBtn = this.querySelector('button[type="submit"]');
+    submitBtn.innerHTML = '<i class="bi bi-hourglass-split"></i> Logging in...';
+    submitBtn.disabled = true;
+});
+
+// Auto-focus on username field
+document.getElementById('id_username').focus();
+</script>
+{% endblock %}
