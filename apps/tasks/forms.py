@@ -39,3 +39,22 @@ class TaskCreationForm(forms.ModelForm):
             'status': forms.Select(attrs={'class': 'form-control'}),
         }
 
+    def __init__(self, *args, **kwargs):
+        super().__init__(*args, **kwargs)
+    
+        # Limit assigned_to field to employees only
+        self.fields['assigned_to'].queryset = User.objects.filter(
+            userprofile__role='employee'
+        ).select_related('userprofile')
+    
+        # Customize field labels and help text
+        self.fields['title'].help_text = 'Brief, descriptive title for the task'
+        self.fields['description'].help_text = 'Detailed description of what needs to be done'
+        self.fields['assigned_to'].help_text = 'Select an employee to assign this task to'
+        self.fields['due_date'].help_text = 'When should this task be completed?'
+    
+        # Set default due date to 7 days from now
+        if not self.instance.pk:
+            default_due = timezone.now() + timedelta(days=7)
+            self.fields['due_date'].initial = default_due.strftime('%Y-%m-%dT%H:%M')
+
