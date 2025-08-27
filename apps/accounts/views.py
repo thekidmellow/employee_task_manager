@@ -99,3 +99,27 @@ def profile_view(request):
         'user_profile': user_profile,
     }
     return render(request, 'accounts/profile.html', context)
+
+
+@require_http_methods(["GET"])
+def check_username_availability(request):
+    """
+    AJAX endpoint to check username availability
+    Demonstrates JavaScript integration (LO4.2)
+    """
+    username = request.GET.get('username', '').strip()
+    
+    if len(username) < 3:
+        return JsonResponse({
+            'available': False,
+            'message': 'Username must be at least 3 characters long'
+        })
+    
+    # Check if username exists
+    is_available = not User.objects.filter(username=username).exists()
+    
+    return JsonResponse({
+        'available': is_available,
+        'message': 'Username is available' if is_available else 'Username is already taken'
+    })
+
