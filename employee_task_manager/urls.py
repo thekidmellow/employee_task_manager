@@ -14,3 +14,14 @@ urlpatterns = [
     
     # Authentication URLs (built-in Django auth views)
     path('accounts/', include('django.contrib.auth.urls')),
+
+    # Custom authentication URLs
+    path('accounts/', include('accounts.urls')),
+    
+    # Task management URLs
+    path('tasks/', include('tasks.urls')),
+    
+    # Core application URLs (dashboards, home)
+    path('', include('core.urls')),
+]
+
