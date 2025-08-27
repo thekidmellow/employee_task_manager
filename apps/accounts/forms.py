@@ -49,3 +49,25 @@ class UserRegistrationForm(UserCreationForm):
             'username': forms.TextInput(attrs={'class': 'form-control','placeholder': 'Choose a username'}),
         }
 
+    def __init__(self, *args, **kwargs):
+        super().__init__(*args, **kwargs)
+        self.fields['password1'].widget.attrs.update({'class': 'form-control','placeholder': 'Enter a strong password'})
+        self.fields['password2'].widget.attrs.update({'class': 'form-control','placeholder': 'Confirm your password'})
+    
+    def clean_email(self):
+        email = self.cleaned_data.get('email')
+        if email:
+            if User.objects.filter(email=email).exists():
+                raise ValidationError("A user with this email already exists.")
+            if not email.endswith(('@company.com', '@gmail.com', '@yahoo.com', '@outlook.com')):
+                raise ValidationError("Please use a valid email domain.")
+        return email
+    
+    def clean_username(self):
+        username = self.cleaned_data.get('username')
+        if username:
+            if len(username) < 3:
+                raise ValidationError("Username must be at least 3 characters long.")
+            if not username.replace('_', '').replace('-', '').isalnum():
+                raise ValidationError("Username can only contain letters, numbers, hyphens, and underscores.")
+        return username
