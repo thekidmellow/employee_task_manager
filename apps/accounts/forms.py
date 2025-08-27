@@ -95,3 +95,11 @@ class UserRegistrationForm(UserCreationForm):
                 'phone_number': forms.TextInput(attrs={'class': 'form-control','placeholder': 'Enter your phone number'}),
                 'department': forms.TextInput(attrs={'class': 'form-control','placeholder': 'Enter your department'}),
             } 
+
+        def clean_phone_number(self):
+            phone = self.cleaned_data.get('phone_number')
+            if phone:
+                digits_only = ''.join(filter(str.isdigit, phone))
+                if len(digits_only) < 10 or len(digits_only) > 15:
+                    raise ValidationError("Phone number must be between 10 and 15 digits.")
+            return phone
