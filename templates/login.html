@@ -80,3 +80,21 @@
                         </button>
                     </div>
                 </form>
+
+                <!-- Additional Links -->
+                <div class="text-center mt-4">
+                    <hr>
+                    <p class="mb-2">
+                        <a href="{% url 'password_reset' %}" class="text-decoration-none">
+                            <i class="bi bi-key"></i> Forgot your password?
+                        </a>
+                    </p>
+                    <p class="mb-0">
+                        Don't have an account? 
+                        <a href="{% url 'accounts:register' %}" class="text-decoration-none fw-bold">
+                            <i class="bi bi-person-plus"></i> Register here
+                        </a>
+                    </p>
+                </div>
+            </div>
+        </div>
