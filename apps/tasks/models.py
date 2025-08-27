@@ -62,3 +62,12 @@ class Task(models.Model):
     updated_at = models.DateTimeField(auto_now=True)
     completed_at = models.DateTimeField(null=True, blank=True)
 
+    class Meta:
+        ordering = ['-created_at']
+        verbose_name = 'Task'
+        verbose_name_plural = 'Tasks'
+    
+    def __str__(self):
+        return f"{self.title} - {self.get_status_display()}"
+
+
