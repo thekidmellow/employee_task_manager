@@ -119,6 +119,26 @@ class Task(models.Model):
             'cancelled': 'danger'
         }
         return status_colors.get(self.status, 'secondary')
+    
+
+class TaskComment(models.Model):
+    """
+    Comments on tasks for communication
+    Demonstrates related model relationships
+    """
+    task = models.ForeignKey(Task, on_delete=models.CASCADE, related_name='comments')
+    user = models.ForeignKey(User, on_delete=models.CASCADE)
+    comment = models.TextField(
+        validators=[MinLengthValidator(5, "Comment must be at least 5 characters long")]
+    )
+    created_at = models.DateTimeField(auto_now_add=True)
+    
+    class Meta:
+        ordering = ['-created_at']
+    
+    def __str__(self):
+        return f"Comment by {self.user.username} on {self.task.title}"
+
 
 
 
