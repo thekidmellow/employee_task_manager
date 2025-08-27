@@ -59,3 +59,44 @@
         </div>
     </div>
 </div>
+
+<!-- Statistics Section -->
+{% if total_users > 0 %}
+<div class="row mb-5">
+    <div class="col-md-4">
+        <div class="card text-center h-100 border-0 shadow-sm">
+            <div class="card-body">
+                <div class="text-primary mb-3">
+                    <i class="bi bi-people-fill display-4"></i>
+                </div>
+                <h3 class="card-title">{{ total_users }}</h3>
+                <p class="card-text text-muted">Active Users</p>
+            </div>
+        </div>
+    </div>
+    
+    <div class="col-md-4">
+        <div class="card text-center h-100 border-0 shadow-sm">
+            <div class="card-body">
+                <div class="text-success mb-3">
+                    <i class="bi bi-list-task display-4"></i>
+                </div>
+                <h3 class="card-title">{{ total_tasks }}</h3>
+                <p class="card-text text-muted">Total Tasks</p>
+            </div>
+        </div>
+    </div>
+    
+    <div class="col-md-4">
+        <div class="card text-center h-100 border-0 shadow-sm">
+            <div class="card-body">
+                <div class="text-warning mb-3">
+                    <i class="bi bi-check-circle-fill display-4"></i>
+                </div>
+                <h3 class="card-title">{{ completed_tasks }}</h3>
+                <p class="card-text text-muted">Completed Tasks</p>
+            </div>
+        </div>
+    </div>
+</div>
+{% endif %}
