@@ -4,3 +4,58 @@
 {% load static %}
 
 {% block title %}Home - Employee Task Manager{% endblock %}
+{% block content %}
+<div class="hero-section bg-primary text-white rounded-3 p-5 mb-5">
+    <div class="row align-items-center">
+        <div class="col-lg-6">
+            <h1 class="display-4 fw-bold mb-3">
+                <i class="bi bi-check-square-fill"></i>
+                Employee Task Manager
+            </h1>
+            <p class="lead mb-4">
+                Streamline your team's productivity with our intuitive task management system. 
+                Assign tasks, track progress, and boost collaboration.
+            </p>
+            
+            {% if not user.is_authenticated %}
+                <div class="d-grid gap-2 d-md-flex justify-content-md-start">
+                    <a href="{% url 'accounts:register' %}" class="btn btn-light btn-lg px-4 me-md-2">
+                        <i class="bi bi-person-plus"></i> Get Started
+                    </a>
+                    <a href="{% url 'login' %}" class="btn btn-outline-light btn-lg px-4">
+                        <i class="bi bi-box-arrow-in-right"></i> Login
+                    </a>
+                </div>
+            {% else %}
+                <div class="d-grid gap-2 d-md-flex justify-content-md-start">
+                    {% if user.userprofile.is_manager %}
+                        <a href="{% url 'core:manager_dashboard' %}" class="btn btn-light btn-lg px-4 me-md-2">
+                            <i class="bi bi-speedometer2"></i> Manager Dashboard
+                        </a>
+                        <a href="{% url 'tasks:task_create' %}" class="btn btn-outline-light btn-lg px-4">
+                            <i class="bi bi-plus-circle"></i> Create Task
+                        </a>
+                    {% else %}
+                        <a href="{% url 'core:employee_dashboard' %}" class="btn btn-light btn-lg px-4 me-md-2">
+                            <i class="bi bi-person-workspace"></i> My Dashboard
+                        </a>
+                        <a href="{% url 'tasks:task_list' %}" class="btn btn-outline-light btn-lg px-4">
+                            <i class="bi bi-list-task"></i> My Tasks
+                        </a>
+                    {% endif %}
+                </div>
+            {% endif %}
+        </div>
+        
+        <div class="col-lg-6 text-center">
+            <div class="position-relative">
+                <i class="bi bi-kanban display-1 text-white-50"></i>
+                <div class="position-absolute top-0 start-50 translate-middle">
+                    <div class="bg-white text-primary rounded-circle p-3 shadow">
+                        <i class="bi bi-check-lg fs-1"></i>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
