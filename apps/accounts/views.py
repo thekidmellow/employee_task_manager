@@ -123,3 +123,29 @@ def check_username_availability(request):
         'message': 'Username is available' if is_available else 'Username is already taken'
     })
 
+
+@login_required
+def user_list_api(request):
+    """
+    API endpoint to get list of employees for task assignment
+    Demonstrates data serialization for frontend consumption
+    """
+    if not request.user.userprofile.is_manager:
+        return JsonResponse({'error': 'Permission denied'}, status=403)
+    
+    employees = User.objects.filter(
+        userprofile__role='employee'
+    ).select_related('userprofile')
+    
+    employee_data = []
+    for employee in employees:
+        employee_data.append({
+            'id': employee.id,
+            'username': employee.username,
+            'full_name': employee.get_full_name() or employee.username,
+            'department': employee.userprofile.department or 'Not specified',
+            'task_count': employee.assigned_tasks.count()
+        })
+    
+    return JsonResponse({'employees': employee_data})
+
