@@ -61,3 +61,20 @@ TEMPLATES = [
 
 WSGI_APPLICATION = 'employee_task_manager.wsgi.application'
 
+# Database
+# https://docs.djangoproject.com/en/4.2/ref/settings/#databases
+
+# Development database (SQLite)
+if DEBUG:
+    DATABASES = {
+        'default': {
+            'ENGINE': 'django.db.backends.sqlite3',
+            'NAME': BASE_DIR / 'db.sqlite3',
+        }
+    }
+else:
+    # Production database (PostgreSQL on Heroku)
+    import dj_database_url
+    DATABASES = {
+        'default': dj_database_url.parse(config('DATABASE_URL'))
+    }
