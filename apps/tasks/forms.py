@@ -58,3 +58,21 @@ class TaskCreationForm(forms.ModelForm):
             default_due = timezone.now() + timedelta(days=7)
             self.fields['due_date'].initial = default_due.strftime('%Y-%m-%dT%H:%M')
 
+    def clean_due_date(self):
+        due_date = self.cleaned_data.get('due_date')
+    
+        if due_date:
+            if due_date <= timezone.now():
+                raise ValidationError("Due date must be in the future.")
+        
+            max_future_date = timezone.now() + timedelta(days=365)
+            if due_date > max_future_date:
+                raise ValidationError("Due date cannot be more than 1 year in the future.")
+        
+            min_time = timezone.now() + timedelta(hours=2)
+            if due_date < min_time:
+                raise ValidationError("Please allow at least 2 hours for task completion.")
+    
+        return due_date
+
+
