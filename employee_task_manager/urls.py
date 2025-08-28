@@ -16,7 +16,7 @@ urlpatterns = [
     path('accounts/', include('django.contrib.auth.urls')),
 
     # Custom authentication URLs
-    path('accounts/', include('accounts.urls')),
+    path('accounts/', include('apps.accounts.urls')),
     
     # Task management URLs
     path('tasks/', include('tasks.urls')),
