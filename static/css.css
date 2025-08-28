@@ -18,3 +18,19 @@ body {
     font-size: 1.5rem;
 }
 
+/* Card Hover Effects */
+.card {
+    transition: transform 0.2s ease-in-out, box-shadow 0.2s ease-in-out;
+}
+
+.card:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 4px 8px rgba(0,0,0,0.1);
+}
+
+/* Task Status Badges */
+.status-pending { background-color: var(--warning-color) !important; }
+.status-in_progress { background-color: var(--primary-color) !important; }
+.status-completed { background-color: var(--success-color) !important; }
+.status-cancelled { background-color: var(--danger-color) !important; }
+
