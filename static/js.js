@@ -147,3 +147,61 @@ function clearFieldError(field) {
     }
     field.classList.remove('is-invalid');
 }
+
+// Dashboard statistics refresh
+function refreshDashboardStats() {
+    fetch('/tasks/api/stats/')
+    .then(response => response.json())
+    .then(data => {
+        updateStatsDisplay(data);
+    })
+    .catch(error => {
+        console.error('Error refreshing stats:', error);
+    });
+}
+
+// Update statistics display
+function updateStatsDisplay(data) {
+    const stats = data.status_stats;
+    
+    const statElements = {
+        'total-tasks': stats.total,
+        'pending-tasks': stats.pending,
+        'in-progress-tasks': stats.in_progress,
+        'completed-tasks': stats.completed,
+        'overdue-tasks': stats.overdue
+    };
+    
+    Object.entries(statElements).forEach(([elementId, value]) => {
+        const element = document.getElementById(elementId);
+        if (element) {
+            element.textContent = value;
+        }
+    });
+}
+
+// Show notification
+function showNotification(message, type = 'info') {
+    const alertDiv = document.createElement('div');
+    alertDiv.className = `alert alert-${type === 'error' ? 'danger' : type} alert-dismissible fade show`;
+    alertDiv.innerHTML = `
+        <i class="bi bi-${type === 'success' ? 'check-circle' : 'info-circle'}"></i>
+        ${message}
+        <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+    `;
+    
+    const container = document.querySelector('.messages-container') || 
+                    document.querySelector('main');
+    
+    if (container) {
+        container.insertBefore(alertDiv, container.firstChild);
+        
+        // Auto-dismiss after 5 seconds
+        setTimeout(() => {
+            if (alertDiv.parentNode) {
+                alertDiv.classList.remove('show');
+                setTimeout(() => alertDiv.remove(), 150);
+            }
+        }, 5000);
+    }
+}
