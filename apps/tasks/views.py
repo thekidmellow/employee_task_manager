@@ -214,4 +214,28 @@ def task_update_view(request, task_id):
     return render(request, 'tasks/task_update.html', context)
 
 
+@login_required
+def task_delete_view(request, task_id):
+    """
+    Delete task (Manager only)
+    Demonstrates authorization and data deletion (LO3.1, LO2.2)
+    """
+    task = get_object_or_404(Task, id=task_id)
+    
+    # Only managers can delete tasks
+    if not request.user.userprofile.is_manager:
+        messages.error(request, 'Only managers can delete tasks.')
+        return redirect('tasks:task_detail', task_id=task.id)
+    
+    if request.method == 'POST':
+        task_title = task.title
+        task.delete()
+        messages.success(request, f'Task "{task_title}" deleted successfully!')
+        return redirect('tasks:task_list')
+    
+    context = {'task': task}
+    return render(request, 'tasks/task_delete.html', context)
+
+
+
 
