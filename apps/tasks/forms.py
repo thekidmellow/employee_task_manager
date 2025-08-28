@@ -156,6 +156,34 @@ class TaskUpdateForm(forms.ModelForm):
         return new_status
     
 
+class TaskCommentForm(forms.ModelForm):
+    class Meta:
+        model = TaskComment
+        fields = ['comment']
+        widgets = {
+            'comment': forms.Textarea(attrs={
+                'class': 'form-control',
+                'rows': 3,
+                'placeholder': 'Add a comment about this task...'
+            }),
+        }
+    
+    def clean_comment(self):
+        comment = self.cleaned_data.get('comment')
+        
+        if comment:
+            comment = comment.strip()
+            
+            if len(comment) < 5:
+                raise ValidationError("Comments must be at least 5 characters long.")
+            
+            if len(comment) > 1000:
+                raise ValidationError("Comments must be less than 1000 characters.")
+        
+        return comment
+
+    
+
 
 
 
