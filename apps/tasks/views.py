@@ -163,4 +163,55 @@ def task_detail_view(request, task_id):
     return render(request, 'tasks/task_detail.html', context)
 
 
+@login_required
+def task_update_view(request, task_id):
+    """
+    Update task details
+    Demonstrates CRUD operations with authorization (LO2.2, LO3)
+    """
+    task = get_object_or_404(Task, id=task_id)
+    user_profile = request.user.userprofile
+    
+    # Check permissions
+    if not (user_profile.is_manager or task.assigned_to == request.user):
+        messages.error(request, 'You do not have permission to edit this task.')
+        return redirect('tasks:task_detail', task_id=task.id)
+    
+    if request.method == 'POST':
+        # Different forms based on user role
+        if user_profile.is_manager:
+            form = TaskCreationForm(request.POST, instance=task)
+        else:
+            # Employees can only update status
+            form = TaskUpdateForm(request.POST, instance=task)
+        
+        if form.is_valid():
+            updated_task = form.save()
+            
+            messages.success(request, f'Task "{updated_task.title}" updated successfully!')
+            
+            # Log status change for notifications (LO2.3)
+            if 'status' in form.changed_data:
+                print(f"[NOTIFICATION] Task '{updated_task.title}' status changed to {updated_task.get_status_display()}")
+            
+            return redirect('tasks:task_detail', task_id=updated_task.id)
+        else:
+            for field, errors in form.errors.items():
+                for error in errors:
+                    messages.error(request, f"{field.title()}: {error}")
+    else:
+        if user_profile.is_manager:
+            form = TaskCreationForm(instance=task)
+        else:
+            form = TaskUpdateForm(instance=task)
+    
+    context = {
+        'form': form,
+        'task': task,
+        'is_manager': user_profile.is_manager,
+    }
+    
+    return render(request, 'tasks/task_update.html', context)
+
+
 
