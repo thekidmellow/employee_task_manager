@@ -280,6 +280,46 @@ def update_task_status_ajax(request):
         
     except Exception as e:
         return JsonResponse({'error': str(e)}, status=500)
+    
+
+@login_required
+def task_stats_api(request):
+    """
+    API endpoint for dashboard statistics
+    Demonstrates data aggregation and JSON API (LO2.2)
+    """
+    user_profile = request.user.userprofile
+    
+    if user_profile.is_manager:
+        # Manager sees all tasks
+        tasks = Task.objects.all()
+    else:
+        # Employee sees only their tasks
+        tasks = Task.objects.filter(assigned_to=request.user)
+    
+    # Calculate statistics
+    stats = {
+        'total': tasks.count(),
+        'pending': tasks.filter(status='pending').count(),
+        'in_progress': tasks.filter(status='in_progress').count(),
+        'completed': tasks.filter(status='completed').count(),
+        'overdue': tasks.filter(
+            due_date__lt=timezone.now(),
+            status__in=['pending', 'in_progress']
+        ).count(),
+    }
+    
+    # Priority breakdown
+    priority_stats = {}
+    for priority, _ in Task.PRIORITY_CHOICES:
+        priority_stats[priority] = tasks.filter(priority=priority).count()
+    
+    return JsonResponse({
+        'status_stats': stats,
+        'priority_stats': priority_stats,
+        'user_role': user_profile.role,
+    })
+
 
 
 
