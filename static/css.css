@@ -34,3 +34,9 @@ body {
 .status-completed { background-color: var(--success-color) !important; }
 .status-cancelled { background-color: var(--danger-color) !important; }
 
+/* Priority Indicators */
+.priority-low { border-left: 4px solid var(--success-color); }
+.priority-medium { border-left: 4px solid var(--warning-color); }
+.priority-high { border-left: 4px solid var(--danger-color); }
+.priority-urgent { border-left: 4px solid var(--dark-color); }
+
