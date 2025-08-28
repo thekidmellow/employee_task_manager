@@ -92,6 +92,26 @@ class TaskCreationForm(forms.ModelForm):
                 raise ValidationError("Please use a professional task title.")
     
         return title
+    
+    def clean(self):
+        cleaned_data = super().clean()
+        status = cleaned_data.get('status')
+        due_date = cleaned_data.get('due_date')
+        assigned_to = cleaned_data.get('assigned_to')
+    
+        if status == 'completed' and not self.instance.pk:
+            raise ValidationError("Cannot create a task with 'completed' status.")
+    
+        priority = cleaned_data.get('priority')
+        if priority == 'urgent' and due_date:
+            max_urgent_date = timezone.now() + timedelta(days=3)
+            if due_date > max_urgent_date:
+                raise ValidationError("Urgent tasks should be due within 3 days.")
+    
+        return cleaned_data
+
+    
+
 
 
 
