@@ -149,3 +149,10 @@ def custom_404(request, exception):
     return render(request, 'errors/404.html', status=404)
 
 
+def custom_500(request):
+    """
+    Custom 500 error page
+    Demonstrates error handling (LO6.2)
+    """
+    return render(request, 'errors/500.html', status=500)
+
