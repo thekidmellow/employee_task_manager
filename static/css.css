@@ -64,3 +64,9 @@ body {
     pointer-events: none;
 }
 
+/* Form Enhancements */
+.form-control:focus {
+    border-color: var(--primary-color);
+    box-shadow: 0 0 0 0.2rem rgba(13, 110, 253, 0.25);
+}
+
