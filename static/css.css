@@ -40,3 +40,10 @@ body {
 .priority-high { border-left: 4px solid var(--danger-color); }
 .priority-urgent { border-left: 4px solid var(--dark-color); }
 
+/* Dashboard Statistics */
+.stat-card {
+    border-radius: 10px;
+    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+    color: white;
+}
+
