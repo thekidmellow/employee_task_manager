@@ -125,6 +125,20 @@ class TaskUpdateForm(forms.ModelForm):
         }
 
 
+def __init__(self, *args, **kwargs):
+    super().__init__(*args, **kwargs)
+    
+    if self.instance and self.instance.status != 'pending':
+        status_choices = [
+            choice for choice in Task.STATUS_CHOICES 
+            if choice[0] != 'pending'
+        ]
+        self.fields['status'].choices = status_choices
+    
+    self.fields['status'].help_text = 'Update the current status of this task'
+
+
+
 
 
 
