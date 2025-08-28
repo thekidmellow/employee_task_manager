@@ -122,3 +122,45 @@ def task_create_view(request):
     return render(request, 'tasks/task_create.html', context)
 
 
+@login_required
+def task_detail_view(request, task_id):
+    """
+    Display task details with comments
+    Demonstrates data display and related model access (LO2.2)
+    """
+    task = get_object_or_404(Task, id=task_id)
+    user_profile = request.user.userprofile
+    
+    # Check permissions
+    if not (user_profile.is_manager or task.assigned_to == request.user):
+        messages.error(request, 'You do not have permission to view this task.')
+        return redirect('tasks:task_list')
+    
+    # Get comments
+    comments = task.comments.select_related('user').all()
+    
+    # Handle comment form
+    comment_form = TaskCommentForm()
+    if request.method == 'POST' and 'add_comment' in request.POST:
+        comment_form = TaskCommentForm(request.POST)
+        if comment_form.is_valid():
+            comment = comment_form.save(commit=False)
+            comment.task = task
+            comment.user = request.user
+            comment.save()
+            
+            messages.success(request, 'Comment added successfully!')
+            return redirect('tasks:task_detail', task_id=task.id)
+    
+    context = {
+        'task': task,
+        'comments': comments,
+        'comment_form': comment_form,
+        'can_edit': user_profile.is_manager or task.assigned_to == request.user,
+        'can_delete': user_profile.is_manager,
+    }
+    
+    return render(request, 'tasks/task_detail.html', context)
+
+
+
