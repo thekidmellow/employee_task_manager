@@ -5,3 +5,9 @@
     --danger-color: #dc3545;
     --dark-color: #212529;
 }
+
+/* Global Styles */
+body {
+    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+    line-height: 1.6;
+}
