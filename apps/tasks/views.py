@@ -15,3 +15,13 @@ from .models import Task, TaskComment
 from .forms import TaskCreationForm, TaskUpdateForm, TaskCommentForm
 from accounts.models import UserProfile
 
+
+@login_required
+def task_list_view(request):
+    """
+    Display tasks based on user role
+    Demonstrates role-based content access (LO3.3)
+    """
+    ...
+    return render(request, 'tasks/task_list.html', context)
+
