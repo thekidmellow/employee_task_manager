@@ -109,8 +109,21 @@ class TaskCreationForm(forms.ModelForm):
                 raise ValidationError("Urgent tasks should be due within 3 days.")
     
         return cleaned_data
-
     
+
+class TaskUpdateForm(forms.ModelForm):
+    """
+    Limited form for employees to update task status
+    Demonstrates role-based form restrictions (LO3)
+    """
+    
+    class Meta:
+        model = Task
+        fields = ['status']
+        widgets = {
+            'status': forms.Select(attrs={'class': 'form-control'}),
+        }
+
 
 
 
