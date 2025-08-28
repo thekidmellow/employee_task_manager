@@ -111,3 +111,39 @@ function checkUsernameAvailability(username) {
         console.error('Error checking username:', error);
     });
 }
+
+// Form validation
+function validateForm(form) {
+    let isValid = true;
+    const requiredFields = form.querySelectorAll('[required]');
+    
+    requiredFields.forEach(function(field) {
+        if (!field.value.trim()) {
+            showFieldError(field, 'This field is required');
+            isValid = false;
+        } else {
+            clearFieldError(field);
+        }
+    });
+    
+    return isValid;
+}
+
+// Show field error
+function showFieldError(field, message) {
+    clearFieldError(field);
+    const errorDiv = document.createElement('div');
+    errorDiv.className = 'invalid-feedback d-block';
+    errorDiv.textContent = message;
+    field.parentNode.appendChild(errorDiv);
+    field.classList.add('is-invalid');
+}
+
+// Clear field error
+function clearFieldError(field) {
+    const existingError = field.parentNode.querySelector('.invalid-feedback');
+    if (existingError) {
+        existingError.remove();
+    }
+    field.classList.remove('is-invalid');
+}
