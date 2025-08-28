@@ -140,3 +140,12 @@ def employee_dashboard(request):
     
     return render(request, 'core/employee_dashboard.html', context)
 
+
+def custom_404(request, exception):
+    """
+    Custom 404 error page
+    Demonstrates error handling (LO6.2)
+    """
+    return render(request, 'errors/404.html', status=404)
+
+
