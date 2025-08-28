@@ -90,3 +90,53 @@ def manager_dashboard(request):
     
     return render(request, 'core/manager_dashboard.html', context)
 
+
+@login_required
+def employee_dashboard(request):
+    """
+    Employee dashboard showing assigned tasks
+    Demonstrates personalized content display (LO3.2)
+    """
+    user_profile = request.user.userprofile
+    user_tasks = Task.objects.filter(assigned_to=request.user)
+    
+    pending_tasks = user_tasks.filter(status='pending')
+    in_progress_tasks = user_tasks.filter(status='in_progress')
+    completed_tasks = user_tasks.filter(status='completed')
+    
+    overdue_tasks = user_tasks.filter(due_date__lt=timezone.now(), status__in=['pending', 'in_progress'])
+    
+    upcoming_deadline = timezone.now() + timedelta(days=7)
+    upcoming_tasks = user_tasks.filter(due_date__lte=upcoming_deadline, status__in=['pending', 'in_progress']).order_by('due_date')
+    
+    recent_tasks = user_tasks.order_by('-updated_at')[:10]
+    
+    total_assigned = user_tasks.count()
+    total_completed = completed_tasks.count()
+    completion_rate = (total_completed / total_assigned * 100) if total_assigned > 0 else 0
+    
+    monthly_stats = []
+    for i in range(6):
+        month_start = timezone.now().replace(day=1) - timedelta(days=30*i)
+        month_end = month_start + timedelta(days=30)
+        month_completed = user_tasks.filter(completed_at__gte=month_start, completed_at__lt=month_end, status='completed').count()
+        monthly_stats.append({'month': month_start.strftime('%b %Y'), 'completed': month_completed})
+    
+    context = {
+        'user_profile': user_profile,
+        'stats': {
+            'total_tasks': total_assigned,
+            'pending_count': pending_tasks.count(),
+            'in_progress_count': in_progress_tasks.count(),
+            'completed_count': total_completed,
+            'overdue_count': overdue_tasks.count(),
+            'completion_rate': round(completion_rate, 1),
+        },
+        'upcoming_tasks': upcoming_tasks[:5],
+        'overdue_tasks': overdue_tasks[:5],
+        'recent_tasks': recent_tasks,
+        'monthly_stats': list(reversed(monthly_stats)),
+    }
+    
+    return render(request, 'core/employee_dashboard.html', context)
+
