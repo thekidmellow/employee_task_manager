@@ -182,7 +182,32 @@ class TaskCommentForm(forms.ModelForm):
         
         return comment
 
-    
+
+class TaskFilterForm(forms.Form):
+    search = forms.CharField(
+        required=False,
+        widget=forms.TextInput(attrs={
+            'class': 'form-control',
+            'placeholder': 'Search tasks...'
+        })
+    )
+    status = forms.ChoiceField(
+        required=False,
+        choices=[('all', 'All Statuses')] + Task.STATUS_CHOICES,
+        widget=forms.Select(attrs={'class': 'form-control'})
+    )
+    priority = forms.ChoiceField(
+        required=False,
+        choices=[('all', 'All Priorities')] + Task.PRIORITY_CHOICES,
+        widget=forms.Select(attrs={'class': 'form-control'})
+    )
+    assigned_to = forms.ModelChoiceField(
+        required=False,
+        queryset=User.objects.filter(userprofile__role='employee'),
+        empty_label="All Employees",
+        widget=forms.Select(attrs={'class': 'form-control'})
+    )
+
 
 
 
