@@ -124,18 +124,37 @@ class TaskUpdateForm(forms.ModelForm):
             'status': forms.Select(attrs={'class': 'form-control'}),
         }
 
+    def __init__(self, *args, **kwargs):
+        super().__init__(*args, **kwargs)
+    
+        if self.instance and self.instance.status != 'pending':
+            status_choices = [
+                choice for choice in Task.STATUS_CHOICES 
+                if choice[0] != 'pending'
+            ]
+            self.fields['status'].choices = status_choices
+    
+        self.fields['status'].help_text = 'Update the current status of this task'
 
-def __init__(self, *args, **kwargs):
-    super().__init__(*args, **kwargs)
+    def clean_status(self):
+        new_status = self.cleaned_data.get('status')
+        current_status = self.instance.status if self.instance else None
     
-    if self.instance and self.instance.status != 'pending':
-        status_choices = [
-            choice for choice in Task.STATUS_CHOICES 
-            if choice[0] != 'pending'
-        ]
-        self.fields['status'].choices = status_choices
+        valid_transitions = {
+            'pending': ['in_progress', 'cancelled'],
+            'in_progress': ['completed', 'pending'],
+            'completed': ['in_progress'],  
+            'cancelled': ['pending', 'in_progress'],
+        }
     
-    self.fields['status'].help_text = 'Update the current status of this task'
+        if current_status and new_status:
+            if new_status not in valid_transitions.get(current_status, []):
+                raise ValidationError(
+                    f"Cannot change status from {current_status} to {new_status}."
+                )
+    
+        return new_status
+    
 
 
 
