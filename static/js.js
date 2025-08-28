@@ -47,3 +47,45 @@ document.addEventListener('DOMContentLoaded', function() {
         setInterval(refreshDashboardStats, 30000); // Refresh every 30 seconds
     }
 });
+
+// AJAX task status update function
+function updateTaskStatus(form) {
+    const formData = new FormData(form);
+    const submitBtn = form.querySelector('button[type="submit"]');
+    
+    // Show loading state
+    const originalText = submitBtn.innerHTML;
+    submitBtn.innerHTML = '<i class="spinner-border spinner-border-sm"></i> Updating...';
+    submitBtn.disabled = true;
+    
+    fetch(form.action, {
+        method: 'POST',
+        body: formData,
+        headers: {
+            'X-CSRFToken': document.querySelector('[name=csrfmiddlewaretoken]').value
+        }
+    })
+    .then(response => response.json())
+    .then(data => {
+        if (data.success) {
+            // Update UI with new status
+            const statusBadge = form.closest('.task-card').querySelector('.status-badge');
+            if (statusBadge) {
+                statusBadge.textContent = data.status_display;
+                statusBadge.className = `badge bg-${data.status_color} status-badge`;
+            }
+            showNotification('Task status updated successfully!', 'success');
+        } else {
+            showNotification(data.error || 'Error updating task status', 'error');
+        }
+    })
+    .catch(error => {
+        console.error('Error:', error);
+        showNotification('Network error occurred', 'error');
+    })
+    .finally(() => {
+        // Restore button state
+        submitBtn.innerHTML = originalText;
+        submitBtn.disabled = false;
+    });
+}
