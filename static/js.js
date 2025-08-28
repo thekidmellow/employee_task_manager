@@ -89,3 +89,25 @@ function updateTaskStatus(form) {
         submitBtn.disabled = false;
     });
 }
+
+// Username availability checker
+function checkUsernameAvailability(username) {
+    if (username.length < 3) return;
+    
+    const indicator = document.getElementById('username-availability');
+    if (!indicator) return;
+    
+    fetch(`/accounts/api/check-username/?username=${encodeURIComponent(username)}`)
+    .then(response => response.json())
+    .then(data => {
+        indicator.innerHTML = `
+            <small class="text-${data.available ? 'success' : 'danger'}">
+                <i class="bi bi-${data.available ? 'check-circle' : 'x-circle'}"></i>
+                ${data.message}
+            </small>
+        `;
+    })
+    .catch(error => {
+        console.error('Error checking username:', error);
+    });
+}
