@@ -237,5 +237,51 @@ def task_delete_view(request, task_id):
     return render(request, 'tasks/task_delete.html', context)
 
 
+@login_required
+def update_task_status_ajax(request):
+    """
+    AJAX endpoint for quick status updates
+    Demonstrates JavaScript integration and real-time updates (LO4.2)
+    """
+    if request.method != 'POST':
+        return JsonResponse({'error': 'Invalid request method'}, status=405)
+    
+    task_id = request.POST.get('task_id')
+    new_status = request.POST.get('status')
+    
+    try:
+        task = get_object_or_404(Task, id=task_id)
+        user_profile = request.user.userprofile
+        
+        # Check permissions
+        if not (user_profile.is_manager or task.assigned_to == request.user):
+            return JsonResponse({'error': 'Permission denied'}, status=403)
+        
+        # Validate status
+        valid_statuses = [choice[0] for choice in Task.STATUS_CHOICES]
+        if new_status not in valid_statuses:
+            return JsonResponse({'error': 'Invalid status'}, status=400)
+        
+        # Update task
+        old_status = task.status
+        task.status = new_status
+        task.save()
+        
+        # Log change for notifications
+        print(f"[NOTIFICATION] Task '{task.title}' status changed from {old_status} to {new_status}")
+        
+        return JsonResponse({
+            'success': True,
+            'message': f'Task status updated to {task.get_status_display()}',
+            'new_status': new_status,
+            'status_display': task.get_status_display(),
+            'status_color': task.get_status_color(),
+        })
+        
+    except Exception as e:
+        return JsonResponse({'error': str(e)}, status=500)
+
+
+
 
 
