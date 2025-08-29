@@ -72,34 +72,35 @@ class UserRegistrationForm(UserCreationForm):
                 raise ValidationError("Username can only contain letters, numbers, hyphens, and underscores.")
         return username
 
-    class UserProfileForm(forms.ModelForm):
-        first_name = forms.CharField(
-            max_length=30,
-            required=False,
-            widget=forms.TextInput(attrs={'class': 'form-control','placeholder': 'Enter your first name'})
-        )
-        last_name = forms.CharField(
-            max_length=30,
-            required=False,
-            widget=forms.TextInput(attrs={'class': 'form-control','placeholder': 'Enter your last name'})
-        )
-        email = forms.EmailField(
-            required=False,
-            widget=forms.EmailInput(attrs={'class': 'form-control','placeholder': 'Enter your email address'})
-        )
-    
-        class Meta:
-            model = UserProfile
-            fields = ['phone_number', 'department']
-            widgets = {
-                'phone_number': forms.TextInput(attrs={'class': 'form-control','placeholder': 'Enter your phone number'}),
-                'department': forms.TextInput(attrs={'class': 'form-control','placeholder': 'Enter your department'}),
-            } 
 
-        def clean_phone_number(self):
-            phone = self.cleaned_data.get('phone_number')
-            if phone:
-                digits_only = ''.join(filter(str.isdigit, phone))
-                if len(digits_only) < 10 or len(digits_only) > 15:
-                    raise ValidationError("Phone number must be between 10 and 15 digits.")
-            return phone
+class UserProfileForm(forms.ModelForm):
+    first_name = forms.CharField(
+        max_length=30,
+        required=False,
+        widget=forms.TextInput(attrs={'class': 'form-control','placeholder': 'Enter your first name'})
+    )
+    last_name = forms.CharField(
+        max_length=30,
+        required=False,
+        widget=forms.TextInput(attrs={'class': 'form-control','placeholder': 'Enter your last name'})
+    )
+    email = forms.EmailField(
+        required=False,
+        widget=forms.EmailInput(attrs={'class': 'form-control','placeholder': 'Enter your email address'})
+    )
+    
+    class Meta:
+        model = UserProfile
+        fields = ['phone_number', 'department']
+        widgets = {
+            'phone_number': forms.TextInput(attrs={'class': 'form-control','placeholder': 'Enter your phone number'}),
+            'department': forms.TextInput(attrs={'class': 'form-control','placeholder': 'Enter your department'}),
+        } 
+
+    def clean_phone_number(self):
+        phone = self.cleaned_data.get('phone_number')
+        if phone:
+            digits_only = ''.join(filter(str.isdigit, phone))
+            if len(digits_only) < 10 or len(digits_only) > 15:
+                raise ValidationError("Phone number must be between 10 and 15 digits.")
+        return phone

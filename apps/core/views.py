@@ -10,8 +10,8 @@ from django.http import HttpResponse
 from django.db.models import Count, Q
 from django.utils import timezone
 from datetime import timedelta
-from tasks.models import Task
-from accounts.models import UserProfile
+from apps.tasks.models import Task
+from apps.accounts.models import UserProfile
 
 
 def home_view(request):
@@ -146,7 +146,7 @@ def custom_404(request, exception):
     Custom 404 error page
     Demonstrates error handling (LO6.2)
     """
-    return render(request, 'errors/404.html', status=404)
+    return render(request, '404.html', status=404)
 
 
 def custom_500(request):
@@ -154,5 +154,5 @@ def custom_500(request):
     Custom 500 error page
     Demonstrates error handling (LO6.2)
     """
-    return render(request, 'errors/500.html', status=500)
+    return render(request, '500.html', status=500)
 

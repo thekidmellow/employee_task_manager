@@ -13,7 +13,7 @@ from django.utils import timezone
 from django.contrib.auth.models import User
 from .models import Task, TaskComment
 from .forms import TaskCreationForm, TaskUpdateForm, TaskCommentForm
-from accounts.models import UserProfile
+from apps.accounts.models import UserProfile
 
 
 @login_required

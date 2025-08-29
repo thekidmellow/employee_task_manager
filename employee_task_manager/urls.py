@@ -19,10 +19,10 @@ urlpatterns = [
     path('accounts/', include('apps.accounts.urls')),
     
     # Task management URLs
-    path('tasks/', include('tasks.urls')),
+    path('tasks/', include('apps.tasks.urls')),
     
     # Core application URLs (dashboards, home)
-    path('', include('core.urls')),
+    path('', include('apps.core.urls')),
 ]
 
 # Serve media files in development
@@ -31,6 +31,6 @@ if settings.DEBUG:
     urlpatterns += static(settings.STATIC_URL, document_root=settings.STATIC_ROOT)
 
 # Custom error handlers (optional)
-handler404 = 'core.views.custom_404'
-handler500 = 'core.views.custom_500'
+handler404 = 'apps.core.views.custom_404'
+handler500 = 'apps.core.views.custom_500'
 
