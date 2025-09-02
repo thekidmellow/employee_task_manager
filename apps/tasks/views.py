@@ -102,6 +102,8 @@ def task_create_view(request):
         if form.is_valid():
             task = form.save(commit=False)
             task.created_by = request.user
+            if not task.status:   # safety net
+                task.status = 'pending'
             task.save()
             
             messages.success(request, f'Task "{task.title}" created successfully!')

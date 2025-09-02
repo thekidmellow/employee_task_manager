@@ -16,10 +16,11 @@ class TaskCreationForm(forms.ModelForm):
     Form for creating and editing tasks (Manager access)
     Demonstrates complex form validation and business rules
     """
-    
     class Meta:
         model = Task
-        fields = ['title', 'description', 'assigned_to', 'priority', 'due_date', 'status']
+        # ⬇️ Remove 'status' so it defaults to 'pending'
+        # ⬇️ Add 'estimated_hours' so you can set it on create
+        fields = ['title', 'description', 'assigned_to', 'priority', 'estimated_hours', 'due_date']
         widgets = {
             'title': forms.TextInput(attrs={
                 'class': 'form-control',
@@ -32,83 +33,93 @@ class TaskCreationForm(forms.ModelForm):
             }),
             'assigned_to': forms.Select(attrs={'class': 'form-control'}),
             'priority': forms.Select(attrs={'class': 'form-control'}),
+            # estimated_hours is a number input with 0.5 step
+            'estimated_hours': forms.NumberInput(attrs={
+                'class': 'form-control',
+                'min': '0',
+                'step': '0.5',
+                'placeholder': 'e.g. 1, 1.5, 2'
+            }),
+            # due_date is a datetime-local (matches your DateTimeField)
             'due_date': forms.DateTimeInput(attrs={
                 'class': 'form-control',
                 'type': 'datetime-local'
             }),
-            'status': forms.Select(attrs={'class': 'form-control'}),
         }
 
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
-    
+
         # Limit assigned_to field to employees only
         self.fields['assigned_to'].queryset = User.objects.filter(
             userprofile__role='employee'
         ).select_related('userprofile')
-    
-        # Customize field labels and help text
+
+        # Customize labels/help
         self.fields['title'].help_text = 'Brief, descriptive title for the task'
         self.fields['description'].help_text = 'Detailed description of what needs to be done'
         self.fields['assigned_to'].help_text = 'Select an employee to assign this task to'
+        self.fields['estimated_hours'].help_text = 'Estimated effort in hours (e.g., 1, 1.5, 2)'
         self.fields['due_date'].help_text = 'When should this task be completed?'
-    
+
         # Set default due date to 7 days from now
         if not self.instance.pk:
             default_due = timezone.now() + timedelta(days=7)
+            # Match the datetime-local format
             self.fields['due_date'].initial = default_due.strftime('%Y-%m-%dT%H:%M')
+
+        # Make sure Django accepts the datetime-local format from the browser
+        self.fields['due_date'].input_formats = ['%Y-%m-%dT%H:%M']
 
     def clean_due_date(self):
         due_date = self.cleaned_data.get('due_date')
-    
+
         if due_date:
             if due_date <= timezone.now():
                 raise ValidationError("Due date must be in the future.")
-        
+
             max_future_date = timezone.now() + timedelta(days=365)
             if due_date > max_future_date:
                 raise ValidationError("Due date cannot be more than 1 year in the future.")
-        
+
             min_time = timezone.now() + timedelta(hours=2)
             if due_date < min_time:
                 raise ValidationError("Please allow at least 2 hours for task completion.")
-    
+
         return due_date
-    
+
     def clean_title(self):
         title = self.cleaned_data.get('title')
-    
+
         if title:
             title = title.strip()
-        
+
             if len(title) < 5:
                 raise ValidationError("Task title must be at least 5 characters long.")
-        
+
             if len(title) > 200:
                 raise ValidationError("Task title must be less than 200 characters.")
-        
+
             inappropriate_words = ['spam', 'test123', 'dummy']
             if any(word in title.lower() for word in inappropriate_words):
                 raise ValidationError("Please use a professional task title.")
-    
+
         return title
-    
+
     def clean(self):
         cleaned_data = super().clean()
-        status = cleaned_data.get('status')
+        # status is not on the form; model default handles it
         due_date = cleaned_data.get('due_date')
-        assigned_to = cleaned_data.get('assigned_to')
-    
-        if status == 'completed' and not self.instance.pk:
-            raise ValidationError("Cannot create a task with 'completed' status.")
-    
         priority = cleaned_data.get('priority')
+
+        # Keep your urgent rule
         if priority == 'urgent' and due_date:
             max_urgent_date = timezone.now() + timedelta(days=3)
             if due_date > max_urgent_date:
                 raise ValidationError("Urgent tasks should be due within 3 days.")
-    
+
         return cleaned_data
+
     
 
 class TaskUpdateForm(forms.ModelForm):
