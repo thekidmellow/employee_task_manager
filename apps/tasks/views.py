@@ -2,7 +2,8 @@
 Task management views with role-based access control
 Demonstrates business logic and data manipulation (LO2)
 """
-
+import json
+from django.views.decorators.http import require_POST
 from django.shortcuts import render, get_object_or_404, redirect
 from django.contrib.auth.decorators import login_required
 from django.contrib import messages
@@ -118,8 +119,9 @@ def task_create_view(request):
     else:
         form = TaskCreationForm()
     
-    context = {'form': form}
-    return render(request, 'tasks/task_create.html', context)
+    context = {'form': form, 'mode': 'create'}
+    return render(request, 'tasks/task_form.html', context)
+
 
 
 @login_required
@@ -211,7 +213,13 @@ def task_update_view(request, task_id):
         'is_manager': user_profile.is_manager,
     }
     
-    return render(request, 'tasks/task_update.html', context)
+    return render(request, 'tasks/task_form.html', {
+        'form': form,
+        'task': task,
+        'is_manager': user_profile.is_manager,
+        'mode': 'edit',  # lets the template switch headings/buttons
+    })
+
 
 
 @login_required
@@ -238,49 +246,57 @@ def task_delete_view(request, task_id):
 
 
 @login_required
-def update_task_status_ajax(request):
+@require_POST
+def update_task_status_ajax(request, task_id=None):
     """
-    AJAX endpoint for quick status updates
-    Demonstrates JavaScript integration and real-time updates (LO4.2)
+    AJAX endpoint for quick status updates.
+    Accepts JSON or form-encoded POST.
+    If task_id is provided in the URL, it takes precedence over the payload.
     """
-    if request.method != 'POST':
-        return JsonResponse({'error': 'Invalid request method'}, status=405)
-    
-    task_id = request.POST.get('task_id')
-    new_status = request.POST.get('status')
-    
-    try:
-        task = get_object_or_404(Task, id=task_id)
-        user_profile = request.user.userprofile
-        
-        # Check permissions
-        if not (user_profile.is_manager or task.assigned_to == request.user):
-            return JsonResponse({'error': 'Permission denied'}, status=403)
-        
-        # Validate status
-        valid_statuses = [choice[0] for choice in Task.STATUS_CHOICES]
-        if new_status not in valid_statuses:
-            return JsonResponse({'error': 'Invalid status'}, status=400)
-        
-        # Update task
-        old_status = task.status
-        task.status = new_status
-        task.save()
-        
-        # Log change for notifications
-        print(f"[NOTIFICATION] Task '{task.title}' status changed from {old_status} to {new_status}")
-        
-        return JsonResponse({
-            'success': True,
-            'message': f'Task status updated to {task.get_status_display()}',
-            'new_status': new_status,
-            'status_display': task.get_status_display(),
-            'status_color': task.get_status_color(),
-        })
-        
-    except Exception as e:
-        return JsonResponse({'error': str(e)}, status=500)
-    
+    # Parse body (JSON or form)
+    if request.content_type == 'application/json':
+        try:
+            payload = json.loads(request.body or '{}')
+        except json.JSONDecodeError:
+            return JsonResponse({'error': 'Invalid JSON'}, status=400)
+    else:
+        payload = request.POST
+
+    new_status = payload.get('status')
+    tid = task_id or payload.get('task_id')
+
+    if not tid:
+        return JsonResponse({'error': 'Missing task_id'}, status=400)
+    if not new_status:
+        return JsonResponse({'error': 'Missing status'}, status=400)
+
+    task = get_object_or_404(Task, id=tid)
+    user_profile = request.user.userprofile
+
+    # Permission check
+    if not (user_profile.is_manager or task.assigned_to == request.user):
+        return JsonResponse({'error': 'Permission denied'}, status=403)
+
+    # Validate status
+    valid_statuses = [choice[0] for choice in Task.STATUS_CHOICES]
+    if new_status not in valid_statuses:
+        return JsonResponse({'error': 'Invalid status'}, status=400)
+
+    old_status = task.status
+    task.status = new_status
+    task.save()
+
+    # Log change for notifications
+    print(f"[NOTIFICATION] Task '{task.title}' status changed from {old_status} to {new_status}")
+
+    return JsonResponse({
+        'success': True,
+        'message': f'Task status updated to {task.get_status_display()}',
+        'new_status': new_status,
+        'status_display': task.get_status_display(),
+        'status_color': task.get_status_color(),
+    })
+
 
 @login_required
 def task_stats_api(request):

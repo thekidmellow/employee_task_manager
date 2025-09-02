@@ -276,7 +276,7 @@ document.getElementById('taskForm').addEventListener('submit', function(e) {
     const submitBtn = this.querySelector('button[type="submit"]');
     const originalText = submitBtn.innerHTML;
     submitBtn.innerHTML = '<i class="bi bi-hourglass-split"></i> ' + 
-                         ({{ form.instance.pk|yesno:"Updating,Creating" }} + ' Task...');
+                        ({{ form.instance.pk|yesno:"Updating,Creating" }} + ' Task...');
     submitBtn.disabled = true;
     
     // Re-enable button if form submission fails (shouldn't happen with proper validation)
