@@ -1,0 +1,304 @@
+<!-- templates/tasks/task_form.html -->
+<!-- Task creation/editing form (LO2.4) -->
+{% extends 'base.html' %}
+{% load static %}
+
+{% block title %}
+    {% if form.instance.pk %}Edit Task{% else %}Create Task{% endif %} - Employee Task Manager
+{% endblock %}
+
+{% block extra_css %}
+<style>
+.form-floating > .form-control {
+    height: calc(3.5rem + 2px);
+}
+
+.form-floating > textarea.form-control {
+    height: calc(6rem + 2px);
+}
+
+.priority-preview {
+    padding: 0.25rem 0.5rem;
+    border-radius: 0.25rem;
+    font-size: 0.875rem;
+    font-weight: 500;
+    display: inline-block;
+    margin-top: 0.5rem;
+}
+
+.priority-high { background-color: #dc3545; color: white; }
+.priority-medium { background-color: #ffc107; color: black; }
+.priority-low { background-color: #28a745; color: white; }
+</style>
+{% endblock %}
+
+{% block content %}
+<div class="row justify-content-center">
+    <div class="col-md-8 col-lg-6">
+        <div class="card shadow-sm">
+            <div class="card-header bg-primary text-white">
+                <h3 class="mb-0">
+                    <i class="bi bi-{% if form.instance.pk %}pencil{% else %}plus-circle{% endif %}"></i>
+                    {% if form.instance.pk %}Edit Task{% else %}Create New Task{% endif %}
+                </h3>
+            </div>
+            
+            <div class="card-body p-4">
+                <form method="post" id="taskForm" novalidate>
+                    {% csrf_token %}
+                    
+                    <!-- Title Field -->
+                    <div class="form-floating mb-3">
+                        {{ form.title }}
+                        <label for="id_title">
+                            <i class="bi bi-card-text"></i> Task Title *
+                        </label>
+                        {% if form.title.errors %}
+                            <div class="invalid-feedback d-block">
+                                {{ form.title.errors.0 }}
+                            </div>
+                        {% endif %}
+                    </div>
+                    
+                    <!-- Description Field -->
+                    <div class="form-floating mb-3">
+                        {{ form.description }}
+                        <label for="id_description">
+                            <i class="bi bi-journal-text"></i> Task Description *
+                        </label>
+                        {% if form.description.errors %}
+                            <div class="invalid-feedback d-block">
+                                {{ form.description.errors.0 }}
+                            </div>
+                        {% endif %}
+                        <div class="form-text">
+                            Provide detailed instructions and requirements for this task.
+                        </div>
+                    </div>
+                    
+                    <!-- Assigned To Field -->
+                    <div class="mb-3">
+                        <label for="id_assigned_to" class="form-label">
+                            <i class="bi bi-person-check"></i> Assign To *
+                        </label>
+                        {{ form.assigned_to }}
+                        {% if form.assigned_to.errors %}
+                            <div class="invalid-feedback d-block">
+                                {{ form.assigned_to.errors.0 }}
+                            </div>
+                        {% endif %}
+                        <div class="form-text">
+                            Select the employee who will be responsible for this task.
+                        </div>
+                    </div>
+                    
+                    <!-- Priority and Due Date Row -->
+                    <div class="row">
+                        <div class="col-md-6 mb-3">
+                            <label for="id_priority" class="form-label">
+                                <i class="bi bi-exclamation-triangle"></i> Priority *
+                            </label>
+                            {{ form.priority }}
+                            {% if form.priority.errors %}
+                                <div class="invalid-feedback d-block">
+                                    {{ form.priority.errors.0 }}
+                                </div>
+                            {% endif %}
+                            <div id="priorityPreview" class="priority-preview" style="display: none;"></div>
+                        </div>
+                        
+                        <div class="col-md-6 mb-3">
+                            <label for="id_due_date" class="form-label">
+                                <i class="bi bi-calendar-date"></i> Due Date *
+                            </label>
+                            {{ form.due_date }}
+                            {% if form.due_date.errors %}
+                                <div class="invalid-feedback d-block">
+                                    {{ form.due_date.errors.0 }}
+                                </div>
+                            {% endif %}
+                        </div>
+                    </div>
+                    
+                    <!-- Status Field (only for editing) -->
+                    {% if form.instance.pk %}
+                        <div class="mb-3">
+                            <label for="id_status" class="form-label">
+                                <i class="bi bi-flag"></i> Status
+                            </label>
+                            {{ form.status }}
+                            {% if form.status.errors %}
+                                <div class="invalid-feedback d-block">
+                                    {{ form.status.errors.0 }}
+                                </div>
+                            {% endif %}
+                        </div>
+                    {% endif %}
+                    
+                    <!-- Estimated Hours -->
+                    <div class="mb-3">
+                        <label for="id_estimated_hours" class="form-label">
+                            <i class="bi bi-clock"></i> Estimated Hours
+                        </label>
+                        <div class="input-group">
+                            {{ form.estimated_hours }}
+                            <span class="input-group-text">hours</span>
+                        </div>
+                        {% if form.estimated_hours.errors %}
+                            <div class="invalid-feedback d-block">
+                                {{ form.estimated_hours.errors.0 }}
+                            </div>
+                        {% endif %}
+                        <div class="form-text">
+                            Estimate how many hours this task will take to complete.
+                        </div>
+                    </div>
+                    
+                    <!-- Notes Field -->
+                    <div class="form-floating mb-4">
+                        {{ form.notes }}
+                        <label for="id_notes">
+                            <i class="bi bi-sticky"></i> Additional Notes
+                        </label>
+                        {% if form.notes.errors %}
+                            <div class="invalid-feedback d-block">
+                                {{ form.notes.errors.0 }}
+                            </div>
+                        {% endif %}
+                        <div class="form-text">
+                            Any additional information or special instructions.
+                        </div>
+                    </div>
+                    
+                    <!-- Form Actions -->
+                    <div class="d-grid gap-2 d-md-flex justify-content-md-end">
+                        <a href="{% url 'tasks:task_list' %}" class="btn btn-outline-secondary">
+                            <i class="bi bi-arrow-left"></i> Cancel
+                        </a>
+                        <button type="submit" class="btn btn-primary">
+                            <i class="bi bi-{% if form.instance.pk %}check-circle{% else %}plus-circle{% endif %}"></i>
+                            {% if form.instance.pk %}Update Task{% else %}Create Task{% endif %}
+                        </button>
+                    </div>
+                </form>
+            </div>
+        </div>
+        
+        <!-- Task Creation Tips -->
+        {% if not form.instance.pk %}
+            <div class="card mt-3 border-info">
+                <div class="card-header bg-info text-white">
+                    <small><i class="bi bi-lightbulb"></i> Task Creation Tips</small>
+                </div>
+                <div class="card-body py-2">
+                    <small class="text-muted">
+                        <ul class="mb-0">
+                            <li>Be specific and clear in your task title and description</li>
+                            <li>Set realistic due dates and estimated hours</li>
+                            <li>Choose the appropriate priority level</li>
+                            <li>Consider breaking large tasks into smaller ones</li>
+                        </ul>
+                    </small>
+                </div>
+            </div>
+        {% endif %}
+    </div>
+</div>
+{% endblock %}
+
+{% block extra_js %}
+<script>
+// Priority preview (LO4.2)
+function updatePriorityPreview() {
+    const prioritySelect = document.getElementById('id_priority');
+    const preview = document.getElementById('priorityPreview');
+    const selectedValue = prioritySelect.value;
+    
+    if (selectedValue) {
+        preview.style.display = 'inline-block';
+        preview.className = 'priority-preview priority-' + selectedValue;
+        preview.textContent = prioritySelect.options[prioritySelect.selectedIndex].text;
+    } else {
+        preview.style.display = 'none';
+    }
+}
+
+// Setup priority preview
+document.getElementById('id_priority').addEventListener('change', updatePriorityPreview);
+updatePriorityPreview(); // Initial load
+
+// Form validation (LO4.2)
+document.getElementById('taskForm').addEventListener('submit', function(e) {
+    const title = document.getElementById('id_title').value.trim();
+    const description = document.getElementById('id_description').value.trim();
+    const assignedTo = document.getElementById('id_assigned_to').value;
+    const priority = document.getElementById('id_priority').value;
+    const dueDate = document.getElementById('id_due_date').value;
+    
+    let isValid = true;
+    let errorMessage = '';
+    
+    // Validation checks
+    if (title.length < 5) {
+        errorMessage = 'Task title must be at least 5 characters long.';
+        isValid = false;
+    } else if (description.length < 10) {
+        errorMessage = 'Task description must be at least 10 characters long.';
+        isValid = false;
+    } else if (!assignedTo) {
+        errorMessage = 'Please select an employee to assign this task to.';
+        isValid = false;
+    } else if (!priority) {
+        errorMessage = 'Please select a priority level.';
+        isValid = false;
+    } else if (!dueDate) {
+        errorMessage = 'Please set a due date for this task.';
+        isValid = false;
+    } else {
+        // Check if due date is in the past
+        const selectedDate = new Date(dueDate);
+        const today = new Date();
+        today.setHours(0, 0, 0, 0);
+        
+        if (selectedDate < today) {
+            errorMessage = 'Due date cannot be in the past.';
+            isValid = false;
+        }
+    }
+    
+    if (!isValid) {
+        e.preventDefault();
+        alert(errorMessage);
+        return false;
+    }
+    
+    // Show loading state
+    const submitBtn = this.querySelector('button[type="submit"]');
+    const originalText = submitBtn.innerHTML;
+    submitBtn.innerHTML = '<i class="bi bi-hourglass-split"></i> ' + 
+                         ({{ form.instance.pk|yesno:"Updating,Creating" }} + ' Task...');
+    submitBtn.disabled = true;
+    
+    // Re-enable button if form submission fails (shouldn't happen with proper validation)
+    setTimeout(() => {
+        submitBtn.innerHTML = originalText;
+        submitBtn.disabled = false;
+    }, 5000);
+});
+
+// Auto-resize description textarea
+const descriptionTextarea = document.getElementById('id_description');
+descriptionTextarea.addEventListener('input', function() {
+    this.style.height = 'auto';
+    this.style.height = (this.scrollHeight) + 'px';
+});
+
+// Set minimum date to today for due date
+const dueDateInput = document.getElementById('id_due_date');
+const today = new Date().toISOString().split('T')[0];
+dueDateInput.setAttribute('min', today);
+
+// Auto-focus on title field
+document.getElementById('id_title').focus();
+</script>
+{% endblock %}

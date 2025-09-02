@@ -10,10 +10,11 @@ from decouple import config
 BASE_DIR = Path(__file__).resolve().parent.parent
 
 # SECURITY WARNING: keep the secret key used in production secret!
-SECRET_KEY = os.environ.get("SECRET_KEY")
+# SECRET_KEY = os.environ.get("SECRET_KEY")
+SECRET_KEY = "-Z3y1eO8ZDTUW-kVhFZsQzoLHDyuNk3MNEBJbN1nlzSZK5J3B5juh8V6psK_vRR97Fg"
 
 # SECURITY WARNING: don't run with debug turned on in production!
-DEBUG = config('DEBUG', default=False, cast=bool)
+DEBUG = config('DEBUG', default=True, cast=bool)
 
 ALLOWED_HOSTS = ['localhost', '127.0.0.1', '.herokuapp.com']
 
@@ -62,22 +63,33 @@ TEMPLATES = [
 WSGI_APPLICATION = 'employee_task_manager.wsgi.application'
 
 # Database
-# https://docs.djangoproject.com/en/4.2/ref/settings/#databases
+# Prefer Postgres if DATABASE_URL is set (Heroku, staging, prod)
+import dj_database_url
 
-# Development database (SQLite)
-if DEBUG:
+raw_db_url = config('DATABASE_URL', default='').strip()
+
+if raw_db_url:
+    try:
+        DATABASES = {
+            'default': dj_database_url.parse(raw_db_url, conn_max_age=600, ssl_require=True)
+        }
+    except dj_database_url.ParseError:
+        # Invalid value present locally; fall back to SQLite
+        DATABASES = {
+            'default': {
+                'ENGINE': 'django.db.backends.sqlite3',
+                'NAME': BASE_DIR / 'db.sqlite3',
+            }
+        }
+else:
+    # No DATABASE_URL locally -> SQLite
     DATABASES = {
         'default': {
             'ENGINE': 'django.db.backends.sqlite3',
             'NAME': BASE_DIR / 'db.sqlite3',
         }
     }
-else:
-    # Production database (PostgreSQL on Heroku)
-    import dj_database_url
-    DATABASES = {
-        'default': dj_database_url.parse(config('DATABASE_URL'))
-    }
+
 
 # Password validation
 AUTH_PASSWORD_VALIDATORS = [

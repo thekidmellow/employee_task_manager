@@ -1,0 +1,282 @@
+<!-- templates/registration/register.html -->
+<!-- Registration form template with validation (LO1.1, LO3.1) -->
+{% extends 'base.html' %}
+{% load static %}
+
+{% block title %}Register - Employee Task Manager{% endblock %}
+
+{% block content %}
+<div class="row justify-content-center">
+    <div class="col-md-8 col-lg-6">
+        <div class="card shadow-sm">
+            <div class="card-header bg-success text-white text-center">
+                <h3 class="mb-0">
+                    <i class="bi bi-person-plus"></i>
+                    Create Your Account
+                </h3>
+            </div>
+            
+            <div class="card-body p-4">
+                <!-- Registration Form -->
+                <form method="post" id="registerForm" novalidate>
+                    {% csrf_token %}
+                    
+                    <!-- Username Field -->
+                    <div class="mb-3">
+                        <label for="id_username" class="form-label">
+                            <i class="bi bi-person"></i> Username *
+                        </label>
+                        {{ form.username }}
+                        {% if form.username.errors %}
+                            <div class="invalid-feedback d-block">
+                                {{ form.username.errors.0 }}
+                            </div>
+                        {% endif %}
+                        <div class="form-text">
+                            150 characters or fewer. Letters, digits and @/./+/-/_ only.
+                        </div>
+                    </div>
+                    
+                    <!-- Email Field -->
+                    <div class="mb-3">
+                        <label for="id_email" class="form-label">
+                            <i class="bi bi-envelope"></i> Email Address *
+                        </label>
+                        {{ form.email }}
+                        {% if form.email.errors %}
+                            <div class="invalid-feedback d-block">
+                                {{ form.email.errors.0 }}
+                            </div>
+                        {% endif %}
+                    </div>
+                    
+                    <!-- First Name -->
+                    <div class="row">
+                        <div class="col-md-6 mb-3">
+                            <label for="id_first_name" class="form-label">
+                                <i class="bi bi-person-badge"></i> First Name *
+                            </label>
+                            {{ form.first_name }}
+                            {% if form.first_name.errors %}
+                                <div class="invalid-feedback d-block">
+                                    {{ form.first_name.errors.0 }}
+                                </div>
+                            {% endif %}
+                        </div>
+                        
+                        <!-- Last Name -->
+                        <div class="col-md-6 mb-3">
+                            <label for="id_last_name" class="form-label">
+                                <i class="bi bi-person-badge-fill"></i> Last Name *
+                            </label>
+                            {{ form.last_name }}
+                            {% if form.last_name.errors %}
+                                <div class="invalid-feedback d-block">
+                                    {{ form.last_name.errors.0 }}
+                                </div>
+                            {% endif %}
+                        </div>
+                    </div>
+                    
+                    <!-- Role Selection -->
+                    <div class="mb-3">
+                        <label for="id_role" class="form-label">
+                            <i class="bi bi-shield-check"></i> Role *
+                        </label>
+                        {{ form.role }}
+                        {% if form.role.errors %}
+                            <div class="invalid-feedback d-block">
+                                {{ form.role.errors.0 }}
+                            </div>
+                        {% endif %}
+                        <div class="form-text">
+                            Select your role in the organization.
+                        </div>
+                    </div>
+                    
+                    <!-- Department -->
+                    <div class="mb-3">
+                        <label for="id_department" class="form-label">
+                            <i class="bi bi-building"></i> Department
+                        </label>
+                        {{ form.department }}
+                        {% if form.department.errors %}
+                            <div class="invalid-feedback d-block">
+                                {{ form.department.errors.0 }}
+                            </div>
+                        {% endif %}
+                    </div>
+                    
+                    <!-- Password Fields -->
+                    <div class="row">
+                        <div class="col-md-6 mb-3">
+                            <label for="id_password1" class="form-label">
+                                <i class="bi bi-lock"></i> Password *
+                            </label>
+                            <div class="input-group">
+                                {{ form.password1 }}
+                                <button class="btn btn-outline-secondary" 
+                                        type="button" 
+                                        id="togglePassword1"
+                                        aria-label="Toggle password visibility">
+                                    <i class="bi bi-eye" id="toggleIcon1"></i>
+                                </button>
+                            </div>
+                            {% if form.password1.errors %}
+                                <div class="invalid-feedback d-block">
+                                    {{ form.password1.errors.0 }}
+                                </div>
+                            {% endif %}
+                        </div>
+                        
+                        <div class="col-md-6 mb-3">
+                            <label for="id_password2" class="form-label">
+                                <i class="bi bi-lock-fill"></i> Confirm Password *
+                            </label>
+                            <div class="input-group">
+                                {{ form.password2 }}
+                                <button class="btn btn-outline-secondary" 
+                                        type="button" 
+                                        id="togglePassword2"
+                                        aria-label="Toggle password visibility">
+                                    <i class="bi bi-eye" id="toggleIcon2"></i>
+                                </button>
+                            </div>
+                            {% if form.password2.errors %}
+                                <div class="invalid-feedback d-block">
+                                    {{ form.password2.errors.0 }}
+                                </div>
+                            {% endif %}
+                        </div>
+                    </div>
+                    
+                    <!-- Terms Agreement -->
+                    <div class="mb-3 form-check">
+                        <input type="checkbox" 
+                               class="form-check-input" 
+                               id="agreeTerms" 
+                               required>
+                        <label class="form-check-label" for="agreeTerms">
+                            I agree to the <a href="#" class="text-decoration-none">Terms of Service</a> 
+                            and <a href="#" class="text-decoration-none">Privacy Policy</a> *
+                        </label>
+                    </div>
+                    
+                    <!-- Submit Button -->
+                    <div class="d-grid">
+                        <button type="submit" class="btn btn-success btn-lg">
+                            <i class="bi bi-person-plus"></i>
+                            Create Account
+                        </button>
+                    </div>
+                </form>
+                
+                <!-- Login Link -->
+                <div class="text-center mt-4">
+                    <hr>
+                    <p class="mb-0">
+                        Already have an account? 
+                        <a href="{% url 'login' %}" class="text-decoration-none fw-bold">
+                            <i class="bi bi-box-arrow-in-right"></i> Login here
+                        </a>
+                    </p>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}
+
+{% block extra_js %}
+<script>
+// Password visibility toggles (LO4.2)
+function setupPasswordToggle(fieldId, buttonId, iconId) {
+    document.getElementById(buttonId).addEventListener('click', function() {
+        const passwordField = document.getElementById(fieldId);
+        const toggleIcon = document.getElementById(iconId);
+        
+        if (passwordField.type === 'password') {
+            passwordField.type = 'text';
+            toggleIcon.className = 'bi bi-eye-slash';
+        } else {
+            passwordField.type = 'password';
+            toggleIcon.className = 'bi bi-eye';
+        }
+    });
+}
+
+// Setup both password toggles
+setupPasswordToggle('id_password1', 'togglePassword1', 'toggleIcon1');
+setupPasswordToggle('id_password2', 'togglePassword2', 'toggleIcon2');
+
+// Form validation (LO4.2)
+document.getElementById('registerForm').addEventListener('submit', function(e) {
+    const username = document.getElementById('id_username').value.trim();
+    const email = document.getElementById('id_email').value.trim();
+    const firstName = document.getElementById('id_first_name').value.trim();
+    const lastName = document.getElementById('id_last_name').value.trim();
+    const password1 = document.getElementById('id_password1').value;
+    const password2 = document.getElementById('id_password2').value;
+    const agreeTerms = document.getElementById('agreeTerms').checked;
+    
+    let isValid = true;
+    let errorMessage = '';
+    
+    // Validation checks
+    if (username.length < 3) {
+        errorMessage = 'Username must be at least 3 characters long.';
+        isValid = false;
+    } else if (!email.includes('@')) {
+        errorMessage = 'Please enter a valid email address.';
+        isValid = false;
+    } else if (firstName.length < 2) {
+        errorMessage = 'First name must be at least 2 characters long.';
+        isValid = false;
+    } else if (lastName.length < 2) {
+        errorMessage = 'Last name must be at least 2 characters long.';
+        isValid = false;
+    } else if (password1.length < 8) {
+        errorMessage = 'Password must be at least 8 characters long.';
+        isValid = false;
+    } else if (password1 !== password2) {
+        errorMessage = 'Passwords do not match.';
+        isValid = false;
+    } else if (!agreeTerms) {
+        errorMessage = 'You must agree to the Terms of Service and Privacy Policy.';
+        isValid = false;
+    }
+    
+    if (!isValid) {
+        e.preventDefault();
+        alert(errorMessage);
+        return false;
+    }
+    
+    // Show loading state
+    const submitBtn = this.querySelector('button[type="submit"]');
+    submitBtn.innerHTML = '<i class="bi bi-hourglass-split"></i> Creating Account...';
+    submitBtn.disabled = true;
+});
+
+// Real-time password match validation
+document.getElementById('id_password2').addEventListener('input', function() {
+    const password1 = document.getElementById('id_password1').value;
+    const password2 = this.value;
+    
+    if (password2.length > 0) {
+        if (password1 === password2) {
+            this.classList.remove('is-invalid');
+            this.classList.add('is-valid');
+        } else {
+            this.classList.remove('is-valid');
+            this.classList.add('is-invalid');
+        }
+    } else {
+        this.classList.remove('is-valid', 'is-invalid');
+    }
+});
+
+// Auto-focus on username field
+document.getElementById('id_username').focus();
+</script>
+{% endblock %}

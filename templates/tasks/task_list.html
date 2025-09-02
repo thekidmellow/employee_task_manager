@@ -1,0 +1,335 @@
+<!-- templates/tasks/task_list.html -->
+<!-- Task listing with filtering and search (LO2.2, LO2.3) -->
+{% extends 'base.html' %}
+{% load static %}
+
+{% block title %}My Tasks - Employee Task Manager{% endblock %}
+
+{% block extra_css %}
+<style>
+.task-card {
+    transition: transform 0.2s ease-in-out, box-shadow 0.2s ease-in-out;
+}
+
+.task-card:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 4px 15px rgba(0,0,0,0.1);
+}
+
+.priority-high { border-left: 4px solid #dc3545; }
+.priority-medium { border-left: 4px solid #ffc107; }
+.priority-low { border-left: 4px solid #28a745; }
+
+.status-pending { background-color: #fff3cd; }
+.status-in_progress { background-color: #d1ecf1; }
+.status-completed { background-color: #d4edda; }
+.status-overdue { background-color: #f8d7da; }
+</style>
+{% endblock %}
+
+{% block content %}
+<div class="d-flex justify-content-between align-items-center mb-4">
+    <h1>
+        <i class="bi bi-list-task"></i>
+        {% if user.userprofile.is_manager %}
+            All Tasks
+        {% else %}
+            My Tasks
+        {% endif %}
+    </h1>
+    
+    {% if user.userprofile.is_manager %}
+        <a href="{% url 'tasks:task_create' %}" class="btn btn-primary">
+            <i class="bi bi-plus-circle"></i> Create New Task
+        </a>
+    {% endif %}
+</div>
+
+<!-- Search and Filter Panel -->
+<div class="card mb-4">
+    <div class="card-body">
+        <form method="get" class="row g-3">
+            <!-- Search -->
+            <div class="col-md-4">
+                <label for="search" class="form-label">Search Tasks</label>
+                <div class="input-group">
+                    <span class="input-group-text"><i class="bi bi-search"></i></span>
+                    <input type="text" 
+                           class="form-control" 
+                           id="search" 
+                           name="search" 
+                           value="{{ request.GET.search }}"
+                           placeholder="Search by title or description...">
+                </div>
+            </div>
+            
+            <!-- Status Filter -->
+            <div class="col-md-2">
+                <label for="status" class="form-label">Status</label>
+                <select class="form-select" id="status" name="status">
+                    <option value="">All Statuses</option>
+                    <option value="pending" {% if request.GET.status == 'pending' %}selected{% endif %}>Pending</option>
+                    <option value="in_progress" {% if request.GET.status == 'in_progress' %}selected{% endif %}>In Progress</option>
+                    <option value="completed" {% if request.GET.status == 'completed' %}selected{% endif %}>Completed</option>
+                </select>
+            </div>
+            
+            <!-- Priority Filter -->
+            <div class="col-md-2">
+                <label for="priority" class="form-label">Priority</label>
+                <select class="form-select" id="priority" name="priority">
+                    <option value="">All Priorities</option>
+                    <option value="high" {% if request.GET.priority == 'high' %}selected{% endif %}>High</option>
+                    <option value="medium" {% if request.GET.priority == 'medium' %}selected{% endif %}>Medium</option>
+                    <option value="low" {% if request.GET.priority == 'low' %}selected{% endif %}>Low</option>
+                </select>
+            </div>
+            
+            <!-- Due Date Filter -->
+            <div class="col-md-2">
+                <label for="due_date" class="form-label">Due Date</label>
+                <input type="date" 
+                       class="form-control" 
+                       id="due_date" 
+                       name="due_date" 
+                       value="{{ request.GET.due_date }}">
+            </div>
+            
+            <!-- Filter Buttons -->
+            <div class="col-md-2 d-flex align-items-end">
+                <div class="btn-group w-100" role="group">
+                    <button type="submit" class="btn btn-outline-primary">
+                        <i class="bi bi-funnel"></i> Filter
+                    </button>
+                    <a href="{% url 'tasks:task_list' %}" class="btn btn-outline-secondary">
+                        <i class="bi bi-arrow-clockwise"></i>
+                    </a>
+                </div>
+            </div>
+        </form>
+    </div>
+</div>
+
+<!-- Tasks Summary -->
+<div class="row mb-4">
+    <div class="col-md-3">
+        <div class="card bg-warning text-white">
+            <div class="card-body text-center">
+                <h5>{{ pending_count }}</h5>
+                <small>Pending Tasks</small>
+            </div>
+        </div>
+    </div>
+    <div class="col-md-3">
+        <div class="card bg-info text-white">
+            <div class="card-body text-center">
+                <h5>{{ in_progress_count }}</h5>
+                <small>In Progress</small>
+            </div>
+        </div>
+    </div>
+    <div class="col-md-3">
+        <div class="card bg-success text-white">
+            <div class="card-body text-center">
+                <h5>{{ completed_count }}</h5>
+                <small>Completed</small>
+            </div>
+        </div>
+    </div>
+    <div class="col-md-3">
+        <div class="card bg-danger text-white">
+            <div class="card-body text-center">
+                <h5>{{ overdue_count }}</h5>
+                <small>Overdue</small>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Task List -->
+{% if tasks %}
+    <div class="row">
+        {% for task in tasks %}
+            <div class="col-md-6 col-lg-4 mb-3">
+                <div class="card task-card priority-{{ task.priority }} h-100">
+                    <div class="card-header d-flex justify-content-between align-items-center">
+                        <h6 class="mb-0">
+                            <span class="badge bg-{{ task.get_priority_color }}">
+                                {{ task.get_priority_display }}
+                            </span>
+                        </h6>
+                        <small class="text-muted">
+                            {% if task.is_overdue %}
+                                <span class="badge bg-danger">Overdue</span>
+                            {% endif %}
+                        </small>
+                    </div>
+                    
+                    <div class="card-body">
+                        <h5 class="card-title">
+                            <a href="{% url 'tasks:task_detail' task.pk %}" 
+                               class="text-decoration-none">
+                                {{ task.title }}
+                            </a>
+                        </h5>
+                        
+                        <p class="card-text">{{ task.description|truncatewords:15 }}</p>
+                        
+                        <div class="row text-center mb-3">
+                            <div class="col">
+                                <small class="text-muted">Assigned to</small><br>
+                                <strong>{{ task.assigned_to.get_full_name|default:task.assigned_to.username }}</strong>
+                            </div>
+                            <div class="col">
+                                <small class="text-muted">Due Date</small><br>
+                                <strong>{{ task.due_date|date:"M d, Y" }}</strong>
+                            </div>
+                        </div>
+                        
+                        <div class="mb-3">
+                            <span class="badge status-{{ task.status }} text-dark">
+                                {{ task.get_status_display }}
+                            </span>
+                        </div>
+                        
+                        <!-- Progress Bar -->
+                        <div class="mb-3">
+                            <small class="text-muted">Progress: {{ task.get_progress_percentage }}%</small>
+                            <div class="progress" style="height: 6px;">
+                                <div class="progress-bar bg-{{ task.get_priority_color }}" 
+                                     role="progressbar" 
+                                     style="width: {{ task.get_progress_percentage }}%">
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <div class="card-footer">
+                        <div class="btn-group w-100" role="group">
+                            <a href="{% url 'tasks:task_detail' task.pk %}" 
+                               class="btn btn-outline-primary btn-sm">
+                                <i class="bi bi-eye"></i> View
+                            </a>
+                            
+                            {% if user.userprofile.is_manager or task.assigned_to == user %}
+                                <a href="{% url 'tasks:task_edit' task.pk %}" 
+                                   class="btn btn-outline-secondary btn-sm">
+                                    <i class="bi bi-pencil"></i> Edit
+                                </a>
+                            {% endif %}
+                            
+                            {% if task.assigned_to == user and task.status != 'completed' %}
+                                <button type="button" 
+                                        class="btn btn-outline-success btn-sm"
+                                        onclick="updateTaskStatus({{ task.pk }}, 'completed')">
+                                    <i class="bi bi-check-circle"></i> Complete
+                                </button>
+                            {% endif %}
+                        </div>
+                    </div>
+                </div>
+            </div>
+        {% endfor %}
+    </div>
+    
+    <!-- Pagination -->
+    {% if is_paginated %}
+        <nav aria-label="Task pagination">
+            <ul class="pagination justify-content-center">
+                {% if page_obj.has_previous %}
+                    <li class="page-item">
+                        <a class="page-link" href="?page=1{{ request.GET|urlencode }}">First</a>
+                    </li>
+                    <li class="page-item">
+                        <a class="page-link" href="?page={{ page_obj.previous_page_number }}{{ request.GET|urlencode }}">Previous</a>
+                    </li>
+                {% endif %}
+                
+                <li class="page-item active">
+                    <span class="page-link">{{ page_obj.number }} of {{ page_obj.paginator.num_pages }}</span>
+                </li>
+                
+                {% if page_obj.has_next %}
+                    <li class="page-item">
+                        <a class="page-link" href="?page={{ page_obj.next_page_number }}{{ request.GET|urlencode }}">Next</a>
+                    </li>
+                    <li class="page-item">
+                        <a class="page-link" href="?page={{ page_obj.paginator.num_pages }}{{ request.GET|urlencode }}">Last</a>
+                    </li>
+                {% endif %}
+            </ul>
+        </nav>
+    {% endif %}
+    
+{% else %}
+    <!-- No Tasks Message -->
+    <div class="text-center py-5">
+        <i class="bi bi-inbox display-1 text-muted"></i>
+        <h3 class="mt-3">No Tasks Found</h3>
+        <p class="text-muted">
+            {% if request.GET.search or request.GET.status or request.GET.priority %}
+                Try adjusting your search criteria or filters.
+            {% else %}
+                {% if user.userprofile.is_manager %}
+                    Start by creating your first task!
+                {% else %}
+                    No tasks have been assigned to you yet.
+                {% endif %}
+            {% endif %}
+        </p>
+        {% if user.userprofile.is_manager %}
+            <a href="{% url 'tasks:task_create' %}" class="btn btn-primary">
+                <i class="bi bi-plus-circle"></i> Create First Task
+            </a>
+        {% endif %}
+    </div>
+{% endif %}
+{% endblock %}
+
+{% block extra_js %}
+<script>
+// Quick status update (LO4.2)
+function updateTaskStatus(taskId, status) {
+    if (confirm('Are you sure you want to mark this task as ' + status + '?')) {
+        fetch(`/tasks/${taskId}/update-status/`, {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json',
+                'X-CSRFToken': document.querySelector('[name=csrfmiddlewaretoken]').value
+            },
+            body: JSON.stringify({
+                'status': status
+            })
+        })
+        .then(response => response.json())
+        .then(data => {
+            if (data.success) {
+                location.reload();
+            } else {
+                alert('Error updating task status: ' + data.message);
+            }
+        })
+        .catch(error => {
+            console.error('Error:', error);
+            alert('Error updating task status. Please try again.');
+        });
+    }
+}
+
+// Auto-submit filters on change
+document.querySelectorAll('#status, #priority, #due_date').forEach(element => {
+    element.addEventListener('change', function() {
+        this.closest('form').submit();
+    });
+});
+
+// Search with debounce
+let searchTimeout;
+document.getElementById('search').addEventListener('input', function() {
+    clearTimeout(searchTimeout);
+    searchTimeout = setTimeout(() => {
+        this.closest('form').submit();
+    }, 500);
+});
+</script>
+{% endblock %}
