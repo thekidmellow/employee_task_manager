@@ -5,7 +5,6 @@ Demonstrates data modeling and business logic (LO2)
 from django.core.validators import MinLengthValidator, MinValueValidator
 from django.db import models
 from django.contrib.auth.models import User
-from django.core.validators import MinLengthValidator
 from django.utils import timezone
 
 
@@ -32,31 +31,37 @@ class Task(models.Model):
         max_length=200,
         validators=[MinLengthValidator(5, "Title must be at least 5 characters long")]
     )
+    
     description = models.TextField(
         validators=[MinLengthValidator(10, "Description must be at least 10 characters long")]
     )
+    
     assigned_to = models.ForeignKey(
         User, 
         on_delete=models.CASCADE, 
         related_name='assigned_tasks',
         help_text="Employee assigned to this task"
     )
+    
     created_by = models.ForeignKey(
         User, 
         on_delete=models.CASCADE, 
         related_name='created_tasks',
         help_text="Manager who created this task"
     )
+    
     status = models.CharField(
         max_length=20, 
         choices=STATUS_CHOICES, 
         default='pending'
     )
+    
     priority = models.CharField(
         max_length=10, 
         choices=PRIORITY_CHOICES, 
         default='medium'
     )
+    
     estimated_hours = models.DecimalField(
         max_digits=5,
         decimal_places=1,
@@ -64,6 +69,7 @@ class Task(models.Model):
         validators=[MinValueValidator(0)],
         help_text="Estimated effort in hours (e.g., 1, 1.5, 2)"
     )
+    
     due_date = models.DateTimeField()
     created_at = models.DateTimeField(auto_now_add=True)
     updated_at = models.DateTimeField(auto_now=True)
