@@ -2,7 +2,7 @@
 Task management models for the Employee Task Manager
 Demonstrates data modeling and business logic (LO2)
 """
-
+from django.core.validators import MinLengthValidator, MinValueValidator
 from django.db import models
 from django.contrib.auth.models import User
 from django.core.validators import MinLengthValidator
@@ -56,6 +56,13 @@ class Task(models.Model):
         max_length=10, 
         choices=PRIORITY_CHOICES, 
         default='medium'
+    )
+    estimated_hours = models.DecimalField(
+        max_digits=5,
+        decimal_places=1,
+        default=0,
+        validators=[MinValueValidator(0)],
+        help_text="Estimated effort in hours (e.g., 1, 1.5, 2)"
     )
     due_date = models.DateTimeField()
     created_at = models.DateTimeField(auto_now_add=True)
