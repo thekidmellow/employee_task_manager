@@ -78,7 +78,7 @@
             <div class="col-md-4 text-md-end">
                 {% if user.userprofile.is_manager or task.assigned_to == user %}
                     <div class="btn-group" role="group">
-                        <a href="{% url 'tasks:task_edit' task.pk %}" class="btn btn-outline-primary">
+                        <a href="{% url 'tasks:task_update' task.id %}" class="btn btn-outline-primary">
                             <i class="bi bi-pencil"></i> Edit
                         </a>
                         {% if user.userprofile.is_manager %}
@@ -306,8 +306,7 @@
                 <div class="card-body">
                     {% for related in related_tasks %}
                         <div class="mb-2">
-                            <a href="{% url 'tasks:task_detail' related.pk %}" 
-                               class="text-decoration-none">
+                            <a href="{% url 'tasks:task_update' task.pk %}" class="btn btn-outline-primary">
                                 {{ related.title }}
                             </a>
                             <span class="badge bg-{{ related.get_status_color }} ms-1">

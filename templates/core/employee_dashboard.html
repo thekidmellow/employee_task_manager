@@ -233,7 +233,7 @@ Also an endpoint for quick status updates:
                 <button class="btn btn-sm btn-outline-primary" onclick="quickUpdate({{ task.pk }}, 'in_progress')">
                   <i class="bi bi-play-circle"></i> Start
                 </button>
-                <a class="btn btn-sm btn-outline-secondary" href="{% url 'tasks:task_edit' task.pk %}">
+                <a class="btn btn-sm btn-outline-secondary" href="{% url 'tasks:task_update' task.id %}">
                   <i class="bi bi-pencil"></i> Update
                 </a>
               </div>
