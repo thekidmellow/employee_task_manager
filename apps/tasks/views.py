@@ -73,6 +73,7 @@ def task_list_view(request):
     
     context = {
         'page_obj': page_obj,
+        'tasks': page_obj.object_list,
         'stats': stats,
         'status_choices': Task.STATUS_CHOICES,
         'priority_choices': Task.PRIORITY_CHOICES,
@@ -80,9 +81,10 @@ def task_list_view(request):
             'status': status_filter,
             'priority': priority_filter,
             'search': search_query,
-        }
+        },
+        'is_manager': user_profile.is_manager,
     }
-    
+
     return render(request, 'tasks/task_list.html', context)
 
 
@@ -98,7 +100,9 @@ def task_create_view(request):
         return redirect('tasks:task_list')
     
     if request.method == 'POST':
-        form = TaskCreationForm(request.POST)
+        data = request.POST.copy()
+        data.setdefault('status', 'pending')
+        form = TaskCreationForm(data)
         if form.is_valid():
             task = form.save(commit=False)
             task.created_by = request.user
@@ -256,7 +260,7 @@ def update_task_status_ajax(request, task_id=None):
     If task_id is provided in the URL, it takes precedence over the payload.
     """
     # Parse body (JSON or form)
-    if request.content_type == 'application/json':
+    if request.content_type and 'application/json' in request.content_type:
         try:
             payload = json.loads(request.body or '{}')
         except json.JSONDecodeError:

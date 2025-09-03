@@ -212,7 +212,7 @@
                             </a>
                             
                             {% if user.userprofile.is_manager or task.assigned_to == user %}
-                                <a href="{% url 'tasks:task_edit' task.pk %}" 
+                            <a href="{% url 'tasks:task_update' task.pk %}" 
                                    class="btn btn-outline-secondary btn-sm">
                                     <i class="bi bi-pencil"></i> Edit
                                 </a>

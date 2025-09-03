@@ -22,29 +22,18 @@ class TaskCreationForm(forms.ModelForm):
         # ⬇️ Add 'estimated_hours' so you can set it on create
         fields = ['title', 'description', 'assigned_to', 'priority', 'estimated_hours', 'due_date']
         widgets = {
-            'title': forms.TextInput(attrs={
-                'class': 'form-control',
-                'placeholder': 'Enter a descriptive task title'
-            }),
-            'description': forms.Textarea(attrs={
-                'class': 'form-control',
-                'rows': 4,
-                'placeholder': 'Provide detailed task description'
-            }),
+            'title': forms.TextInput(attrs={'class': 'form-control','placeholder': 'Enter a descriptive task title'}),
+            'description': forms.Textarea(attrs={'class': 'form-control','rows': 4,'placeholder': 'Provide detailed task description'}),
             'assigned_to': forms.Select(attrs={'class': 'form-control'}),
             'priority': forms.Select(attrs={'class': 'form-control'}),
-            # estimated_hours is a number input with 0.5 step
             'estimated_hours': forms.NumberInput(attrs={
                 'class': 'form-control',
-                'min': '0',
                 'step': '0.5',
+                'min': '0',
                 'placeholder': 'e.g. 1, 1.5, 2'
             }),
-            # due_date is a datetime-local (matches your DateTimeField)
-            'due_date': forms.DateTimeInput(attrs={
-                'class': 'form-control',
-                'type': 'datetime-local'
-            }),
+            'due_date': forms.DateTimeInput(attrs={'class': 'form-control','type': 'datetime-local'}),
+            'status': forms.Select(attrs={'class': 'form-control'}),
         }
 
     def __init__(self, *args, **kwargs):
@@ -68,8 +57,9 @@ class TaskCreationForm(forms.ModelForm):
             # Match the datetime-local format
             self.fields['due_date'].initial = default_due.strftime('%Y-%m-%dT%H:%M')
 
-        # Make sure Django accepts the datetime-local format from the browser
+        # Accept the browser's datetime-local format
         self.fields['due_date'].input_formats = ['%Y-%m-%dT%H:%M']
+
 
     def clean_due_date(self):
         due_date = self.cleaned_data.get('due_date')
