@@ -116,17 +116,22 @@ TIME_ZONE = 'UTC'
 USE_I18N = True
 USE_TZ = True
 
-# Static files (CSS, JavaScript, Images)
+# Static files
 STATIC_URL = '/static/'
-STATICFILES_DIRS = [BASE_DIR / 'static']  # your static/css, static/js live here
+STATIC_ROOT = BASE_DIR / 'staticfiles'        # <-- always set
+STATICFILES_DIRS = [BASE_DIR / 'static']      # your static/css, static/js live here
 
+# Django 5+ storage config
 if DEBUG:
-    # Dev: serve from app/static without collectstatic
-    STATICFILES_STORAGE = 'django.contrib.staticfiles.storage.StaticFilesStorage'
+    static_backend = "django.contrib.staticfiles.storage.StaticFilesStorage"
 else:
-    # Prod: collect to STATIC_ROOT and serve via WhiteNoise
-    STATIC_ROOT = BASE_DIR / 'staticfiles'
-    STATICFILES_STORAGE = 'whitenoise.storage.CompressedManifestStaticFilesStorage'
+    static_backend = "whitenoise.storage.CompressedManifestStaticFilesStorage"
+
+STORAGES = {
+    "default": {"BACKEND": "django.core.files.storage.FileSystemStorage"},
+    "staticfiles": {"BACKEND": static_backend},
+}
+
 
 
 # Media files

@@ -1,2 +1,39 @@
-.venv
+# --- Python ---
+__pycache__/
+*.py[cod]
+*.pyo
+*.pyd
+*.egg-info/
+.eggs/
+*.log
+
+# --- Virtual envs ---
+.venv/
+venv/
+
+# --- Env / secrets ---
+.env
+.env.*
+*.env
 env.py
+
+# --- Django ---
+db.sqlite3
+*.sqlite3
+/media/              # local uploads; keep out of git
+/staticfiles/        # collectstatic output (build artifact)
+local_settings.py
+
+# --- Tests / coverage ---
+.pytest_cache/
+.coverage
+htmlcov/
+
+# --- Node (if you ever add frontend tooling) ---
+node_modules/
+
+# --- IDE / OS junk ---
+.vscode/
+.idea/
+.DS_Store
+Thumbs.db
