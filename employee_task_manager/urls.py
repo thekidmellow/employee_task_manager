@@ -1,36 +1,22 @@
-"""
-Main URL configuration for Employee Task Manager
-Demonstrates URL routing and app integration (LO1.3)
-"""
-
 from django.contrib import admin
 from django.urls import path, include
 from django.conf import settings
 from django.conf.urls.static import static
 
 urlpatterns = [
-    # Admin interface
     path('admin/', admin.site.urls),
-    
-    # Authentication URLs (built-in Django auth views)
-    path('accounts/', include('django.contrib.auth.urls')),
 
-    # Custom authentication URLs
-    path('accounts/', include('apps.accounts.urls')),
-    
-    # Task management URLs
-    path('tasks/', include('apps.tasks.urls')),
-    
-    # Core application URLs (dashboards, home)
-    path('', include('apps.core.urls')),
+    # Core + Accounts
+    path('', include('apps.core.urls', namespace='core')),              # add namespace for consistency
+    path('accounts/', include('apps.accounts.urls', namespace='accounts')),
+
+    # Tasks with namespace (IMPORTANT)
+    path('tasks/', include(('apps.tasks.urls', 'tasks'), namespace='tasks')),
+
+    # Django auth defaults (login/logout/password reset, etc.) at root
+    # If you already provide custom login/logout in apps.accounts, you can omit this line.
+    path('', include('django.contrib.auth.urls')),
 ]
 
-# Serve media files in development
 if settings.DEBUG:
     urlpatterns += static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)
-    urlpatterns += static(settings.STATIC_URL, document_root=settings.STATIC_ROOT)
-
-# Custom error handlers (optional)
-handler404 = 'apps.core.views.custom_404'
-handler500 = 'apps.core.views.custom_500'
-

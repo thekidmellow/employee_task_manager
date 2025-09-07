@@ -1,349 +1,289 @@
-"""
-Task management views with role-based access control
-Demonstrates business logic and data manipulation (LO2)
-"""
-import json
-from django.views.decorators.http import require_POST
-from django.shortcuts import render, get_object_or_404, redirect
-from django.contrib.auth.decorators import login_required
+# apps/tasks/views.py
+from datetime import timedelta
+
 from django.contrib import messages
-from django.http import JsonResponse
+from django.contrib.auth.decorators import login_required
+from django.core.exceptions import PermissionDenied
 from django.core.paginator import Paginator
-from django.db.models import Q, Count
+from django.db.models import Q
+from django.http import JsonResponse
+from django.shortcuts import render, get_object_or_404, redirect
 from django.utils import timezone
-from django.contrib.auth.models import User
+from django.views.decorators.http import require_POST
+
+from .forms import TaskCreationForm, TaskUpdateForm, TaskCommentForm, TaskFilterForm
 from .models import Task, TaskComment
-from .forms import TaskCreationForm, TaskUpdateForm, TaskCommentForm
-from apps.accounts.models import UserProfile
 
 
 @login_required
 def task_list_view(request):
-    """
-    Display tasks based on user role
-    Demonstrates role-based content access (LO3.3)
-    """
-    user_profile = request.user.userprofile
-    
-    # Filter tasks based on user role
-    if user_profile.is_manager:
-        # Managers can see all tasks
-        tasks = Task.objects.select_related('assigned_to', 'created_by').all()
-    else:
-        # Employees can only see their assigned tasks
-        tasks = Task.objects.select_related('assigned_to', 'created_by').filter(
-            assigned_to=request.user
-        )
-    
-    # Apply filters from GET parameters
-    status_filter = request.GET.get('status')
-    priority_filter = request.GET.get('priority')
-    search_query = request.GET.get('search')
-    
-    if status_filter and status_filter != 'all':
-        tasks = tasks.filter(status=status_filter)
-    
-    if priority_filter and priority_filter != 'all':
-        tasks = tasks.filter(priority=priority_filter)
-    
-    if search_query:
-        tasks = tasks.filter(
-            Q(title__icontains=search_query) | 
-            Q(description__icontains=search_query)
-        )
-    
-    # Pagination
+    """Display paginated list of tasks with filtering"""
+    user = request.user
+    is_manager = getattr(user, 'userprofile', None) and user.userprofile.is_manager
+
+    # Managers see all; others see tasks assigned to them OR created by them
+    base_qs = Task.objects.all() if is_manager else Task.objects.filter(
+        Q(assigned_to=user) | Q(created_by=user)
+    )
+
+    # Apply filters
+    filter_form = TaskFilterForm(request.GET, user=user)
+    tasks = base_qs
+    if filter_form.is_valid():
+        search = filter_form.cleaned_data.get('search')
+        if search:
+            tasks = tasks.filter(Q(title__icontains=search) | Q(description__icontains=search))
+
+        status = filter_form.cleaned_data.get('status')
+        if status:
+            tasks = tasks.filter(status=status)
+
+        priority = filter_form.cleaned_data.get('priority')
+        if priority:
+            tasks = tasks.filter(priority=priority)
+
+        assigned_to = filter_form.cleaned_data.get('assigned_to')
+        if assigned_to:
+            tasks = tasks.filter(assigned_to=assigned_to)
+
+    tasks = tasks.select_related('assigned_to', 'created_by').order_by('-priority', 'due_date', '-created_at')
+
     paginator = Paginator(tasks, 10)
     page_number = request.GET.get('page')
     page_obj = paginator.get_page(page_number)
-    
-    # Calculate statistics for managers
-    stats = {}
-    if user_profile.is_manager:
-        stats = {
-            'total_tasks': Task.objects.count(),
-            'pending_tasks': Task.objects.filter(status='pending').count(),
-            'in_progress_tasks': Task.objects.filter(status='in_progress').count(),
-            'completed_tasks': Task.objects.filter(status='completed').count(),
-            'overdue_tasks': Task.objects.filter(
-                due_date__lt=timezone.now(),
-                status__in=['pending', 'in_progress']
-            ).count(),
-        }
-    
-    context = {
-        'page_obj': page_obj,
-        'tasks': page_obj.object_list,
-        'stats': stats,
-        'status_choices': Task.STATUS_CHOICES,
-        'priority_choices': Task.PRIORITY_CHOICES,
-        'current_filters': {
-            'status': status_filter,
-            'priority': priority_filter,
-            'search': search_query,
-        },
-        'is_manager': user_profile.is_manager,
+
+    # Stats should match what the user can see
+    stats_queryset = base_qs
+    stats = {
+        'total': stats_queryset.count(),
+        'pending': stats_queryset.filter(status='pending').count(),
+        'in_progress': stats_queryset.filter(status='in_progress').count(),
+        'completed': stats_queryset.filter(status='completed').count(),
+        'overdue': stats_queryset.filter(
+            due_date__lt=timezone.now(),
+            status__in=['pending', 'in_progress']
+        ).count(),
     }
 
-    return render(request, 'tasks/task_list.html', context)
+    return render(request, 'tasks/task_list.html', {
+        'page_obj': page_obj,
+        'tasks': page_obj.object_list,
+        'filter_form': filter_form,
+        'is_manager': is_manager,
+        'stats': stats,
+        'pending_count': stats['pending'],
+        'in_progress_count': stats['in_progress'],
+        'completed_count': stats['completed'],
+        'overdue_count': stats['overdue'],
+        'total_count': paginator.count,
+        'is_paginated': page_obj.has_other_pages(),
+    })
 
 
 @login_required
 def task_create_view(request):
-    """
-    Create new task (Manager only)
-    Demonstrates authorization and form validation (LO3.1, LO2.4)
-    """
-    # Check if user is manager
-    if not request.user.userprofile.is_manager:
-        messages.error(request, 'Only managers can create tasks.')
-        return redirect('tasks:task_list')
-    
+    """Create new task (managers only)"""
+    user = request.user
+    is_manager = getattr(user, 'userprofile', None) and user.userprofile.is_manager
+
+    # Return 403 Forbidden for non-managers (tests expect 403, not a redirect)
+    if not is_manager:
+        raise PermissionDenied
+
     if request.method == 'POST':
-        data = request.POST.copy()
-        data.setdefault('status', 'pending')
-        form = TaskCreationForm(data)
+        form = TaskCreationForm(request.POST, user=user)
         if form.is_valid():
             task = form.save(commit=False)
-            task.created_by = request.user
-            if not task.status:   # safety net
-                task.status = 'pending'
+            task.created_by = user
             task.save()
-            
             messages.success(request, f'Task "{task.title}" created successfully!')
-            
-            # Notify assigned user (placeholder for future notification system)
-            # This demonstrates business logic implementation
-            assigned_user = task.assigned_to
-            print(f"[NOTIFICATION] Task '{task.title}' assigned to {assigned_user.username}")
-            
             return redirect('tasks:task_detail', task_id=task.id)
         else:
-            for field, errors in form.errors.items():
-                for error in errors:
-                    messages.error(request, f"{field.title()}: {error}")
+            messages.error(request, "Please correct the errors below.")
+            # Optional debug: print("Create form errors:", form.errors.as_json())
     else:
-        form = TaskCreationForm()
-    
-    context = {'form': form, 'mode': 'create'}
-    return render(request, 'tasks/task_form.html', context)
+        form = TaskCreationForm(user=user)
 
+    return render(request, 'tasks/task_form.html', {
+        'form': form,
+        'title': 'Create New Task',
+        'button_text': 'Create Task',
+    })
 
 
 @login_required
 def task_detail_view(request, task_id):
-    """
-    Display task details with comments
-    Demonstrates data display and related model access (LO2.2)
-    """
+    """Display task details with comments"""
     task = get_object_or_404(Task, id=task_id)
-    user_profile = request.user.userprofile
-    
-    # Check permissions
-    if not (user_profile.is_manager or task.assigned_to == request.user):
-        messages.error(request, 'You do not have permission to view this task.')
+    user = request.user
+    is_manager = getattr(user, 'userprofile', None) and user.userprofile.is_manager
+
+    # Permission check: non-managers can only view tasks assigned to them
+    if not is_manager and task.assigned_to != user:
+        messages.error(request, 'You can only view tasks assigned to you.')
         return redirect('tasks:task_list')
-    
-    # Get comments
-    comments = task.comments.select_related('user').all()
-    
-    # Handle comment form
-    comment_form = TaskCommentForm()
-    if request.method == 'POST' and 'add_comment' in request.POST:
+
+    # Comment form
+    if request.method == 'POST':
         comment_form = TaskCommentForm(request.POST)
         if comment_form.is_valid():
             comment = comment_form.save(commit=False)
             comment.task = task
-            comment.user = request.user
+            comment.user = user
             comment.save()
-            
             messages.success(request, 'Comment added successfully!')
             return redirect('tasks:task_detail', task_id=task.id)
-    
-    context = {
+    else:
+        comment_form = TaskCommentForm()
+
+    comments = task.comments.select_related('user').order_by('-created_at')
+    can_edit = is_manager or task.assigned_to == user
+    can_delete = is_manager
+
+    return render(request, 'tasks/task_detail.html', {
         'task': task,
         'comments': comments,
         'comment_form': comment_form,
-        'can_edit': user_profile.is_manager or task.assigned_to == request.user,
-        'can_delete': user_profile.is_manager,
-    }
-    
-    return render(request, 'tasks/task_detail.html', context)
+        'can_edit': can_edit,
+        'can_delete': can_delete,
+        'is_manager': is_manager,
+    })
 
 
 @login_required
 def task_update_view(request, task_id):
-    """
-    Update task details
-    Demonstrates CRUD operations with authorization (LO2.2, LO3)
-    """
+    """Update task (permissions based on user role)"""
     task = get_object_or_404(Task, id=task_id)
-    user_profile = request.user.userprofile
-    
-    # Check permissions
-    if not (user_profile.is_manager or task.assigned_to == request.user):
-        messages.error(request, 'You do not have permission to edit this task.')
-        return redirect('tasks:task_detail', task_id=task.id)
-    
+    user = request.user
+    is_manager = getattr(user, 'userprofile', None) and user.userprofile.is_manager
+
+    # Employees can only update their own tasks
+    if not is_manager and task.assigned_to != user:
+        messages.error(request, 'You can only edit tasks assigned to you.')
+        return redirect('tasks:task_list')
+
     if request.method == 'POST':
-        # Different forms based on user role
-        if user_profile.is_manager:
-            form = TaskCreationForm(request.POST, instance=task)
-        else:
-            # Employees can only update status
-            form = TaskUpdateForm(request.POST, instance=task)
-        
+        form = (
+            TaskCreationForm(request.POST, instance=task, user=user)
+            if is_manager else
+            TaskUpdateForm(request.POST, instance=task, user=user)
+        )
         if form.is_valid():
             updated_task = form.save()
-            
-            messages.success(request, f'Task "{updated_task.title}" updated successfully!')
-            
-            # Log status change for notifications (LO2.3)
-            if 'status' in form.changed_data:
-                print(f"[NOTIFICATION] Task '{updated_task.title}' status changed to {updated_task.get_status_display()}")
-            
+            action = 'updated' if is_manager else 'status updated'
+            messages.success(request, f'Task "{updated_task.title}" {action} successfully!')
             return redirect('tasks:task_detail', task_id=updated_task.id)
-        else:
-            for field, errors in form.errors.items():
-                for error in errors:
-                    messages.error(request, f"{field.title()}: {error}")
     else:
-        if user_profile.is_manager:
-            form = TaskCreationForm(instance=task)
-        else:
-            form = TaskUpdateForm(instance=task)
-    
-    context = {
-        'form': form,
-        'task': task,
-        'is_manager': user_profile.is_manager,
-    }
-    
+        form = (
+            TaskCreationForm(instance=task, user=user)
+            if is_manager else
+            TaskUpdateForm(instance=task, user=user)
+        )
+
     return render(request, 'tasks/task_form.html', {
         'form': form,
         'task': task,
-        'is_manager': user_profile.is_manager,
-        'mode': 'edit',  # lets the template switch headings/buttons
+        'title': f'Edit Task: {task.title}',
+        'button_text': 'Update Task',
+        'is_manager': is_manager,
     })
-
 
 
 @login_required
 def task_delete_view(request, task_id):
-    """
-    Delete task (Manager only)
-    Demonstrates authorization and data deletion (LO3.1, LO2.2)
-    """
+    """Delete task (managers only)"""
     task = get_object_or_404(Task, id=task_id)
-    
-    # Only managers can delete tasks
-    if not request.user.userprofile.is_manager:
+    user = request.user
+    is_manager = getattr(user, 'userprofile', None) and user.userprofile.is_manager
+
+    if not is_manager:
         messages.error(request, 'Only managers can delete tasks.')
         return redirect('tasks:task_detail', task_id=task.id)
-    
+
     if request.method == 'POST':
         task_title = task.title
         task.delete()
         messages.success(request, f'Task "{task_title}" deleted successfully!')
         return redirect('tasks:task_list')
-    
-    context = {'task': task}
-    return render(request, 'tasks/task_delete.html', context)
+
+    return render(request, 'tasks/task_confirm_delete.html', {'task': task})
 
 
 @login_required
 @require_POST
-def update_task_status_ajax(request, task_id=None):
-    """
-    AJAX endpoint for quick status updates.
-    Accepts JSON or form-encoded POST.
-    If task_id is provided in the URL, it takes precedence over the payload.
-    """
-    # Parse body (JSON or form)
-    if request.content_type and 'application/json' in request.content_type:
-        try:
-            payload = json.loads(request.body or '{}')
-        except json.JSONDecodeError:
-            return JsonResponse({'error': 'Invalid JSON'}, status=400)
-    else:
-        payload = request.POST
+def update_task_status(request, task_id):
+    """AJAX endpoint for quick status updates"""
+    task = get_object_or_404(Task, id=task_id)
+    user = request.user
+    is_manager = getattr(user, 'userprofile', None) and user.userprofile.is_manager
 
-    new_status = payload.get('status')
-    tid = task_id or payload.get('task_id')
+    # Parse JSON body
+    import json
+    try:
+        data = json.loads(request.body.decode('utf-8'))
+    except Exception:
+        return JsonResponse({'success': False, 'message': 'Invalid request body'}, status=400)
 
-    if not tid:
-        return JsonResponse({'error': 'Missing task_id'}, status=400)
-    if not new_status:
-        return JsonResponse({'error': 'Missing status'}, status=400)
-
-    task = get_object_or_404(Task, id=tid)
-    user_profile = request.user.userprofile
+    new_status = data.get('status')
 
     # Permission check
-    if not (user_profile.is_manager or task.assigned_to == request.user):
-        return JsonResponse({'error': 'Permission denied'}, status=403)
+    if not is_manager and task.assigned_to != user:
+        return JsonResponse({'success': False, 'message': 'Permission denied'}, status=403)
 
     # Validate status
     valid_statuses = [choice[0] for choice in Task.STATUS_CHOICES]
     if new_status not in valid_statuses:
-        return JsonResponse({'error': 'Invalid status'}, status=400)
+        return JsonResponse({'success': False, 'message': 'Invalid status'}, status=400)
 
-    old_status = task.status
+    # Update status
     task.status = new_status
+    if new_status == "completed":
+        task.completed_at = timezone.now()
     task.save()
 
-    # Log change for notifications
-    print(f"[NOTIFICATION] Task '{task.title}' status changed from {old_status} to {new_status}")
-
-    return JsonResponse({
-        'success': True,
-        'message': f'Task status updated to {task.get_status_display()}',
-        'new_status': new_status,
-        'status_display': task.get_status_display(),
-        'status_color': task.get_status_color(),
-    })
+    return JsonResponse({'success': True, 'new_status': task.get_status_display()})
 
 
 @login_required
 def task_stats_api(request):
     """
-    API endpoint for dashboard statistics
-    Demonstrates data aggregation and JSON API (LO2.2)
+    API endpoint for task statistics (used by dashboard widgets)
     """
-    user_profile = request.user.userprofile
-    
-    if user_profile.is_manager:
-        # Manager sees all tasks
-        tasks = Task.objects.all()
-    else:
-        # Employee sees only their tasks
-        tasks = Task.objects.filter(assigned_to=request.user)
-    
-    # Calculate statistics
-    stats = {
-        'total': tasks.count(),
-        'pending': tasks.filter(status='pending').count(),
-        'in_progress': tasks.filter(status='in_progress').count(),
-        'completed': tasks.filter(status='completed').count(),
-        'overdue': tasks.filter(
-            due_date__lt=timezone.now(),
-            status__in=['pending', 'in_progress']
-        ).count(),
+    user = request.user
+    is_manager = getattr(user, 'userprofile', None) and user.userprofile.is_manager
+
+    qs = Task.objects.all() if is_manager else Task.objects.filter(assigned_to=user)
+
+    total = qs.count()
+    pending = qs.filter(status='pending').count()
+    in_progress = qs.filter(status='in_progress').count()
+    completed = qs.filter(status='completed').count()
+    cancelled = qs.filter(status='cancelled').count()
+    overdue = qs.filter(
+        due_date__lt=timezone.now(),
+        status__in=['pending', 'in_progress']
+    ).count()
+
+    completion_rate = round((completed / total) * 100, 1) if total else 0.0
+
+    priority_breakdown = {}
+    for code, name in Task.PRIORITY_CHOICES:
+        priority_breakdown[code] = {
+            'name': name,
+            'count': qs.filter(priority=code).count(),
+        }
+
+    data = {
+        'total_tasks': total,
+        'pending_tasks': pending,
+        'in_progress_tasks': in_progress,
+        'completed_tasks': completed,
+        'cancelled_tasks': cancelled,
+        'overdue_tasks': overdue,
+        'completion_rate': completion_rate,
+        'priority_breakdown': priority_breakdown,
+        'is_manager': is_manager,
+        'timestamp': timezone.now().isoformat(),
     }
-    
-    # Priority breakdown
-    priority_stats = {}
-    for priority, _ in Task.PRIORITY_CHOICES:
-        priority_stats[priority] = tasks.filter(priority=priority).count()
-    
-    return JsonResponse({
-        'status_stats': stats,
-        'priority_stats': priority_stats,
-        'user_role': user_profile.role,
-    })
 
-
-
-
-
-
+    return JsonResponse(data)

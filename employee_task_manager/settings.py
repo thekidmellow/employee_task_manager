@@ -72,24 +72,24 @@ import dj_database_url
 raw_db_url = config('DATABASE_URL', default='').strip()
 
 if raw_db_url:
-    try:
-        DATABASES = {
-            'default': dj_database_url.parse(raw_db_url, conn_max_age=600, ssl_require=True)
-        }
-    except dj_database_url.ParseError:
-        # Invalid value present locally; fall back to SQLite
-        DATABASES = {
-            'default': {
-                'ENGINE': 'django.db.backends.sqlite3',
-                'NAME': BASE_DIR / 'db.sqlite3',
-            }
-        }
+    db = dj_database_url.parse(raw_db_url, conn_max_age=60, ssl_require=True)
+    db["CONN_HEALTH_CHECKS"] = True
+    db.setdefault("OPTIONS", {})
+    db["OPTIONS"].update({
+        "sslmode": "require",
+        "connect_timeout": 10,
+        "keepalives": 1,
+        "keepalives_idle": 30,
+        "keepalives_interval": 10,
+        "keepalives_count": 5,
+    })
+    DATABASES = {"default": db}
 else:
-    # No DATABASE_URL locally -> SQLite
+    # No DATABASE_URL → fall back to SQLite locally
     DATABASES = {
-        'default': {
-            'ENGINE': 'django.db.backends.sqlite3',
-            'NAME': BASE_DIR / 'db.sqlite3',
+        "default": {
+            "ENGINE": "django.db.backends.sqlite3",
+            "NAME": BASE_DIR / "db.sqlite3",
         }
     }
 
@@ -118,8 +118,8 @@ USE_TZ = True
 
 # Static files
 STATIC_URL = '/static/'
-STATIC_ROOT = BASE_DIR / 'staticfiles'        # <-- always set
-STATICFILES_DIRS = [BASE_DIR / 'static']      # your static/css, static/js live here
+STATIC_ROOT = BASE_DIR / 'staticfiles'
+STATICFILES_DIRS = [BASE_DIR / 'static']
 
 # Django 5+ storage config
 if DEBUG:
@@ -131,7 +131,6 @@ STORAGES = {
     "default": {"BACKEND": "django.core.files.storage.FileSystemStorage"},
     "staticfiles": {"BACKEND": static_backend},
 }
-
 
 
 # Media files
@@ -155,4 +154,3 @@ MESSAGE_TAGS = {
     messages.WARNING: 'alert-warning',
     messages.ERROR: 'alert-danger',
 }
-
