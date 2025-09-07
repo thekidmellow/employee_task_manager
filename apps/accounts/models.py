@@ -1,3 +1,4 @@
+# apps/accounts/models.py
 """
 User profile models for role-based access control
 """

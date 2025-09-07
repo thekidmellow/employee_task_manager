@@ -1,169 +1,171 @@
-<!-- templates/core/home.html -->
-<!-- Home page template demonstrating UX design principles (LO1.1) -->
 {% extends 'base.html' %}
 {% load static %}
 
 {% block title %}Home - Employee Task Manager{% endblock %}
-{% block content %}
-<div class="hero-section bg-primary text-white rounded-3 p-5 mb-5">
-    <div class="row align-items-center">
-        <div class="col-lg-6">
-            <h1 class="display-4 fw-bold mb-3">
-                <i class="bi bi-check-square-fill"></i>
-                Employee Task Manager
-            </h1>
-            <p class="lead mb-4">
-                Streamline your team's productivity with our intuitive task management system. 
-                Assign tasks, track progress, and boost collaboration.
-            </p>
-            
-            {% if not user.is_authenticated %}
-                <div class="d-grid gap-2 d-md-flex justify-content-md-start">
-                    <a href="{% url 'accounts:register' %}" class="btn btn-light btn-lg px-4 me-md-2">
-                        <i class="bi bi-person-plus"></i> Get Started
-                    </a>
-                    <a href="{% url 'login' %}" class="btn btn-outline-light btn-lg px-4">
-                        <i class="bi bi-box-arrow-in-right"></i> Login
-                    </a>
-                </div>
-            {% else %}
-                <div class="d-grid gap-2 d-md-flex justify-content-md-start">
-                    {% if user.userprofile.is_manager %}
-                        <a href="{% url 'core:manager_dashboard' %}" class="btn btn-light btn-lg px-4 me-md-2">
-                            <i class="bi bi-speedometer2"></i> Manager Dashboard
-                        </a>
-                        <a href="{% url 'tasks:task_create' %}" class="btn btn-outline-light btn-lg px-4">
-                            <i class="bi bi-plus-circle"></i> Create Task
-                        </a>
-                    {% else %}
-                        <a href="{% url 'core:employee_dashboard' %}" class="btn btn-light btn-lg px-4 me-md-2">
-                            <i class="bi bi-person-workspace"></i> My Dashboard
-                        </a>
-                        <a href="{% url 'tasks:task_list' %}" class="btn btn-outline-light btn-lg px-4">
-                            <i class="bi bi-list-task"></i> My Tasks
-                        </a>
-                    {% endif %}
-                </div>
-            {% endif %}
-        </div>
-        
-        <div class="col-lg-6 text-center">
-            <div class="position-relative">
-                <i class="bi bi-kanban display-1 text-white-50"></i>
-                <div class="position-absolute top-0 start-50 translate-middle">
-                    <div class="bg-white text-primary rounded-circle p-3 shadow">
-                        <i class="bi bi-check-lg fs-1"></i>
-                    </div>
-                </div>
-            </div>
-        </div>
-    </div>
-</div>
 
-<!-- Statistics Section -->
+{% block meta_description %}
+Professional employee task management system. Streamline your team's productivity with role-based access, real-time tracking, and comprehensive task management features.
+{% endblock %}
+
+{% block meta_keywords %}
+employee task manager, team productivity, task tracking, project management, workflow management
+{% endblock %}
+
+{% block content %}
+<!-- Hero Section -->
+<section class="hero-section bg-primary text-white rounded-3 p-5 mb-5" role="banner" aria-labelledby="hero-title">
+  <div class="row align-items-center">
+    <div class="col-lg-8">
+      <h1 id="hero-title" class="display-4 fw-bold mb-3">
+        <i class="bi bi-check-square-fill" aria-hidden="true"></i>
+        Employee Task Manager
+      </h1>
+
+      <p class="lead mb-4">
+        Streamline your team's productivity with our intuitive task management system.
+        Assign tasks, track progress, and boost collaboration across your organization.
+      </p>
+
+      {% if not user.is_authenticated %}
+        <div class="d-grid gap-2 d-md-flex justify-content-md-start">
+          <a href="{% url 'accounts:register' %}" class="btn btn-light btn-lg px-4 me-md-2" aria-label="Get started with registration">
+            <i class="bi bi-person-plus" aria-hidden="true"></i> Get Started
+          </a>
+          <a href="{% url 'accounts:login' %}" class="btn btn-outline-light btn-lg px-4" aria-label="Login to existing account">
+            <i class="bi bi-box-arrow-in-right" aria-hidden="true"></i> Login
+          </a>
+        </div>
+      {% else %}
+        <div class="d-grid gap-2 d-md-flex justify-content-md-start">
+          {% if user.userprofile.is_manager %}
+            <a href="{% url 'core:manager_dashboard' %}" class="btn btn-light btn-lg px-4 me-md-2" aria-label="Go to manager dashboard">
+              <i class="bi bi-speedometer2" aria-hidden="true"></i> Manager Dashboard
+            </a>
+            <a href="{% url 'tasks:task_create' %}" class="btn btn-outline-light btn-lg px-4" aria-label="Create new task">
+              <i class="bi bi-plus-circle" aria-hidden="true"></i> Create Task
+            </a>
+          {% else %}
+            <a href="{% url 'core:employee_dashboard' %}" class="btn btn-light btn-lg px-4 me-md-2" aria-label="Go to my dashboard">
+              <i class="bi bi-person-workspace" aria-hidden="true"></i> My Dashboard
+            </a>
+            <a href="{% url 'tasks:task_list' %}" class="btn btn-outline-light btn-lg px-4" aria-label="View my tasks">
+              <i class="bi bi-list-task" aria-hidden="true"></i> My Tasks
+            </a>
+          {% endif %}
+        </div>
+      {% endif %}
+    </div>
+
+    {# Removed the right-side decorative icon stack that caused the big check/box graphic #}
+  </div>
+</section>
+
 {% if total_users > 0 %}
-<div class="row mb-5">
+<!-- Statistics Section -->
+<section class="mb-5" aria-labelledby="stats-heading">
+  <h2 id="stats-heading" class="visually-hidden">Platform Statistics</h2>
+  <div class="row g-4">
     <div class="col-md-4">
-        <div class="card text-center h-100 border-0 shadow-sm">
-            <div class="card-body">
-                <div class="text-primary mb-3">
-                    <i class="bi bi-people-fill display-4"></i>
-                </div>
-                <h3 class="card-title">{{ total_users }}</h3>
-                <p class="card-text text-muted">Active Users</p>
-            </div>
+      <div class="card text-center h-100 border-0 shadow-sm">
+        <div class="card-body">
+          <div class="text-primary mb-3">
+            <i class="bi bi-people-fill display-4" aria-hidden="true"></i>
+          </div>
+          <h3 class="card-title">{{ total_users }}</h3>
+          <p class="card-text text-muted">Active Users</p>
         </div>
+      </div>
     </div>
-    
+
     <div class="col-md-4">
-        <div class="card text-center h-100 border-0 shadow-sm">
-            <div class="card-body">
-                <div class="text-success mb-3">
-                    <i class="bi bi-list-task display-4"></i>
-                </div>
-                <h3 class="card-title">{{ total_tasks }}</h3>
-                <p class="card-text text-muted">Total Tasks</p>
-            </div>
+      <div class="card text-center h-100 border-0 shadow-sm">
+        <div class="card-body">
+          <div class="text-success mb-3">
+            <i class="bi bi-list-task display-4" aria-hidden="true"></i>
+          </div>
+          <h3 class="card-title">{{ total_tasks }}</h3>
+          <p class="card-text text-muted">Total Tasks</p>
         </div>
+      </div>
     </div>
-    
+
     <div class="col-md-4">
-        <div class="card text-center h-100 border-0 shadow-sm">
-            <div class="card-body">
-                <div class="text-warning mb-3">
-                    <i class="bi bi-check-circle-fill display-4"></i>
-                </div>
-                <h3 class="card-title">{{ completed_tasks }}</h3>
-                <p class="card-text text-muted">Completed Tasks</p>
-            </div>
+      <div class="card text-center h-100 border-0 shadow-sm">
+        <div class="card-body">
+          <div class="text-warning mb-3">
+            <i class="bi bi-check-circle-fill display-4" aria-hidden="true"></i>
+          </div>
+          <h3 class="card-title">{{ completed_tasks }}</h3>
+          <p class="card-text text-muted">Completed Tasks</p>
         </div>
+      </div>
     </div>
-</div>
+  </div>
+</section>
 {% endif %}
 
 <!-- Features Section -->
-<div class="row mb-5">
-    <div class="col-12">
-        <h2 class="text-center mb-5">Why Choose Our Task Manager?</h2>
-    </div>
-    
-    <div class="col-lg-4 mb-4">
-        <div class="card h-100 border-0 shadow-sm">
-            <div class="card-body text-center">
-                <div class="text-primary mb-3">
-                    <i class="bi bi-shield-check display-4"></i>
-                </div>
-                <h5 class="card-title">Role-Based Access</h5>
-                <p class="card-text">
-                    Secure role-based permissions ensure managers and employees 
-                    see only what they need to see.
-                </p>
-            </div>
+<section class="mb-5" aria-labelledby="features-heading">
+  <h2 id="features-heading" class="text-center mb-5">Why Choose Our Task Manager?</h2>
+  <div class="row g-4">
+    <div class="col-lg-4">
+      <article class="card h-100 border-0 shadow-sm">
+        <div class="card-body text-center">
+          <div class="text-primary mb-3">
+            <i class="bi bi-shield-check display-4" aria-hidden="true"></i>
+          </div>
+          <h3 class="card-title h5">Role-Based Access</h3>
+          <p class="card-text">
+            Secure role-based permissions ensure managers and employees
+            see only what they need to see for optimal security and productivity.
+          </p>
         </div>
+      </article>
     </div>
-    
-    <div class="col-lg-4 mb-4">
-        <div class="card h-100 border-0 shadow-sm">
-            <div class="card-body text-center">
-                <div class="text-success mb-3">
-                    <i class="bi bi-graph-up display-4"></i>
-                </div>
-                <h5 class="card-title">Real-time Tracking</h5>
-                <p class="card-text">
-                    Monitor task progress in real-time with instant status updates 
-                    and notifications.
-                </p>
-            </div>
-        </div>
-    </div>
-    
-    <div class="col-lg-4 mb-4">
-        <div class="card h-100 border-0 shadow-sm">
-            <div class="card-body text-center">
-                <div class="text-info mb-3">
-                    <i class="bi bi-phone display-4"></i>
-                </div>
-                <h5 class="card-title">Mobile Responsive</h5>
-                <p class="card-text">
-                    Access your tasks anywhere, anytime with our fully responsive 
-                    design that works on all devices.
-                </p>
-            </div>
-        </div>
-    </div>
-</div>
 
-<!-- Call to Action -->
+    <div class="col-lg-4">
+      <article class="card h-100 border-0 shadow-sm">
+        <div class="card-body text-center">
+          <div class="text-success mb-3">
+            <i class="bi bi-graph-up display-4" aria-hidden="true"></i>
+          </div>
+          <h3 class="card-title h5">Real-time Tracking</h3>
+          <p class="card-text">
+            Monitor task progress in real-time with instant status updates
+            and notifications to keep your team synchronized and informed.
+          </p>
+        </div>
+      </article>
+    </div>
+
+    <div class="col-lg-4">
+      <article class="card h-100 border-0 shadow-sm">
+        <div class="card-body text-center">
+          <div class="text-info mb-3">
+            <i class="bi bi-phone display-4" aria-hidden="true"></i>
+          </div>
+          <h3 class="card-title h5">Mobile Responsive</h3>
+          <p class="card-text">
+            Access your tasks anywhere, anytime with our fully responsive
+            design that works seamlessly on all devices and screen sizes.
+          </p>
+        </div>
+      </article>
+    </div>
+  </div>
+</section>
+
 {% if not user.is_authenticated %}
-<div class="bg-light rounded-3 p-5 text-center">
-    <h3 class="mb-3">Ready to Get Started?</h3>
-    <p class="lead mb-4">
-        Join hundreds of teams already using our task management system to boost productivity.
-    </p>
-    <a href="{% url 'accounts:register' %}" class="btn btn-primary btn-lg">
-        <i class="bi bi-person-plus"></i> Create Your Account
-    </a>
-</div>
+<!-- Call to Action -->
+<section class="bg-light rounded-3 p-5 text-center" aria-labelledby="cta-heading">
+  <h2 id="cta-heading" class="mb-3">Ready to Get Started?</h2>
+  <p class="lead mb-4">
+    Join hundreds of teams already using our task management system to boost productivity
+    and streamline their workflow management processes.
+  </p>
+  <a href="{% url 'accounts:register' %}" class="btn btn-primary btn-lg" aria-label="Create your account now">
+    <i class="bi bi-person-plus" aria-hidden="true"></i> Create Your Account
+  </a>
+</section>
 {% endif %}
 {% endblock %}
-

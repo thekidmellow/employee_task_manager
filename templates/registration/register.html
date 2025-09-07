@@ -1,20 +1,20 @@
-<!-- templates/registration/register.html -->
-<!-- Registration form template with validation (LO1.1, LO3.1) -->
 {% extends 'base.html' %}
 {% load static %}
 
 {% block title %}Register - Employee Task Manager{% endblock %}
 
+{% block meta_description %}Create your Employee Task Manager account. Join teams worldwide in streamlining productivity with our comprehensive task management solution.{% endblock %}
+
 {% block content %}
 <div class="row justify-content-center">
     <div class="col-md-8 col-lg-6">
         <div class="card shadow-sm">
-            <div class="card-header bg-success text-white text-center">
-                <h3 class="mb-0">
-                    <i class="bi bi-person-plus"></i>
+            <header class="card-header bg-success text-white text-center">
+                <h1 class="h3 mb-0">
+                    <i class="bi bi-person-plus" aria-hidden="true"></i>
                     Create Your Account
-                </h3>
-            </div>
+                </h1>
+            </header>
             
             <div class="card-body p-4">
                 <!-- Registration Form -->
@@ -24,7 +24,7 @@
                     <!-- Username Field -->
                     <div class="mb-3">
                         <label for="id_username" class="form-label">
-                            <i class="bi bi-person"></i> Username *
+                            <i class="bi bi-person" aria-hidden="true"></i> Username <span class="text-danger">*</span>
                         </label>
                         {{ form.username }}
                         {% if form.username.errors %}
@@ -35,12 +35,13 @@
                         <div class="form-text">
                             150 characters or fewer. Letters, digits and @/./+/-/_ only.
                         </div>
+                        <div id="username-availability" aria-live="polite"></div>
                     </div>
                     
                     <!-- Email Field -->
                     <div class="mb-3">
                         <label for="id_email" class="form-label">
-                            <i class="bi bi-envelope"></i> Email Address *
+                            <i class="bi bi-envelope" aria-hidden="true"></i> Email Address <span class="text-danger">*</span>
                         </label>
                         {{ form.email }}
                         {% if form.email.errors %}
@@ -50,11 +51,11 @@
                         {% endif %}
                     </div>
                     
-                    <!-- First Name -->
+                    <!-- Name Fields -->
                     <div class="row">
                         <div class="col-md-6 mb-3">
                             <label for="id_first_name" class="form-label">
-                                <i class="bi bi-person-badge"></i> First Name *
+                                <i class="bi bi-person-badge" aria-hidden="true"></i> First Name <span class="text-danger">*</span>
                             </label>
                             {{ form.first_name }}
                             {% if form.first_name.errors %}
@@ -64,10 +65,9 @@
                             {% endif %}
                         </div>
                         
-                        <!-- Last Name -->
                         <div class="col-md-6 mb-3">
                             <label for="id_last_name" class="form-label">
-                                <i class="bi bi-person-badge-fill"></i> Last Name *
+                                <i class="bi bi-person-badge-fill" aria-hidden="true"></i> Last Name <span class="text-danger">*</span>
                             </label>
                             {{ form.last_name }}
                             {% if form.last_name.errors %}
@@ -81,7 +81,7 @@
                     <!-- Role Selection -->
                     <div class="mb-3">
                         <label for="id_role" class="form-label">
-                            <i class="bi bi-shield-check"></i> Role *
+                            <i class="bi bi-shield-check" aria-hidden="true"></i> Role <span class="text-danger">*</span>
                         </label>
                         {{ form.role }}
                         {% if form.role.errors %}
@@ -97,7 +97,7 @@
                     <!-- Department -->
                     <div class="mb-3">
                         <label for="id_department" class="form-label">
-                            <i class="bi bi-building"></i> Department
+                            <i class="bi bi-building" aria-hidden="true"></i> Department
                         </label>
                         {{ form.department }}
                         {% if form.department.errors %}
@@ -107,11 +107,26 @@
                         {% endif %}
                     </div>
                     
+                    <!-- Phone Number -->
+                    {% if form.phone_number %}
+                    <div class="mb-3">
+                        <label for="id_phone_number" class="form-label">
+                            <i class="bi bi-telephone" aria-hidden="true"></i> Phone Number
+                        </label>
+                        {{ form.phone_number }}
+                        {% if form.phone_number.errors %}
+                            <div class="invalid-feedback d-block">
+                                {{ form.phone_number.errors.0 }}
+                            </div>
+                        {% endif %}
+                    </div>
+                    {% endif %}
+                    
                     <!-- Password Fields -->
                     <div class="row">
                         <div class="col-md-6 mb-3">
                             <label for="id_password1" class="form-label">
-                                <i class="bi bi-lock"></i> Password *
+                                <i class="bi bi-lock" aria-hidden="true"></i> Password <span class="text-danger">*</span>
                             </label>
                             <div class="input-group">
                                 {{ form.password1 }}
@@ -119,7 +134,7 @@
                                         type="button" 
                                         id="togglePassword1"
                                         aria-label="Toggle password visibility">
-                                    <i class="bi bi-eye" id="toggleIcon1"></i>
+                                    <i class="bi bi-eye" id="toggleIcon1" aria-hidden="true"></i>
                                 </button>
                             </div>
                             {% if form.password1.errors %}
@@ -131,7 +146,7 @@
                         
                         <div class="col-md-6 mb-3">
                             <label for="id_password2" class="form-label">
-                                <i class="bi bi-lock-fill"></i> Confirm Password *
+                                <i class="bi bi-lock-fill" aria-hidden="true"></i> Confirm Password <span class="text-danger">*</span>
                             </label>
                             <div class="input-group">
                                 {{ form.password2 }}
@@ -139,7 +154,7 @@
                                         type="button" 
                                         id="togglePassword2"
                                         aria-label="Toggle password visibility">
-                                    <i class="bi bi-eye" id="toggleIcon2"></i>
+                                    <i class="bi bi-eye" id="toggleIcon2" aria-hidden="true"></i>
                                 </button>
                             </div>
                             {% if form.password2.errors %}
@@ -155,17 +170,19 @@
                         <input type="checkbox" 
                                class="form-check-input" 
                                id="agreeTerms" 
-                               required>
+                               required
+                               aria-describedby="termsError">
                         <label class="form-check-label" for="agreeTerms">
                             I agree to the <a href="#" class="text-decoration-none">Terms of Service</a> 
-                            and <a href="#" class="text-decoration-none">Privacy Policy</a> *
+                            and <a href="#" class="text-decoration-none">Privacy Policy</a> <span class="text-danger">*</span>
                         </label>
+                        <div class="invalid-feedback" id="termsError"></div>
                     </div>
                     
                     <!-- Submit Button -->
                     <div class="d-grid">
-                        <button type="submit" class="btn btn-success btn-lg">
-                            <i class="bi bi-person-plus"></i>
+                        <button type="submit" class="btn btn-success btn-lg" id="submitBtn">
+                            <i class="bi bi-person-plus" aria-hidden="true"></i>
                             Create Account
                         </button>
                     </div>
@@ -177,7 +194,7 @@
                     <p class="mb-0">
                         Already have an account? 
                         <a href="{% url 'login' %}" class="text-decoration-none fw-bold">
-                            <i class="bi bi-box-arrow-in-right"></i> Login here
+                            <i class="bi bi-box-arrow-in-right" aria-hidden="true"></i> Login here
                         </a>
                     </p>
                 </div>
@@ -189,94 +206,206 @@
 
 {% block extra_js %}
 <script>
-// Password visibility toggles (LO4.2)
-function setupPasswordToggle(fieldId, buttonId, iconId) {
-    document.getElementById(buttonId).addEventListener('click', function() {
-        const passwordField = document.getElementById(fieldId);
-        const toggleIcon = document.getElementById(iconId);
+/**
+ * Registration form JavaScript functionality
+ * Handles password visibility, validation, and real-time feedback
+ */
+(function() {
+    'use strict';
+
+    // Password visibility toggles
+    function setupPasswordToggle(fieldId, buttonId, iconId) {
+        const field = document.getElementById(fieldId);
+        const button = document.getElementById(buttonId);
+        const icon = document.getElementById(iconId);
+
+        if (field && button && icon) {
+            button.addEventListener('click', function() {
+                const isPassword = field.type === 'password';
+                field.type = isPassword ? 'text' : 'password';
+                icon.className = isPassword ? 'bi bi-eye-slash' : 'bi bi-eye';
+            });
+        }
+    }
+
+    // Setup both password toggles
+    setupPasswordToggle('id_password1', 'togglePassword1', 'toggleIcon1');
+    setupPasswordToggle('id_password2', 'togglePassword2', 'toggleIcon2');
+
+    // Form elements
+    const form = document.getElementById('registerForm');
+    const submitBtn = document.getElementById('submitBtn');
+    const fields = {
+        username: document.getElementById('id_username'),
+        email: document.getElementById('id_email'),
+        firstName: document.getElementById('id_first_name'),
+        lastName: document.getElementById('id_last_name'),
+        password1: document.getElementById('id_password1'),
+        password2: document.getElementById('id_password2'),
+        agreeTerms: document.getElementById('agreeTerms')
+    };
+
+    // Form validation
+    if (form && submitBtn) {
+        form.addEventListener('submit', function(e) {
+            let isValid = true;
+            clearAllErrors();
+
+            // Username validation
+            if (fields.username && fields.username.value.trim().length < 3) {
+                showError(fields.username, 'Username must be at least 3 characters long.');
+                isValid = false;
+            }
+
+            // Email validation
+            if (fields.email && !isValidEmail(fields.email.value.trim())) {
+                showError(fields.email, 'Please enter a valid email address.');
+                isValid = false;
+            }
+
+            // Name validations
+            if (fields.firstName && fields.firstName.value.trim().length < 2) {
+                showError(fields.firstName, 'First name must be at least 2 characters long.');
+                isValid = false;
+            }
+
+            if (fields.lastName && fields.lastName.value.trim().length < 2) {
+                showError(fields.lastName, 'Last name must be at least 2 characters long.');
+                isValid = false;
+            }
+
+            // Password validation
+            if (fields.password1 && fields.password1.value.length < 8) {
+                showError(fields.password1, 'Password must be at least 8 characters long.');
+                isValid = false;
+            }
+
+            if (fields.password1 && fields.password2 && fields.password1.value !== fields.password2.value) {
+                showError(fields.password2, 'Passwords do not match.');
+                isValid = false;
+            }
+
+            // Terms validation
+            if (fields.agreeTerms && !fields.agreeTerms.checked) {
+                const termsError = document.getElementById('termsError');
+                if (termsError) {
+                    termsError.textContent = 'You must agree to the Terms of Service and Privacy Policy.';
+                    termsError.style.display = 'block';
+                    fields.agreeTerms.classList.add('is-invalid');
+                }
+                isValid = false;
+            }
+
+            if (!isValid) {
+                e.preventDefault();
+                return false;
+            }
+
+            // Show loading state
+            const originalText = submitBtn.innerHTML;
+            submitBtn.innerHTML = '<span class="spinner-border spinner-border-sm me-2" role="status" aria-hidden="true"></span>Creating Account...';
+            submitBtn.disabled = true;
+
+            // Re-enable button after 15 seconds as fallback
+            setTimeout(function() {
+                if (submitBtn.disabled) {
+                    submitBtn.innerHTML = originalText;
+                    submitBtn.disabled = false;
+                }
+            }, 15000);
+        });
+
+        // Real-time password match validation
+        if (fields.password2) {
+            fields.password2.addEventListener('input', function() {
+                if (fields.password1 && this.value.length > 0) {
+                    if (fields.password1.value === this.value) {
+                        this.classList.remove('is-invalid');
+                        this.classList.add('is-valid');
+                    } else {
+                        this.classList.remove('is-valid');
+                        this.classList.add('is-invalid');
+                    }
+                } else {
+                    this.classList.remove('is-valid', 'is-invalid');
+                }
+            });
+        }
+
+        // Clear validation on input
+        Object.values(fields).forEach(function(field) {
+            if (field && field.addEventListener) {
+                field.addEventListener('input', function() {
+                    clearFieldError(this);
+                });
+            }
+        });
+
+        // Auto-focus on username field
+        if (fields.username) {
+            fields.username.focus();
+        }
+    }
+
+    /**
+     * Validate email format
+     * @param {string} email - Email to validate
+     * @returns {boolean} - True if valid email
+     */
+    function isValidEmail(email) {
+        const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+        return emailRegex.test(email);
+    }
+
+    /**
+     * Show error for a specific field
+     * @param {HTMLElement} field - The field element
+     * @param {string} message - Error message
+     */
+    function showError(field, message) {
+        field.classList.add('is-invalid');
         
-        if (passwordField.type === 'password') {
-            passwordField.type = 'text';
-            toggleIcon.className = 'bi bi-eye-slash';
-        } else {
-            passwordField.type = 'password';
-            toggleIcon.className = 'bi bi-eye';
+        // Find or create error element
+        let errorElement = field.parentNode.querySelector('.invalid-feedback');
+        if (!errorElement) {
+            errorElement = document.createElement('div');
+            errorElement.className = 'invalid-feedback d-block';
+            field.parentNode.appendChild(errorElement);
         }
-    });
-}
-
-// Setup both password toggles
-setupPasswordToggle('id_password1', 'togglePassword1', 'toggleIcon1');
-setupPasswordToggle('id_password2', 'togglePassword2', 'toggleIcon2');
-
-// Form validation (LO4.2)
-document.getElementById('registerForm').addEventListener('submit', function(e) {
-    const username = document.getElementById('id_username').value.trim();
-    const email = document.getElementById('id_email').value.trim();
-    const firstName = document.getElementById('id_first_name').value.trim();
-    const lastName = document.getElementById('id_last_name').value.trim();
-    const password1 = document.getElementById('id_password1').value;
-    const password2 = document.getElementById('id_password2').value;
-    const agreeTerms = document.getElementById('agreeTerms').checked;
-    
-    let isValid = true;
-    let errorMessage = '';
-    
-    // Validation checks
-    if (username.length < 3) {
-        errorMessage = 'Username must be at least 3 characters long.';
-        isValid = false;
-    } else if (!email.includes('@')) {
-        errorMessage = 'Please enter a valid email address.';
-        isValid = false;
-    } else if (firstName.length < 2) {
-        errorMessage = 'First name must be at least 2 characters long.';
-        isValid = false;
-    } else if (lastName.length < 2) {
-        errorMessage = 'Last name must be at least 2 characters long.';
-        isValid = false;
-    } else if (password1.length < 8) {
-        errorMessage = 'Password must be at least 8 characters long.';
-        isValid = false;
-    } else if (password1 !== password2) {
-        errorMessage = 'Passwords do not match.';
-        isValid = false;
-    } else if (!agreeTerms) {
-        errorMessage = 'You must agree to the Terms of Service and Privacy Policy.';
-        isValid = false;
+        errorElement.textContent = message;
+        errorElement.style.display = 'block';
     }
-    
-    if (!isValid) {
-        e.preventDefault();
-        alert(errorMessage);
-        return false;
-    }
-    
-    // Show loading state
-    const submitBtn = this.querySelector('button[type="submit"]');
-    submitBtn.innerHTML = '<i class="bi bi-hourglass-split"></i> Creating Account...';
-    submitBtn.disabled = true;
-});
 
-// Real-time password match validation
-document.getElementById('id_password2').addEventListener('input', function() {
-    const password1 = document.getElementById('id_password1').value;
-    const password2 = this.value;
-    
-    if (password2.length > 0) {
-        if (password1 === password2) {
-            this.classList.remove('is-invalid');
-            this.classList.add('is-valid');
-        } else {
-            this.classList.remove('is-valid');
-            this.classList.add('is-invalid');
+    /**
+     * Clear error for a specific field
+     * @param {HTMLElement} field - The field element
+     */
+    function clearFieldError(field) {
+        field.classList.remove('is-invalid', 'is-valid');
+        const errorElement = field.parentNode.querySelector('.invalid-feedback');
+        if (errorElement) {
+            errorElement.textContent = '';
+            errorElement.style.display = 'none';
         }
-    } else {
-        this.classList.remove('is-valid', 'is-invalid');
     }
-});
 
-// Auto-focus on username field
-document.getElementById('id_username').focus();
+    /**
+     * Clear all form errors
+     */
+    function clearAllErrors() {
+        Object.values(fields).forEach(function(field) {
+            if (field) {
+                clearFieldError(field);
+            }
+        });
+
+        // Clear terms error
+        const termsError = document.getElementById('termsError');
+        if (termsError) {
+            termsError.textContent = '';
+            termsError.style.display = 'none';
+        }
+    }
+})();
 </script>
 {% endblock %}

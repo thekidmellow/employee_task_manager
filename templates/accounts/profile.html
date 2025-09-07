@@ -1,177 +1,332 @@
-{# templates/accounts/profile.html #}
-{% extends "base.html" %}
+{% extends 'base.html' %}
+{% load static %}
 
 {% block title %}My Profile - Employee Task Manager{% endblock %}
 
 {% block extra_css %}
 <style>
-  .profile-card { transition: box-shadow .2s ease, transform .2s ease; }
-  .profile-card:hover { transform: translateY(-2px); box-shadow: 0 8px 22px rgba(0,0,0,.08); }
-  .avatar {
-    width: 84px; height: 84px; border-radius: 50%;
-    display: grid; place-items: center; background: #f1f3f5; color: #6c757d;
-    font-weight: 700; font-size: 28px;
-  }
+.profile-header {
+    background: linear-gradient(135deg, #6f42c1 0%, #e83e8c 100%);
+    color: white;
+    border-radius: 0.5rem;
+    padding: 2rem;
+    margin-bottom: 2rem;
+}
+
+.profile-avatar {
+    width: 120px;
+    height: 120px;
+    border-radius: 50%;
+    background: rgba(255,255,255,0.2);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 3rem;
+    color: white;
+    margin: 0 auto 1rem;
+}
+
+.profile-card {
+    background: white;
+    border-radius: 0.5rem;
+    box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+    border: none;
+}
+
+.form-floating > label {
+    padding-left: 1rem;
+}
+
+.form-floating > .form-control {
+    padding-left: 1rem;
+    padding-right: 1rem;
+}
+
+.stats-card {
+    background: white;
+    border-radius: 0.5rem;
+    box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+    border: none;
+    text-align: center;
+    padding: 1.5rem;
+}
+
+.stats-icon {
+    width: 60px;
+    height: 60px;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    margin: 0 auto 1rem;
+    font-size: 1.5rem;
+    color: white;
+}
+
+.role-badge {
+    font-size: 0.9rem;
+    padding: 0.5rem 1rem;
+    border-radius: 2rem;
+}
 </style>
 {% endblock %}
 
 {% block content %}
-<div class="row g-4">
-  <div class="col-12 col-lg-4">
-    <div class="card profile-card">
-      <div class="card-body">
-        <div class="d-flex align-items-center gap-3">
-          {% if user.userprofile.avatar_url %}
-            <img src="{{ user.userprofile.avatar_url }}" alt="Avatar" class="rounded-circle" style="width:84px;height:84px;object-fit:cover;">
-          {% else %}
-            <div class="avatar" aria-hidden="true">
-              {{ user.get_full_name|default:user.username|first|upper }}
+<main class="container py-4">
+    <!-- Profile Header -->
+    <div class="profile-header text-center">
+        <div class="profile-avatar">
+            <i class="fas fa-user"></i>
+        </div>
+        <h1 class="display-5 mb-2">{{ user.get_full_name }}</h1>
+        <p class="lead mb-3">{{ user.email }}</p>
+        <span class="role-badge bg-primary">
+            {% if user.groups.all %}
+                {{ user.groups.first.name|title }}
+            {% else %}
+                Employee
+            {% endif %}
+        </span>
+    </div>
+
+    <div class="row">
+        <!-- Profile Information -->
+        <div class="col-lg-8 mb-4">
+            <div class="profile-card p-4">
+                <div class="d-flex justify-content-between align-items-center mb-4">
+                    <h2 class="h4 mb-0">Profile Information</h2>
+                    <button type="button" class="btn btn-outline-primary" data-bs-toggle="modal" data-bs-target="#editProfileModal">
+                        <i class="fas fa-edit me-2"></i>Edit Profile
+                    </button>
+                </div>
+
+                <form method="post" id="profileForm">
+                    {% csrf_token %}
+                    
+                    <div class="row">
+                        <div class="col-md-6 mb-3">
+                            <div class="form-floating">
+                                <input type="text" class="form-control" id="first_name" name="first_name" 
+                                       value="{{ user.first_name }}" readonly>
+                                <label for="first_name">First Name</label>
+                            </div>
+                        </div>
+                        <div class="col-md-6 mb-3">
+                            <div class="form-floating">
+                                <input type="text" class="form-control" id="last_name" name="last_name" 
+                                       value="{{ user.last_name }}" readonly>
+                                <label for="last_name">Last Name</label>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="row">
+                        <div class="col-md-6 mb-3">
+                            <div class="form-floating">
+                                <input type="email" class="form-control" id="email" name="email" 
+                                       value="{{ user.email }}" readonly>
+                                <label for="email">Email Address</label>
+                            </div>
+                        </div>
+                        <div class="col-md-6 mb-3">
+                            <div class="form-floating">
+                                <input type="text" class="form-control" id="username" name="username" 
+                                       value="{{ user.username }}" readonly>
+                                <label for="username">Username</label>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="row">
+                        <div class="col-md-6 mb-3">
+                            <div class="form-floating">
+                                <input type="text" class="form-control" id="department" name="department" 
+                                       value="{{ user.profile.department|default:'Not specified' }}" readonly>
+                                <label for="department">Department</label>
+                            </div>
+                        </div>
+                        <div class="col-md-6 mb-3">
+                            <div class="form-floating">
+                                <input type="text" class="form-control" id="join_date" 
+                                       value="{{ user.date_joined|date:'F d, Y' }}" readonly>
+                                <label for="join_date">Member Since</label>
+                            </div>
+                        </div>
+                    </div>
+                </form>
             </div>
-          {% endif %}
-          <div>
-            <h5 class="mb-1">
-              {{ user.get_full_name|default:user.username }}
-              <span class="badge bg-secondary ms-2">{{ user.userprofile.get_role_display }}</span>
-            </h5>
-            <div class="text-muted small">
-              <i class="bi bi-at"></i> {{ user.username }}<br>
-              {% if user.email %}
-                <i class="bi bi-envelope"></i> {{ user.email }}
-              {% endif %}
+
+            <!-- Change Password Section -->
+            <div class="profile-card p-4 mt-4">
+                <h2 class="h4 mb-4">Security Settings</h2>
+                <div class="row">
+                    <div class="col-md-6">
+                        <p class="text-muted mb-3">Keep your account secure by using a strong password.</p>
+                        <a href="{% url 'accounts:password_change' %}" class="btn btn-outline-warning">
+                            <i class="fas fa-lock me-2"></i>Change Password
+                        </a>
+                    </div>
+                    <div class="col-md-6">
+                        <p class="text-muted mb-3">Last password change: {{ user.last_login|date:'F d, Y' }}</p>
+                    </div>
+                </div>
             </div>
-          </div>
         </div>
 
-        <hr>
-
-        <ul class="list-unstyled mb-0">
-          <li class="mb-2">
-            <i class="bi bi-person-badge"></i>
-            <strong>Role:</strong> {{ user.userprofile.get_role_display }}
-          </li>
-          {% if user.date_joined %}
-          <li class="mb-2">
-            <i class="bi bi-calendar-check"></i>
-            <strong>Member since:</strong> {{ user.date_joined|date:"M d, Y" }}
-          </li>
-          {% endif %}
-          {% if user.last_login %}
-          <li class="mb-2">
-            <i class="bi bi-clock-history"></i>
-            <strong>Last login:</strong> {{ user.last_login|date:"M d, Y H:i" }}
-          </li>
-          {% endif %}
-        </ul>
-      </div>
-    </div>
-
-    <div class="card mt-3">
-      <div class="card-body d-grid gap-2">
-        <a href="{% url 'tasks:task_list' %}" class="btn btn-outline-primary">
-          <i class="bi bi-list-task"></i> View My Tasks
-        </a>
-        <a href="{% url 'password_change' %}" class="btn btn-outline-secondary">
-          <i class="bi bi-key"></i> Change Password
-        </a>
-      </div>
-    </div>
-  </div>
-
-  <div class="col-12 col-lg-8">
-    <div class="card profile-card">
-      <div class="card-header">
-        <h5 class="mb-0"><i class="bi bi-pencil-square"></i> Profile Details</h5>
-      </div>
-      <div class="card-body">
-
-        {# If you pass a bound Django form (e.g., profile_form), we'll render it for editing #}
-        {% if profile_form %}
-          <form method="post" enctype="multipart/form-data" novalidate>
-            {% csrf_token %}
-            {% if profile_form.non_field_errors %}
-              <div class="alert alert-warning">{{ profile_form.non_field_errors }}</div>
-            {% endif %}
-
-            {% for field in profile_form %}
-              <div class="mb-3">
-                <label class="form-label" for="{{ field.id_for_label }}">{{ field.label }}</label>
-                {{ field }}
-                {% if field.help_text %}
-                  <div class="form-text">{{ field.help_text }}</div>
-                {% endif %}
-                {% for e in field.errors %}
-                  <div class="invalid-feedback d-block">{{ e }}</div>
-                {% endfor %}
-              </div>
-            {% endfor %}
-
-            <div class="d-flex justify-content-end gap-2">
-              <a href="{% url 'core:employee_dashboard' %}" class="btn btn-outline-secondary">Cancel</a>
-              <button class="btn btn-primary">
-                <i class="bi bi-save"></i> Save Changes
-              </button>
-            </div>
-          </form>
-
-        {% else %}
-          {# Read-only fallback if you don’t provide a form #}
-          <div class="row">
-            <div class="col-md-6">
-              <div class="mb-3">
-                <div class="text-muted small">Full name</div>
-                <div class="fw-semibold">{{ user.get_full_name|default:"—" }}</div>
-              </div>
-              <div class="mb-3">
-                <div class="text-muted small">Username</div>
-                <div class="fw-semibold">{{ user.username }}</div>
-              </div>
-              <div class="mb-3">
-                <div class="text-muted small">Email</div>
-                <div class="fw-semibold">{{ user.email|default:"—" }}</div>
-              </div>
+        <!-- Statistics Sidebar -->
+        <div class="col-lg-4">
+            <!-- Task Statistics -->
+            <div class="stats-card mb-4">
+                <div class="stats-icon bg-primary">
+                    <i class="fas fa-tasks"></i>
+                </div>
+                <h3 class="h5 mb-1">{{ user_stats.total_tasks }}</h3>
+                <p class="text-muted mb-0">Total Tasks Assigned</p>
             </div>
 
-            <div class="col-md-6">
-              <div class="mb-3">
-                <div class="text-muted small">Role</div>
-                <div class="fw-semibold">{{ user.userprofile.get_role_display }}</div>
-              </div>
-              {% if user.date_joined %}
-              <div class="mb-3">
-                <div class="text-muted small">Member since</div>
-                <div class="fw-semibold">{{ user.date_joined|date:"M d, Y" }}</div>
-              </div>
-              {% endif %}
-              {% if user.last_login %}
-              <div class="mb-3">
-                <div class="text-muted small">Last login</div>
-                <div class="fw-semibold">{{ user.last_login|date:"M d, Y H:i" }}</div>
-              </div>
-              {% endif %}
+            <div class="stats-card mb-4">
+                <div class="stats-icon bg-success">
+                    <i class="fas fa-check-circle"></i>
+                </div>
+                <h3 class="h5 mb-1">{{ user_stats.completed_tasks }}</h3>
+                <p class="text-muted mb-0">Tasks Completed</p>
             </div>
-          </div>
 
-          <div class="alert alert-info d-flex align-items-center mt-3" role="alert">
-            <i class="bi bi-info-circle me-2"></i>
-            To enable editing here, pass a bound <code>profile_form</code> to this template.
-          </div>
-        {% endif %}
-      </div>
+            <div class="stats-card mb-4">
+                <div class="stats-icon bg-warning">
+                    <i class="fas fa-clock"></i>
+                </div>
+                <h3 class="h5 mb-1">{{ user_stats.pending_tasks }}</h3>
+                <p class="text-muted mb-0">Pending Tasks</p>
+            </div>
+
+            <div class="stats-card">
+                <div class="stats-icon bg-info">
+                    <i class="fas fa-percentage"></i>
+                </div>
+                <h3 class="h5 mb-1">{{ user_stats.completion_rate }}%</h3>
+                <p class="text-muted mb-0">Completion Rate</p>
+            </div>
+        </div>
     </div>
-  </div>
+</main>
+
+<!-- Edit Profile Modal -->
+<div class="modal fade" id="editProfileModal" tabindex="-1" aria-labelledby="editProfileModalLabel" aria-hidden="true">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="editProfileModalLabel">Edit Profile</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <form method="post" id="editProfileForm">
+                <div class="modal-body">
+                    {% csrf_token %}
+                    
+                    <div class="row">
+                        <div class="col-md-6 mb-3">
+                            <div class="form-floating">
+                                <input type="text" class="form-control" id="edit_first_name" name="first_name" 
+                                       value="{{ user.first_name }}" required>
+                                <label for="edit_first_name">First Name</label>
+                            </div>
+                        </div>
+                        <div class="col-md-6 mb-3">
+                            <div class="form-floating">
+                                <input type="text" class="form-control" id="edit_last_name" name="last_name" 
+                                       value="{{ user.last_name }}" required>
+                                <label for="edit_last_name">Last Name</label>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="mb-3">
+                        <div class="form-floating">
+                            <input type="email" class="form-control" id="edit_email" name="email" 
+                                   value="{{ user.email }}" required>
+                            <label for="edit_email">Email Address</label>
+                        </div>
+                    </div>
+
+                    <div class="mb-3">
+                        <div class="form-floating">
+                            <input type="text" class="form-control" id="edit_department" name="department" 
+                                   value="{{ user.profile.department|default:'' }}">
+                            <label for="edit_department">Department</label>
+                        </div>
+                    </div>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
+                    <button type="submit" class="btn btn-primary">Save Changes</button>
+                </div>
+            </form>
+        </div>
+    </div>
 </div>
 {% endblock %}
 
 {% block extra_js %}
 <script>
-// Optionally, auto-dismiss success alerts after save
-document.addEventListener('DOMContentLoaded', () => {
-  document.querySelectorAll('.alert-success').forEach(a => {
-    setTimeout(() => {
-      const bsAlert = bootstrap.Alert.getOrCreateInstance(a);
-      bsAlert.close();
-    }, 3000);
-  });
+document.addEventListener('DOMContentLoaded', function() {
+    const editForm = document.getElementById('editProfileForm');
+    const editModal = document.getElementById('editProfileModal');
+    
+    editForm.addEventListener('submit', function(e) {
+        e.preventDefault();
+        
+        const formData = new FormData(editForm);
+        
+        fetch('{% url "accounts:profile" %}', {
+            method: 'POST',
+            body: formData,
+            headers: {
+                'X-Requested-With': 'XMLHttpRequest'
+            }
+        })
+        .then(response => response.json())
+        .then(data => {
+            if (data.success) {
+                // Update the profile display
+                document.getElementById('first_name').value = data.user.first_name;
+                document.getElementById('last_name').value = data.user.last_name;
+                document.getElementById('email').value = data.user.email;
+                document.getElementById('department').value = data.user.department || 'Not specified';
+                
+                // Update header
+                document.querySelector('.profile-header h1').textContent = data.user.first_name + ' ' + data.user.last_name;
+                document.querySelector('.profile-header p.lead').textContent = data.user.email;
+                
+                // Close modal
+                bootstrap.Modal.getInstance(editModal).hide();
+                
+                // Show success message
+                showNotification('Profile updated successfully!', 'success');
+            } else {
+                showNotification('Error updating profile: ' + data.message, 'danger');
+            }
+        })
+        .catch(error => {
+            console.error('Error:', error);
+            showNotification('An error occurred while updating your profile.', 'danger');
+        });
+    });
 });
+
+function showNotification(message, type) {
+    const alertDiv = document.createElement('div');
+    alertDiv.className = `alert alert-${type} alert-dismissible fade show position-fixed top-0 start-50 translate-middle-x mt-3`;
+    alertDiv.style.zIndex = '9999';
+    alertDiv.innerHTML = `
+        ${message}
+        <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+    `;
+    
+    document.body.appendChild(alertDiv);
+    
+    setTimeout(() => {
+        alertDiv.remove();
+    }, 5000);
+}
 </script>
 {% endblock %}

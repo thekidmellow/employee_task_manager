@@ -1,5 +1,3 @@
-<!-- templates/tasks/task_form.html -->
-<!-- Task creation/editing form (LO2.4) -->
 {% extends 'base.html' %}
 {% load static %}
 
@@ -7,200 +5,300 @@
     {% if form.instance.pk %}Edit Task{% else %}Create Task{% endif %} - Employee Task Manager
 {% endblock %}
 
+{% block meta_description %}
+    {% if form.instance.pk %}
+        Edit and update task details including title, description, assignee, priority, and due date for effective task management.
+    {% else %}
+        Create a new task with detailed specifications, assign team members, set priorities and deadlines for optimal productivity.
+    {% endif %}
+{% endblock %}
+
 {% block extra_css %}
 <style>
-.form-floating > .form-control {
-    height: calc(3.5rem + 2px);
-}
+    .form-container {
+        background: linear-gradient(135deg, #f8f9fa 0%, #ffffff 100%);
+        border-radius: 1rem;
+        box-shadow: 0 0.5rem 1.5rem rgba(0, 0, 0, 0.1);
+    }
 
-.form-floating > textarea.form-control {
-    height: calc(6rem + 2px);
-}
+    .form-floating>.form-control {
+        height: calc(3.5rem + 2px);
+        line-height: 1.25;
+    }
 
-.priority-preview {
-    padding: 0.25rem 0.5rem;
-    border-radius: 0.25rem;
-    font-size: 0.875rem;
-    font-weight: 500;
-    display: inline-block;
-    margin-top: 0.5rem;
-}
+    .form-floating>textarea.form-control {
+        height: auto;
+        min-height: calc(6rem + 2px);
+        resize: vertical;
+    }
 
-.priority-high { background-color: #dc3545; color: white; }
-.priority-medium { background-color: #ffc107; color: black; }
-.priority-low { background-color: #28a745; color: white; }
+    .priority-preview {
+        padding: 0.5rem 1rem;
+        border-radius: 0.375rem;
+        font-size: 0.875rem;
+        font-weight: 600;
+        display: inline-block;
+        margin-top: 0.5rem;
+        transition: all 0.3s ease;
+        opacity: 0;
+        transform: translateY(-10px);
+    }
+
+    .priority-preview.show {
+        opacity: 1;
+        transform: translateY(0);
+    }
+
+    .priority-high {
+        background: linear-gradient(135deg, #dc3545, #c82333);
+        color: white;
+        box-shadow: 0 0.25rem 0.5rem rgba(220, 53, 69, 0.3);
+    }
+
+    .priority-medium {
+        background: linear-gradient(135deg, #ffc107, #e0a800);
+        color: #212529;
+        box-shadow: 0 0.25rem 0.5rem rgba(255, 193, 7, 0.3);
+    }
+
+    .priority-low {
+        background: linear-gradient(135deg, #198754, #157347);
+        color: white;
+        box-shadow: 0 0.25rem 0.5rem rgba(25, 135, 84, 0.3);
+    }
+
+    .priority-urgent {
+        background: linear-gradient(135deg, #6f42c1, #5a32a3);
+        color: white;
+        box-shadow: 0 0.25rem 0.5rem rgba(111, 66, 193, 0.3);
+    }
+
+    .tips-card {
+        background: linear-gradient(135deg, rgba(13, 110, 253, 0.1) 0%, rgba(13, 110, 253, 0.05) 100%);
+        border: 1px solid rgba(13, 110, 253, 0.2);
+    }
+
+    .form-section {
+        padding: 1.5rem;
+        margin-bottom: 1rem;
+        background: rgba(255, 255, 255, 0.7);
+        border-radius: 0.75rem;
+        border: 1px solid rgba(0, 0, 0, 0.05);
+    }
+
+    .character-counter {
+        font-size: 0.75rem;
+        color: #6c757d;
+        text-align: right;
+    }
+
+    .character-counter.warning {
+        color: #ffc107;
+    }
+
+    .character-counter.danger {
+        color: #dc3545;
+    }
 </style>
 {% endblock %}
 
 {% block content %}
 <div class="row justify-content-center">
-    <div class="col-md-8 col-lg-6">
-        <div class="card shadow-sm">
-            <div class="card-header bg-primary text-white">
-                <h3 class="mb-0">
-                    <i class="bi bi-{% if form.instance.pk %}pencil{% else %}plus-circle{% endif %}"></i>
+    <div class="col-md-10 col-lg-8">
+        <div class="form-container p-0 mb-4">
+            <header class="bg-primary text-white p-4 rounded-top">
+                <h1 class="h3 mb-0">
+                    <i class="bi bi-{% if form.instance.pk %}pencil{% else %}plus-circle{% endif %}" aria-hidden="true"></i>
                     {% if form.instance.pk %}Edit Task{% else %}Create New Task{% endif %}
-                </h3>
-            </div>
-            
-            <div class="card-body p-4">
+                </h1>
+                <p class="mb-0 mt-2 opacity-75">
+                    {% if form.instance.pk %}
+                        Update task details to keep your team informed and on track.
+                    {% else %}
+                        Fill out the details below to create a comprehensive task for your team.
+                    {% endif %}
+                </p>
+            </header>
+
+            <main class="p-4">
                 <form method="post" id="taskForm" novalidate>
                     {% csrf_token %}
-                    
-                    <!-- Title Field -->
-                    <div class="form-floating mb-3">
-                        {{ form.title }}
-                        <label for="id_title">
-                            <i class="bi bi-card-text"></i> Task Title *
-                        </label>
-                        {% if form.title.errors %}
-                            <div class="invalid-feedback d-block">
-                                {{ form.title.errors.0 }}
-                            </div>
-                        {% endif %}
-                    </div>
-                    
-                    <!-- Description Field -->
-                    <div class="form-floating mb-3">
-                        {{ form.description }}
-                        <label for="id_description">
-                            <i class="bi bi-journal-text"></i> Task Description *
-                        </label>
-                        {% if form.description.errors %}
-                            <div class="invalid-feedback d-block">
-                                {{ form.description.errors.0 }}
-                            </div>
-                        {% endif %}
-                        <div class="form-text">
-                            Provide detailed instructions and requirements for this task.
-                        </div>
-                    </div>
-                    
-                    <!-- Assigned To Field -->
-                    <div class="mb-3">
-                        <label for="id_assigned_to" class="form-label">
-                            <i class="bi bi-person-check"></i> Assign To *
-                        </label>
-                        {{ form.assigned_to }}
-                        {% if form.assigned_to.errors %}
-                            <div class="invalid-feedback d-block">
-                                {{ form.assigned_to.errors.0 }}
-                            </div>
-                        {% endif %}
-                        <div class="form-text">
-                            Select the employee who will be responsible for this task.
-                        </div>
-                    </div>
-                    
-                    <!-- Priority and Due Date Row -->
-                    <div class="row">
-                        <div class="col-md-6 mb-3">
-                            <label for="id_priority" class="form-label">
-                                <i class="bi bi-exclamation-triangle"></i> Priority *
-                            </label>
-                            {{ form.priority }}
-                            {% if form.priority.errors %}
-                                <div class="invalid-feedback d-block">
-                                    {{ form.priority.errors.0 }}
-                                </div>
-                            {% endif %}
-                            <div id="priorityPreview" class="priority-preview" style="display: none;"></div>
-                        </div>
-                        
-                        <div class="col-md-6 mb-3">
-                            <label for="id_due_date" class="form-label">
-                                <i class="bi bi-calendar-date"></i> Due Date *
-                            </label>
-                            {{ form.due_date }}
-                            {% if form.due_date.errors %}
-                                <div class="invalid-feedback d-block">
-                                    {{ form.due_date.errors.0 }}
-                                </div>
-                            {% endif %}
-                        </div>
-                    </div>
-                    
-                    <!-- Status Field (only for editing) -->
-                    {% if form.instance.pk %}
-                        <div class="mb-3">
-                            <label for="id_status" class="form-label">
-                                <i class="bi bi-flag"></i> Status
-                            </label>
-                            {{ form.status }}
-                            {% if form.status.errors %}
-                                <div class="invalid-feedback d-block">
-                                    {{ form.status.errors.0 }}
-                                </div>
-                            {% endif %}
+
+                    {# Hidden status on CREATE to satisfy required field (initial='pending' from the form) #}
+                    {% if not form.instance.pk %}
+                        {{ form.status.as_hidden }}
+                    {% endif %}
+
+                    {# Non-field errors alert #}
+                    {% if form.non_field_errors %}
+                        <div class="alert alert-danger" role="alert">
+                            <ul class="mb-0">
+                                {% for err in form.non_field_errors %}
+                                    <li>{{ err }}</li>
+                                {% endfor %}
+                            </ul>
                         </div>
                     {% endif %}
-                    
-                    <!-- Estimated Hours -->
-                    <div class="mb-3">
-                        <label for="id_estimated_hours" class="form-label">
-                            <i class="bi bi-clock"></i> Estimated Hours
-                        </label>
-                        <div class="input-group">
-                            {{ form.estimated_hours }}
-                            <span class="input-group-text">hours</span>
+
+                    <!-- Basic Information Section -->
+                    <section class="form-section">
+                        <h2 class="h5 mb-3">
+                            <i class="bi bi-info-circle" aria-hidden="true"></i> Basic Information
+                        </h2>
+
+                        <!-- Title Field -->
+                        <div class="form-floating mb-3">
+                            {{ form.title }}
+                            <label for="id_title">
+                                <i class="bi bi-card-text" aria-hidden="true"></i> Task Title <span class="text-danger">*</span>
+                            </label>
+                            {% if form.title.errors %}
+                                <div class="invalid-feedback d-block">{{ form.title.errors.0 }}</div>
+                            {% endif %}
+                            <div class="character-counter" id="titleCounter">0 / 200 characters</div>
                         </div>
-                        {% if form.estimated_hours.errors %}
-                            <div class="invalid-feedback d-block">
-                                {{ form.estimated_hours.errors.0 }}
+
+                        <!-- Description Field -->
+                        <div class="form-floating mb-3">
+                            {{ form.description }}
+                            <label for="id_description">
+                                <i class="bi bi-journal-text" aria-hidden="true"></i> Task Description <span class="text-danger">*</span>
+                            </label>
+                            {% if form.description.errors %}
+                                <div class="invalid-feedback d-block">{{ form.description.errors.0 }}</div>
+                            {% endif %}
+                            <div class="form-text">Provide detailed instructions, requirements, and any important context for this task.</div>
+                            <div class="character-counter" id="descriptionCounter">0 / 1000 characters</div>
+                        </div>
+                    </section>
+
+                    <!-- Assignment Section -->
+                    <section class="form-section">
+                        <h2 class="h5 mb-3">
+                            <i class="bi bi-people" aria-hidden="true"></i> Assignment Details
+                        </h2>
+
+                        <div class="mb-3">
+                            <label for="id_assigned_to" class="form-label">
+                                <i class="bi bi-person-check" aria-hidden="true"></i> Assign To <span class="text-danger">*</span>
+                            </label>
+                            {{ form.assigned_to }}
+                            {% if form.assigned_to.errors %}
+                                <div class="invalid-feedback d-block">{{ form.assigned_to.errors.0 }}</div>
+                            {% endif %}
+                            <div class="form-text">Select the team member who will be responsible for completing this task.</div>
+                        </div>
+                    </section>
+
+                    <!-- Priority and Scheduling Section -->
+                    <section class="form-section">
+                        <h2 class="h5 mb-3">
+                            <i class="bi bi-calendar-event" aria-hidden="true"></i> Priority & Scheduling
+                        </h2>
+
+                        <div class="row">
+                            <div class="col-md-6 mb-3">
+                                <label for="id_priority" class="form-label">
+                                    <i class="bi bi-exclamation-triangle" aria-hidden="true"></i> Priority Level <span class="text-danger">*</span>
+                                </label>
+                                {{ form.priority }}
+                                {% if form.priority.errors %}
+                                    <div class="invalid-feedback d-block">{{ form.priority.errors.0 }}</div>
+                                {% endif %}
+                                <div id="priorityPreview" class="priority-preview" aria-live="polite"></div>
+                            </div>
+
+                            <div class="col-md-6 mb-3">
+                                <label for="id_due_date" class="form-label">
+                                    <i class="bi bi-calendar-date" aria-hidden="true"></i> Due Date <span class="text-danger">*</span>
+                                </label>
+                                {{ form.due_date }}
+                                {% if form.due_date.errors %}
+                                    <div class="invalid-feedback d-block">{{ form.due_date.errors.0 }}</div>
+                                {% endif %}
+                                <div class="form-text">Select a realistic deadline for task completion.</div>
+                            </div>
+                        </div>
+                    </section>
+
+                    <!-- Additional Details Section -->
+                    <section class="form-section">
+                        <h2 class="h5 mb-3">
+                            <i class="bi bi-gear" aria-hidden="true"></i> Additional Details
+                        </h2>
+
+                        {# Status field visible only on EDIT #}
+                        {% if form.instance.pk %}
+                            <div class="mb-3">
+                                <label for="id_status" class="form-label">
+                                    <i class="bi bi-flag" aria-hidden="true"></i> Current Status
+                                </label>
+                                {{ form.status }}
+                                {% if form.status.errors %}
+                                    <div class="invalid-feedback d-block">{{ form.status.errors.0 }}</div>
+                                {% endif %}
+                                <div class="form-text">Update the current status of this task.</div>
                             </div>
                         {% endif %}
-                        <div class="form-text">
-                            Estimate how many hours this task will take to complete.
+
+                        <div class="mb-3">
+                            <label for="id_estimated_hours" class="form-label">
+                                <i class="bi bi-clock" aria-hidden="true"></i> Estimated Hours
+                            </label>
+                            <div class="input-group">
+                                {{ form.estimated_hours }}
+                                <span class="input-group-text">hours</span>
+                            </div>
+                            {% if form.estimated_hours.errors %}
+                                <div class="invalid-feedback d-block">{{ form.estimated_hours.errors.0 }}</div>
+                            {% endif %}
+                            <div class="form-text">Provide an estimate of how many hours this task will take to complete (optional).</div>
                         </div>
-                    </div>
-                    
-                    <!-- Notes Field -->
-                    <div class="form-floating mb-4">
-                        {{ form.notes }}
-                        <label for="id_notes">
-                            <i class="bi bi-sticky"></i> Additional Notes
-                        </label>
-                        {% if form.notes.errors %}
-                            <div class="invalid-feedback d-block">
-                                {{ form.notes.errors.0 }}
+
+                        {% if form.notes %}
+                            <div class="form-floating mb-3">
+                                {{ form.notes }}
+                                <label for="id_notes">
+                                    <i class="bi bi-sticky" aria-hidden="true"></i> Additional Notes
+                                </label>
+                                {% if form.notes.errors %}
+                                    <div class="invalid-feedback d-block">{{ form.notes.errors.0 }}</div>
+                                {% endif %}
+                                <div class="form-text">Add any additional information, special instructions, or important considerations.</div>
                             </div>
                         {% endif %}
-                        <div class="form-text">
-                            Any additional information or special instructions.
-                        </div>
-                    </div>
-                    
-                    <!-- Form Actions -->
-                    <div class="d-grid gap-2 d-md-flex justify-content-md-end">
-                        <a href="{% url 'tasks:task_list' %}" class="btn btn-outline-secondary">
-                            <i class="bi bi-arrow-left"></i> Cancel
+                    </section>
+
+                    <footer class="d-flex flex-column flex-md-row gap-2 justify-content-md-end pt-3 border-top">
+                        <a href="{% url 'tasks:task_list' %}" class="btn btn-outline-secondary order-md-1">
+                            <i class="bi bi-arrow-left" aria-hidden="true"></i> Cancel
                         </a>
-                        <button type="submit" class="btn btn-primary">
-                            <i class="bi bi-{% if form.instance.pk %}check-circle{% else %}plus-circle{% endif %}"></i>
+                        <button type="submit" class="btn btn-primary order-md-2" id="submitBtn">
+                            <i class="bi bi-{% if form.instance.pk %}check-circle{% else %}plus-circle{% endif %}" aria-hidden="true"></i>
                             {% if form.instance.pk %}Update Task{% else %}Create Task{% endif %}
                         </button>
-                    </div>
+                    </footer>
                 </form>
-            </div>
+            </main>
         </div>
-        
-        <!-- Task Creation Tips -->
+
         {% if not form.instance.pk %}
-            <div class="card mt-3 border-info">
-                <div class="card-header bg-info text-white">
-                    <small><i class="bi bi-lightbulb"></i> Task Creation Tips</small>
+            <aside class="tips-card card border-info">
+                <header class="card-header bg-info text-white">
+                    <h2 class="h6 mb-0">
+                        <i class="bi bi-lightbulb" aria-hidden="true"></i> Task Creation Best Practices
+                    </h2>
+                </header>
+                <div class="card-body">
+                    <ul class="mb-0 small">
+                        <li><strong>Be Specific:</strong> Use clear, descriptive titles that immediately convey the task's purpose</li>
+                        <li><strong>Detailed Descriptions:</strong> Include all necessary context, requirements, and expected outcomes</li>
+                        <li><strong>Realistic Deadlines:</strong> Set achievable due dates considering task complexity and team availability</li>
+                        <li><strong>Appropriate Priority:</strong> Use priority levels consistently across your team to maintain effectiveness</li>
+                        <li><strong>Break Down Large Tasks:</strong> Consider dividing complex work into smaller, manageable subtasks</li>
+                    </ul>
                 </div>
-                <div class="card-body py-2">
-                    <small class="text-muted">
-                        <ul class="mb-0">
-                            <li>Be specific and clear in your task title and description</li>
-                            <li>Set realistic due dates and estimated hours</li>
-                            <li>Choose the appropriate priority level</li>
-                            <li>Consider breaking large tasks into smaller ones</li>
-                        </ul>
-                    </small>
-                </div>
-            </div>
+            </aside>
         {% endif %}
     </div>
 </div>
@@ -208,97 +306,183 @@
 
 {% block extra_js %}
 <script>
-// Priority preview (LO4.2)
-function updatePriorityPreview() {
+(function() {
+    'use strict';
+    const form = document.getElementById('taskForm');
+    const submitBtn = document.getElementById('submitBtn');
     const prioritySelect = document.getElementById('id_priority');
-    const preview = document.getElementById('priorityPreview');
-    const selectedValue = prioritySelect.value;
-    
-    if (selectedValue) {
-        preview.style.display = 'inline-block';
-        preview.className = 'priority-preview priority-' + selectedValue;
-        preview.textContent = prioritySelect.options[prioritySelect.selectedIndex].text;
-    } else {
-        preview.style.display = 'none';
+    const dueDateInput = document.getElementById('id_due_date');
+    const titleInput = document.getElementById('id_title');
+    const descriptionInput = document.getElementById('id_description');
+
+    function initializePriorityPreview() {
+        if (!prioritySelect) return;
+        const preview = document.getElementById('priorityPreview');
+        if (!preview) return;
+        function updatePriorityPreview() {
+            const v = prioritySelect.value;
+            const t = prioritySelect.options[prioritySelect.selectedIndex]?.text;
+            if (v && t) {
+                preview.className = `priority-preview priority-${v} show`;
+                preview.textContent = `${t} Priority`;
+                preview.setAttribute('aria-label', `Selected priority: ${t}`);
+            } else {
+                preview.className = 'priority-preview';
+                preview.textContent = '';
+                preview.removeAttribute('aria-label');
+            }
+        }
+        prioritySelect.addEventListener('change', updatePriorityPreview);
+        updatePriorityPreview();
     }
-}
 
-// Setup priority preview
-document.getElementById('id_priority').addEventListener('change', updatePriorityPreview);
-updatePriorityPreview(); // Initial load
+    function initializeCharacterCounters() {
+        const counters = [
+            { input: titleInput, counter: 'titleCounter', maxLength: 200 },
+            { input: descriptionInput, counter: 'descriptionCounter', maxLength: 1000 }
+        ];
+        counters.forEach(({ input, counter, maxLength }) => {
+            if (!input) return;
+            const el = document.getElementById(counter);
+            if (!el) return;
+            function update() {
+                const n = input.value.length;
+                const rem = maxLength - n;
+                el.textContent = `${n} / ${maxLength} characters`;
+                el.classList.remove('warning', 'danger');
+                if (rem < maxLength * 0.1) el.classList.add('danger');
+                else if (rem < maxLength * 0.2) el.classList.add('warning');
+            }
+            input.addEventListener('input', update);
+            update();
+        });
+    }
 
-// Form validation (LO4.2)
-document.getElementById('taskForm').addEventListener('submit', function(e) {
-    const title = document.getElementById('id_title').value.trim();
-    const description = document.getElementById('id_description').value.trim();
-    const assignedTo = document.getElementById('id_assigned_to').value;
-    const priority = document.getElementById('id_priority').value;
-    const dueDate = document.getElementById('id_due_date').value;
-    
-    let isValid = true;
-    let errorMessage = '';
-    
-    // Validation checks
-    if (title.length < 5) {
-        errorMessage = 'Task title must be at least 5 characters long.';
-        isValid = false;
-    } else if (description.length < 10) {
-        errorMessage = 'Task description must be at least 10 characters long.';
-        isValid = false;
-    } else if (!assignedTo) {
-        errorMessage = 'Please select an employee to assign this task to.';
-        isValid = false;
-    } else if (!priority) {
-        errorMessage = 'Please select a priority level.';
-        isValid = false;
-    } else if (!dueDate) {
-        errorMessage = 'Please set a due date for this task.';
-        isValid = false;
-    } else {
-        // Check if due date is in the past
-        const selectedDate = new Date(dueDate);
-        const today = new Date();
-        today.setHours(0, 0, 0, 0);
-        
-        if (selectedDate < today) {
-            errorMessage = 'Due date cannot be in the past.';
-            isValid = false;
+    function initializeFormValidation() {
+        if (!form || !submitBtn) return;
+        form.addEventListener('submit', function(e) {
+            const errors = [];
+            clearAllValidationErrors();
+
+            if (titleInput) {
+                const v = titleInput.value.trim();
+                if (v.length < 5) errors.push({ field: titleInput, message: 'Task title must be at least 5 characters long.' });
+                else if (v.length > 200) errors.push({ field: titleInput, message: 'Task title cannot exceed 200 characters.' });
+            }
+            if (descriptionInput) {
+                const v = descriptionInput.value.trim();
+                if (v.length < 10) errors.push({ field: descriptionInput, message: 'Task description must be at least 10 characters long.' });
+                else if (v.length > 1000) errors.push({ field: descriptionInput, message: 'Task description cannot exceed 1000 characters.' });
+            }
+            const assigneeSelect = document.getElementById('id_assigned_to');
+            if (assigneeSelect && !assigneeSelect.value) {
+                errors.push({ field: assigneeSelect, message: 'Please select a team member to assign this task to.' });
+            }
+            if (prioritySelect && !prioritySelect.value) {
+                errors.push({ field: prioritySelect, message: 'Please select a priority level for this task.' });
+            }
+            if (dueDateInput) {
+                const v = dueDateInput.value;
+                if (!v) errors.push({ field: dueDateInput, message: 'Please set a due date for this task.' });
+                else {
+                    const d = new Date(v), today = new Date(); today.setHours(0,0,0,0);
+                    if (d < today) errors.push({ field: dueDateInput, message: 'Due date cannot be in the past.' });
+                }
+            }
+
+            if (errors.length > 0) {
+                e.preventDefault();
+                errors.forEach(({ field, message }) => showFieldError(field, message));
+                errors[0].field.focus();
+                showAlert('Please correct the errors below before submitting.', 'danger');
+                return false;
+            }
+            showLoadingState();
+        });
+    }
+
+    function showFieldError(field, message) {
+        field.classList.add('is-invalid');
+        let el = field.parentNode.querySelector('.invalid-feedback');
+        if (!el) {
+            el = document.createElement('div');
+            el.className = 'invalid-feedback d-block';
+            field.parentNode.appendChild(el);
+        }
+        el.textContent = message;
+    }
+
+    function clearAllValidationErrors() {
+        const invalids = form.querySelectorAll('.is-invalid');
+        invalids.forEach(field => {
+            field.classList.remove('is-invalid');
+            const el = field.parentNode.querySelector('.invalid-feedback');
+            if (el && !el.hasAttribute('data-server-error')) el.remove();
+        });
+    }
+
+    function showLoadingState() {
+        const original = submitBtn.innerHTML;
+        submitBtn.innerHTML = `
+            <span class="spinner-border spinner-border-sm me-2" role="status" aria-hidden="true"></span>
+            ${form.dataset.isEdit ? 'Updating' : 'Creating'} Task...
+        `;
+        submitBtn.disabled = true;
+        setTimeout(() => {
+            if (submitBtn.disabled) {
+                submitBtn.innerHTML = original;
+                submitBtn.disabled = false;
+            }
+        }, 15000);
+    }
+
+    function showAlert(message, type='info') {
+        const el = document.createElement('div');
+        el.className = `alert alert-${type} alert-dismissible fade show`;
+        el.setAttribute('role', 'alert');
+        el.innerHTML = `
+            <i class="bi bi-${type === 'danger' ? 'exclamation-triangle' : 'info-circle'}" aria-hidden="true"></i>
+            ${message}
+            <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+        `;
+        const main = document.querySelector('main');
+        if (main) main.insertBefore(el, main.firstChild);
+        setTimeout(() => { if (el.parentNode) { el.classList.remove('show'); setTimeout(() => el.remove(), 150); } }, 5000);
+    }
+
+    function initializeAutoResize() {
+        const textareas = form.querySelectorAll('textarea');
+        textareas.forEach(t => {
+            function resize() { t.style.height = 'auto'; t.style.height = t.scrollHeight + 'px'; }
+            t.addEventListener('input', resize);
+            resize();
+        });
+    }
+
+    function initializeDateConstraints() {
+        if (dueDateInput) {
+            const today = new Date().toISOString().split('T')[0];
+            dueDateInput.setAttribute('min', today);
         }
     }
-    
-    if (!isValid) {
-        e.preventDefault();
-        alert(errorMessage);
-        return false;
+
+    function initialize() {
+        initializePriorityPreview();
+        initializeCharacterCounters();
+        initializeFormValidation();
+        initializeAutoResize();
+        initializeDateConstraints();
+        if (titleInput) titleInput.focus();
+        const inputs = form.querySelectorAll('input, select, textarea');
+        inputs.forEach(i => i.addEventListener('input', function() {
+            this.classList.remove('is-invalid');
+            const el = this.parentNode.querySelector('.invalid-feedback');
+            if (el && !el.hasAttribute('data-server-error')) el.remove();
+        }));
     }
-    
-    // Show loading state
-    const submitBtn = this.querySelector('button[type="submit"]');
-    const originalText = submitBtn.innerHTML;
-    submitBtn.innerHTML = '<i class="bi bi-hourglass-split"></i> ' + 
-                        ({{ form.instance.pk|yesno:"Updating,Creating" }} + ' Task...');
-    submitBtn.disabled = true;
-    
-    // Re-enable button if form submission fails (shouldn't happen with proper validation)
-    setTimeout(() => {
-        submitBtn.innerHTML = originalText;
-        submitBtn.disabled = false;
-    }, 5000);
-});
 
-// Auto-resize description textarea
-const descriptionTextarea = document.getElementById('id_description');
-descriptionTextarea.addEventListener('input', function() {
-    this.style.height = 'auto';
-    this.style.height = (this.scrollHeight) + 'px';
-});
-
-// Set minimum date to today for due date
-const dueDateInput = document.getElementById('id_due_date');
-const today = new Date().toISOString().split('T')[0];
-dueDateInput.setAttribute('min', today);
-
-// Auto-focus on title field
-document.getElementById('id_title').focus();
+    if (document.readyState === 'loading') document.addEventListener('DOMContentLoaded', initialize);
+    else initialize();
+})();
 </script>
 {% endblock %}

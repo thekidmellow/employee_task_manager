@@ -27,7 +27,7 @@ local_settings.py
 # --- Tests / coverage ---
 .pytest_cache/
 .coverage
-htmlcov/
+
 
 # --- Node (if you ever add frontend tooling) ---
 node_modules/
