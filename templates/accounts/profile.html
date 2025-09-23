@@ -5,74 +5,75 @@
 
 {% block extra_css %}
 <style>
-.profile-header {
-    background: linear-gradient(135deg, #6f42c1 0%, #e83e8c 100%);
-    color: white;
-    border-radius: 0.5rem;
-    padding: 2rem;
-    margin-bottom: 2rem;
-}
+    .profile-header {
+        background: linear-gradient(135deg, #6f42c1 0%, #e83e8c 100%);
+        color: white;
+        border-radius: 0.5rem;
+        padding: 2rem;
+        margin-bottom: 2rem;
+    }
 
-.profile-avatar {
-    width: 120px;
-    height: 120px;
-    border-radius: 50%;
-    background: rgba(255,255,255,0.2);
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    font-size: 3rem;
-    color: white;
-    margin: 0 auto 1rem;
-}
+    .profile-avatar {
+        width: 120px;
+        height: 120px;
+        border-radius: 50%;
+        background: rgba(255, 255, 255, 0.2);
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-size: 3rem;
+        color: white;
+        margin: 0 auto 1rem;
+    }
 
-.profile-card {
-    background: white;
-    border-radius: 0.5rem;
-    box-shadow: 0 2px 4px rgba(0,0,0,0.1);
-    border: none;
-}
+    .profile-card {
+        background: white;
+        border-radius: 0.5rem;
+        box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+        border: none;
+    }
 
-.form-floating > label {
-    padding-left: 1rem;
-}
+    .form-floating>label {
+        padding-left: 1rem;
+    }
 
-.form-floating > .form-control {
-    padding-left: 1rem;
-    padding-right: 1rem;
-}
+    .form-floating>.form-control {
+        padding-left: 1rem;
+        padding-right: 1rem;
+    }
 
-.stats-card {
-    background: white;
-    border-radius: 0.5rem;
-    box-shadow: 0 2px 4px rgba(0,0,0,0.1);
-    border: none;
-    text-align: center;
-    padding: 1.5rem;
-}
+    .stats-card {
+        background: white;
+        border-radius: 0.5rem;
+        box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+        border: none;
+        text-align: center;
+        padding: 1.5rem;
+    }
 
-.stats-icon {
-    width: 60px;
-    height: 60px;
-    border-radius: 50%;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    margin: 0 auto 1rem;
-    font-size: 1.5rem;
-    color: white;
-}
+    .stats-icon {
+        width: 60px;
+        height: 60px;
+        border-radius: 50%;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        margin: 0 auto 1rem;
+        font-size: 1.5rem;
+        color: white;
+    }
 
-.role-badge {
-    font-size: 0.9rem;
-    padding: 0.5rem 1rem;
-    border-radius: 2rem;
-}
+    .role-badge {
+        font-size: 0.9rem;
+        padding: 0.5rem 1rem;
+        border-radius: 2rem;
+    }
 </style>
 {% endblock %}
 
 {% block content %}
-<main class="container py-4">
+<div class="container py-4" role="region" aria-labelledby="profile-heading">
+    <h1 id="profile-heading" class="visually-hidden">My Profile</h1>
     <!-- Profile Header -->
     <div class="profile-header text-center">
         <div class="profile-avatar">
@@ -95,26 +96,27 @@
             <div class="profile-card p-4">
                 <div class="d-flex justify-content-between align-items-center mb-4">
                     <h2 class="h4 mb-0">Profile Information</h2>
-                    <button type="button" class="btn btn-outline-primary" data-bs-toggle="modal" data-bs-target="#editProfileModal">
+                    <button type="button" class="btn btn-outline-primary" data-bs-toggle="modal"
+                        data-bs-target="#editProfileModal">
                         <i class="fas fa-edit me-2"></i>Edit Profile
                     </button>
                 </div>
 
                 <form method="post" id="profileForm">
                     {% csrf_token %}
-                    
+
                     <div class="row">
                         <div class="col-md-6 mb-3">
                             <div class="form-floating">
-                                <input type="text" class="form-control" id="first_name" name="first_name" 
-                                       value="{{ user.first_name }}" readonly>
+                                <input type="text" class="form-control" id="first_name" name="first_name"
+                                    value="{{ user.first_name }}" readonly>
                                 <label for="first_name">First Name</label>
                             </div>
                         </div>
                         <div class="col-md-6 mb-3">
                             <div class="form-floating">
-                                <input type="text" class="form-control" id="last_name" name="last_name" 
-                                       value="{{ user.last_name }}" readonly>
+                                <input type="text" class="form-control" id="last_name" name="last_name"
+                                    value="{{ user.last_name }}" readonly>
                                 <label for="last_name">Last Name</label>
                             </div>
                         </div>
@@ -123,15 +125,15 @@
                     <div class="row">
                         <div class="col-md-6 mb-3">
                             <div class="form-floating">
-                                <input type="email" class="form-control" id="email" name="email" 
-                                       value="{{ user.email }}" readonly>
+                                <input type="email" class="form-control" id="email" name="email"
+                                    value="{{ user.email }}" readonly>
                                 <label for="email">Email Address</label>
                             </div>
                         </div>
                         <div class="col-md-6 mb-3">
                             <div class="form-floating">
-                                <input type="text" class="form-control" id="username" name="username" 
-                                       value="{{ user.username }}" readonly>
+                                <input type="text" class="form-control" id="username" name="username"
+                                    value="{{ user.username }}" readonly>
                                 <label for="username">Username</label>
                             </div>
                         </div>
@@ -140,15 +142,15 @@
                     <div class="row">
                         <div class="col-md-6 mb-3">
                             <div class="form-floating">
-                                <input type="text" class="form-control" id="department" name="department" 
-                                       value="{{ user.profile.department|default:'Not specified' }}" readonly>
+                                <input type="text" class="form-control" id="department" name="department"
+                                    value="{{ user.profile.department|default:'Not specified' }}" readonly>
                                 <label for="department">Department</label>
                             </div>
                         </div>
                         <div class="col-md-6 mb-3">
                             <div class="form-floating">
-                                <input type="text" class="form-control" id="join_date" 
-                                       value="{{ user.date_joined|date:'F d, Y' }}" readonly>
+                                <input type="text" class="form-control" id="join_date"
+                                    value="{{ user.date_joined|date:'F d, Y' }}" readonly>
                                 <label for="join_date">Member Since</label>
                             </div>
                         </div>
@@ -209,7 +211,7 @@
             </div>
         </div>
     </div>
-</main>
+</div>
 
 <!-- Edit Profile Modal -->
 <div class="modal fade" id="editProfileModal" tabindex="-1" aria-labelledby="editProfileModalLabel" aria-hidden="true">
@@ -222,19 +224,19 @@
             <form method="post" id="editProfileForm">
                 <div class="modal-body">
                     {% csrf_token %}
-                    
+
                     <div class="row">
                         <div class="col-md-6 mb-3">
                             <div class="form-floating">
-                                <input type="text" class="form-control" id="edit_first_name" name="first_name" 
-                                       value="{{ user.first_name }}" required>
+                                <input type="text" class="form-control" id="edit_first_name" name="first_name"
+                                    value="{{ user.first_name }}" required>
                                 <label for="edit_first_name">First Name</label>
                             </div>
                         </div>
                         <div class="col-md-6 mb-3">
                             <div class="form-floating">
-                                <input type="text" class="form-control" id="edit_last_name" name="last_name" 
-                                       value="{{ user.last_name }}" required>
+                                <input type="text" class="form-control" id="edit_last_name" name="last_name"
+                                    value="{{ user.last_name }}" required>
                                 <label for="edit_last_name">Last Name</label>
                             </div>
                         </div>
@@ -242,16 +244,16 @@
 
                     <div class="mb-3">
                         <div class="form-floating">
-                            <input type="email" class="form-control" id="edit_email" name="email" 
-                                   value="{{ user.email }}" required>
+                            <input type="email" class="form-control" id="edit_email" name="email"
+                                value="{{ user.email }}" required>
                             <label for="edit_email">Email Address</label>
                         </div>
                     </div>
 
                     <div class="mb-3">
                         <div class="form-floating">
-                            <input type="text" class="form-control" id="edit_department" name="department" 
-                                   value="{{ user.profile.department|default:'' }}">
+                            <input type="text" class="form-control" id="edit_department" name="department"
+                                value="{{ user.profile.department|default:'' }}">
                             <label for="edit_department">Department</label>
                         </div>
                     </div>
@@ -268,65 +270,65 @@
 
 {% block extra_js %}
 <script>
-document.addEventListener('DOMContentLoaded', function() {
-    const editForm = document.getElementById('editProfileForm');
-    const editModal = document.getElementById('editProfileModal');
-    
-    editForm.addEventListener('submit', function(e) {
-        e.preventDefault();
-        
-        const formData = new FormData(editForm);
-        
-        fetch('{% url "accounts:profile" %}', {
-            method: 'POST',
-            body: formData,
-            headers: {
-                'X-Requested-With': 'XMLHttpRequest'
-            }
-        })
-        .then(response => response.json())
-        .then(data => {
-            if (data.success) {
-                // Update the profile display
-                document.getElementById('first_name').value = data.user.first_name;
-                document.getElementById('last_name').value = data.user.last_name;
-                document.getElementById('email').value = data.user.email;
-                document.getElementById('department').value = data.user.department || 'Not specified';
-                
-                // Update header
-                document.querySelector('.profile-header h1').textContent = data.user.first_name + ' ' + data.user.last_name;
-                document.querySelector('.profile-header p.lead').textContent = data.user.email;
-                
-                // Close modal
-                bootstrap.Modal.getInstance(editModal).hide();
-                
-                // Show success message
-                showNotification('Profile updated successfully!', 'success');
-            } else {
-                showNotification('Error updating profile: ' + data.message, 'danger');
-            }
-        })
-        .catch(error => {
-            console.error('Error:', error);
-            showNotification('An error occurred while updating your profile.', 'danger');
+    document.addEventListener('DOMContentLoaded', function () {
+        const editForm = document.getElementById('editProfileForm');
+        const editModal = document.getElementById('editProfileModal');
+
+        editForm.addEventListener('submit', function (e) {
+            e.preventDefault();
+
+            const formData = new FormData(editForm);
+
+            fetch('{% url "accounts:profile" %}', {
+                method: 'POST',
+                body: formData,
+                headers: {
+                    'X-Requested-With': 'XMLHttpRequest'
+                }
+            })
+                .then(response => response.json())
+                .then(data => {
+                    if (data.success) {
+                        // Update the profile display
+                        document.getElementById('first_name').value = data.user.first_name;
+                        document.getElementById('last_name').value = data.user.last_name;
+                        document.getElementById('email').value = data.user.email;
+                        document.getElementById('department').value = data.user.department || 'Not specified';
+
+                        // Update header
+                        document.querySelector('.profile-header h1').textContent = data.user.first_name + ' ' + data.user.last_name;
+                        document.querySelector('.profile-header p.lead').textContent = data.user.email;
+
+                        // Close modal
+                        bootstrap.Modal.getInstance(editModal).hide();
+
+                        // Show success message
+                        showNotification('Profile updated successfully!', 'success');
+                    } else {
+                        showNotification('Error updating profile: ' + data.message, 'danger');
+                    }
+                })
+                .catch(error => {
+                    console.error('Error:', error);
+                    showNotification('An error occurred while updating your profile.', 'danger');
+                });
         });
     });
-});
 
-function showNotification(message, type) {
-    const alertDiv = document.createElement('div');
-    alertDiv.className = `alert alert-${type} alert-dismissible fade show position-fixed top-0 start-50 translate-middle-x mt-3`;
-    alertDiv.style.zIndex = '9999';
-    alertDiv.innerHTML = `
+    function showNotification(message, type) {
+        const alertDiv = document.createElement('div');
+        alertDiv.className = `alert alert-${type} alert-dismissible fade show position-fixed top-0 start-50 translate-middle-x mt-3`;
+        alertDiv.style.zIndex = '9999';
+        alertDiv.innerHTML = `
         ${message}
         <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
     `;
-    
-    document.body.appendChild(alertDiv);
-    
-    setTimeout(() => {
-        alertDiv.remove();
-    }, 5000);
-}
+
+        document.body.appendChild(alertDiv);
+
+        setTimeout(() => {
+            alertDiv.remove();
+        }, 5000);
+    }
 </script>
 {% endblock %}

@@ -1,3 +1,6 @@
+/* jshint esversion: 11, browser: true, devel: true */
+/* globals bootstrap, Chart */
+
 document.addEventListener('DOMContentLoaded', function() {
     
     // Auto-dismiss alerts after 5 seconds
