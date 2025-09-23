@@ -66,7 +66,7 @@
 {% endblock %}
 
 {% block content %}
-<main class="container-fluid py-4">
+<section class="container-fluid py-4">
 
     <!-- CSRF token for JS fetches (NEW) -->
     <input type="hidden" id="csrfToken" name="csrfmiddlewaretoken" value="{{ csrf_token }}">
@@ -227,7 +227,7 @@
             </div>
         </div>
     </div>
-</main>
+</section>
 {% endblock %}
 
 {% block extra_js %}
