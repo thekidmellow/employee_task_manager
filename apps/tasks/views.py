@@ -1,4 +1,3 @@
-# apps/tasks/views.py
 from datetime import timedelta
 
 from django.contrib import messages
@@ -22,13 +21,11 @@ from .models import Task, TaskComment
 
 @login_required
 def task_list_view(request):
-    """Display paginated list of tasks with filtering"""
     user = request.user
     is_manager = (
         getattr(user, "userprofile", None) and user.userprofile.is_manager
     )
 
-    # Managers see all; others see tasks assigned to them OR created by them
     base_qs = (
         Task.objects.all()
         if is_manager
@@ -37,7 +34,6 @@ def task_list_view(request):
         )
     )
 
-    # Apply filters
     filter_form = TaskFilterForm(request.GET, user=user)
     tasks = base_qs
     if filter_form.is_valid():
@@ -73,7 +69,6 @@ def task_list_view(request):
     page_number = request.GET.get("page")
     page_obj = paginator.get_page(page_number)
 
-    # Stats should match what the user can see
     stats_queryset = base_qs
     stats = {
         "total": stats_queryset.count(),
@@ -111,13 +106,11 @@ def task_list_view(request):
 
 @login_required
 def task_create_view(request):
-    """Create new task (managers only)"""
     user = request.user
     is_manager = (
         getattr(user, "userprofile", None) and user.userprofile.is_manager
     )
 
-    # Return 403 Forbidden for non-managers (tests expect 403, not redirect)
     if not is_manager:
         raise PermissionDenied
 
@@ -149,14 +142,12 @@ def task_create_view(request):
 
 @login_required
 def task_detail_view(request, task_id):
-    """Display task details with comments"""
     task = get_object_or_404(Task, id=task_id)
     user = request.user
     is_manager = (
         getattr(user, "userprofile", None) and user.userprofile.is_manager
     )
 
-    # Permission check: non-managers can only view tasks assigned to them
     if not is_manager and task.assigned_to != user:
         messages.error(
             request,
@@ -164,7 +155,6 @@ def task_detail_view(request, task_id):
         )
         return redirect("tasks:task_list")
 
-    # Comment form
     if request.method == "POST":
         comment_form = TaskCommentForm(request.POST)
         if comment_form.is_valid():
@@ -197,14 +187,12 @@ def task_detail_view(request, task_id):
 
 @login_required
 def task_update_view(request, task_id):
-    """Update task (permissions based on user role)"""
     task = get_object_or_404(Task, id=task_id)
     user = request.user
     is_manager = (
         getattr(user, "userprofile", None) and user.userprofile.is_manager
     )
 
-    # Employees can only update their own tasks
     if not is_manager and task.assigned_to != user:
         messages.error(
             request,
@@ -267,7 +255,6 @@ def task_update_view(request, task_id):
 
 @login_required
 def task_delete_view(request, task_id):
-    """Delete task (managers only)"""
     task = get_object_or_404(Task, id=task_id)
     user = request.user
     is_manager = (
@@ -297,14 +284,12 @@ def task_delete_view(request, task_id):
 @login_required
 @require_POST
 def update_task_status(request, task_id):
-    """AJAX endpoint for quick status updates"""
     task = get_object_or_404(Task, id=task_id)
     user = request.user
     is_manager = (
         getattr(user, "userprofile", None) and user.userprofile.is_manager
     )
 
-    # Parse JSON body
     import json
 
     try:
@@ -317,14 +302,12 @@ def update_task_status(request, task_id):
 
     new_status = data.get("status")
 
-    # Permission check
     if not is_manager and task.assigned_to != user:
         return JsonResponse(
             {"success": False, "message": "Permission denied"},
             status=403,
         )
 
-    # Validate status
     valid_statuses = [choice[0] for choice in Task.STATUS_CHOICES]
     if new_status not in valid_statuses:
         return JsonResponse(
@@ -332,7 +315,6 @@ def update_task_status(request, task_id):
             status=400,
         )
 
-    # Update status
     task.status = new_status
     if new_status == "completed":
         task.completed_at = timezone.now()
@@ -345,9 +327,6 @@ def update_task_status(request, task_id):
 
 @login_required
 def task_stats_api(request):
-    """
-    API endpoint for task statistics (used by dashboard widgets)
-    """
     user = request.user
     is_manager = (
         getattr(user, "userprofile", None) and user.userprofile.is_manager

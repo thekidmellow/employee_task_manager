@@ -1,9 +1,3 @@
-# core/views.py
-"""
-Core application views
-Handles main application pages and dashboard functionality
-"""
-
 from django.shortcuts import render, redirect
 from django.contrib.auth.decorators import login_required
 from django.contrib.auth.models import User
@@ -15,16 +9,11 @@ from apps.tasks.models import Task
 
 
 def home_view(request):
-    """
-    Home page view with platform statistics
-    Demonstrates context data preparation (LO1.3)
-    """
-    # Calculate platform statistics for display
+
     total_users = User.objects.count()
     total_tasks = Task.objects.count()
     completed_tasks = Task.objects.filter(status="completed").count()
 
-    # Get recent activities for display (last 5 tasks)
     recent_tasks = Task.objects.select_related(
         "assigned_to", "created_by"
     ).order_by("-created_at")[:5]
@@ -42,9 +31,7 @@ def home_view(request):
 
 @login_required
 def dashboard_view(request):
-    """
-    Main dashboard - redirects to role-specific dashboard
-    """
+
     user = request.user
     is_manager = (
         getattr(user, "userprofile", None) and user.userprofile.is_manager
@@ -56,9 +43,7 @@ def dashboard_view(request):
 
 @login_required
 def manager_dashboard_view(request):
-    """
-    Manager dashboard with team overview and statistics
-    """
+
     user = request.user
     is_manager = (
         getattr(user, "userprofile", None) and user.userprofile.is_manager
@@ -66,10 +51,8 @@ def manager_dashboard_view(request):
     if not is_manager:
         return redirect("core:employee_dashboard")
 
-    # Get all tasks for statistics
     all_tasks = Task.objects.select_related("assigned_to", "created_by")
 
-    # Raw counts
     total_tasks = all_tasks.count()
     pending_count = all_tasks.filter(status="pending").count()
     in_progress_count = all_tasks.filter(status="in_progress").count()
@@ -79,10 +62,8 @@ def manager_dashboard_view(request):
         status__in=["pending", "in_progress"],
     ).count()
 
-    # Recent activities (last 10 tasks)
     recent_activities = all_tasks.order_by("-created_at")[:10]
 
-    # Team performance
     team_performance = []
     employees = User.objects.filter(groups__name="Employees")
     for employee in employees:
@@ -123,34 +104,27 @@ def manager_dashboard_view(request):
 
 @login_required
 def employee_dashboard_view(request):
-    """
-    Employee dashboard with personal task overview
-    """
+
     user = request.user
 
-    # Only the user's assigned tasks
     my_tasks = Task.objects.filter(assigned_to=user)
 
-    # Personal stats
     my_tasks_count = my_tasks.count()
     pending_count = my_tasks.filter(status="pending").count()
     in_progress_count = my_tasks.filter(status="in_progress").count()
     completed_count = my_tasks.filter(status="completed").count()
 
-    # Overdue (assuming due_date is a DateTimeField)
     overdue_count = my_tasks.filter(
         due_date__lt=timezone.now(),
         status__in=["pending", "in_progress"],
     ).count()
 
-    # Completion %
     completion_percentage = (
         round((completed_count / my_tasks_count) * 100, 1)
         if my_tasks_count
         else 0
     )
 
-    # Today's tasks (due today or already overdue)
     today = timezone.now().date()
     todays_tasks = my_tasks.filter(
         Q(due_date__date=today)
@@ -160,12 +134,10 @@ def employee_dashboard_view(request):
         )
     ).order_by("due_date", "priority")[:5]
 
-    # Recent activity (last 7 days)
     recent_activities = my_tasks.filter(
         updated_at__gte=timezone.now() - timedelta(days=7)
     ).order_by("-updated_at")[:5]
 
-    # Weekly progress (last 7 days)
     weekly_progress = []
     for i in range(7):
         day = today - timedelta(days=6 - i)
@@ -204,9 +176,7 @@ def employee_dashboard_view(request):
 
 
 def about_view(request):
-    """
-    About page view
-    """
+
     context = {
         "page_title": "About Employee Task Manager",
         "features": [
@@ -248,9 +218,7 @@ def about_view(request):
 
 
 def contact_view(request):
-    """
-    Contact page view
-    """
+
     context = {
         "page_title": "Contact Us",
         "contact_info": {

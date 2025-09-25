@@ -74,7 +74,6 @@
 {% block content %}
 <div class="container py-4" role="region" aria-labelledby="profile-heading">
     <h1 id="profile-heading" class="visually-hidden">My Profile</h1>
-    <!-- Profile Header -->
     <div class="profile-header text-center">
         <div class="profile-avatar">
             <i class="fas fa-user"></i>
@@ -91,7 +90,6 @@
     </div>
 
     <div class="row">
-        <!-- Profile Information -->
         <div class="col-lg-8 mb-4">
             <div class="profile-card p-4">
                 <div class="d-flex justify-content-between align-items-center mb-4">
@@ -158,7 +156,6 @@
                 </form>
             </div>
 
-            <!-- Change Password Section -->
             <div class="profile-card p-4 mt-4">
                 <h2 class="h4 mb-4">Security Settings</h2>
                 <div class="row">
@@ -175,9 +172,7 @@
             </div>
         </div>
 
-        <!-- Statistics Sidebar -->
         <div class="col-lg-4">
-            <!-- Task Statistics -->
             <div class="stats-card mb-4">
                 <div class="stats-icon bg-primary">
                     <i class="fas fa-tasks"></i>
@@ -213,7 +208,6 @@
     </div>
 </div>
 
-<!-- Edit Profile Modal -->
 <div class="modal fade" id="editProfileModal" tabindex="-1" aria-labelledby="editProfileModalLabel" aria-hidden="true">
     <div class="modal-dialog">
         <div class="modal-content">
@@ -289,20 +283,16 @@
                 .then(response => response.json())
                 .then(data => {
                     if (data.success) {
-                        // Update the profile display
                         document.getElementById('first_name').value = data.user.first_name;
                         document.getElementById('last_name').value = data.user.last_name;
                         document.getElementById('email').value = data.user.email;
                         document.getElementById('department').value = data.user.department || 'Not specified';
 
-                        // Update header
                         document.querySelector('.profile-header h1').textContent = data.user.first_name + ' ' + data.user.last_name;
                         document.querySelector('.profile-header p.lead').textContent = data.user.email;
 
-                        // Close modal
                         bootstrap.Modal.getInstance(editModal).hide();
 
-                        // Show success message
                         showNotification('Profile updated successfully!', 'success');
                     } else {
                         showNotification('Error updating profile: ' + data.message, 'danger');

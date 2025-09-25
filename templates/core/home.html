@@ -12,7 +12,6 @@ employee task manager, team productivity, task tracking, project management, wor
 {% endblock %}
 
 {% block content %}
-<!-- Hero Section -->
 <section class="hero-section bg-primary text-white rounded-3 p-5 mb-5" role="banner" aria-labelledby="hero-title">
   <div class="row align-items-center">
     <div class="col-lg-8">
@@ -61,7 +60,6 @@ employee task manager, team productivity, task tracking, project management, wor
 </section>
 
 {% if total_users > 0 %}
-<!-- Statistics Section -->
 <section class="mb-5" aria-labelledby="stats-heading">
   <h2 id="stats-heading" class="visually-hidden">Platform Statistics</h2>
   <div class="row g-4">
@@ -104,7 +102,6 @@ employee task manager, team productivity, task tracking, project management, wor
 </section>
 {% endif %}
 
-<!-- Features Section -->
 <section class="mb-5" aria-labelledby="features-heading">
   <h2 id="features-heading" class="text-center mb-5">Why Choose Our Task Manager?</h2>
   <div class="row g-4">
@@ -156,7 +153,6 @@ employee task manager, team productivity, task tracking, project management, wor
 </section>
 
 {% if not user.is_authenticated %}
-<!-- Call to Action -->
 <section class="bg-light rounded-3 p-5 text-center" aria-labelledby="cta-heading">
   <h2 id="cta-heading" class="mb-3">Ready to Get Started?</h2>
   <p class="lead mb-4">

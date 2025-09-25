@@ -1,9 +1,3 @@
-# apps/tasks/models.py
-"""
-Task management models for the Employee Task Manager
-Demonstrates data modeling and business logic (LO2)
-"""
-
 from datetime import datetime, timedelta
 from django.db import models
 from django.core.validators import MinLengthValidator
@@ -14,10 +8,7 @@ User = get_user_model()
 
 
 class Task(models.Model):
-    """
-    Main Task model representing work assignments
-    Demonstrates custom model creation (LO1.4)
-    """
+
     STATUS_CHOICES = [
         ("pending", "Pending"),
         ("in_progress", "In Progress"),
@@ -99,8 +90,6 @@ class Task(models.Model):
         verbose_name = "Task"
         verbose_name_plural = "Tasks"
 
-    # Support tests using `assignee=...` while keeping
-    # the DB field named `assigned_to`.
     def __init__(self, *args, **kwargs):
         assignee = kwargs.pop("assignee", None)
         super().__init__(*args, **kwargs)
@@ -115,8 +104,6 @@ class Task(models.Model):
     def assignee(self, value):
         self.assigned_to = value
 
-    # Make any assigned due_date timezone-aware immediately
-    # (prevents warnings)
     def __setattr__(self, name, value):
         if name == "due_date" and isinstance(value, datetime):
             from django.utils import timezone as _tz
@@ -132,27 +119,19 @@ class Task(models.Model):
         return f"{self.title} - {self.get_status_display()}"
 
     def save(self, *args, **kwargs):
-        """
-        Custom save method to handle business logic
-        Demonstrates compound statements and custom logic (LO1.8, LO1.9)
-        """
-        # If due_date is missing (some tests/fixtures may omit it),
-        # give it a safe default
+
         if not getattr(self, "due_date", None):
             self.due_date = timezone.now() + timedelta(days=7)
 
-        # Ensure due_date is timezone-aware (extra safety)
         if timezone.is_naive(self.due_date):
             self.due_date = timezone.make_aware(
                 self.due_date,
                 timezone.get_current_timezone(),
             )
 
-        # If task is being marked as completed, set completed_at
         if self.status == "completed" and not self.completed_at:
             self.completed_at = timezone.now()
 
-        # If task status is changed from completed, clear completed_at
         if self.status != "completed" and self.completed_at:
             self.completed_at = None
 
@@ -160,21 +139,21 @@ class Task(models.Model):
 
     @property
     def is_overdue(self):
-        """Check if task is overdue"""
+
         if self.status == "completed":
             return False
         return timezone.now() > self.due_date
 
     @property
     def days_until_due(self):
-        """Calculate days until due date"""
+
         if self.status == "completed":
             return 0
         delta = self.due_date - timezone.now()
         return delta.days if delta.days > 0 else 0
 
     def get_priority_color(self):
-        """Return CSS class for priority display"""
+
         priority_colors = {
             "low": "text-success",
             "medium": "text-warning",
@@ -184,7 +163,7 @@ class Task(models.Model):
         return priority_colors.get(self.priority, "text-secondary")
 
     def get_status_color(self):
-        """Return CSS class for status display"""
+
         status_colors = {
             "pending": "secondary",
             "in_progress": "primary",
@@ -195,10 +174,7 @@ class Task(models.Model):
 
 
 class TaskComment(models.Model):
-    """
-    Comments on tasks for communication
-    Demonstrates related model relationships
-    """
+
     task = models.ForeignKey(
         Task,
         on_delete=models.CASCADE,

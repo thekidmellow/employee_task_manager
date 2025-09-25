@@ -23,7 +23,6 @@ productivity.
         box-shadow: 0 0.5rem 1.5rem rgba(0, 0, 0, 0.1);
     }
 
-    /* Floating labels: keep inputs tall enough and text fully visible */
     .form-floating > .form-control,
     .form-floating > .form-select {
         height: calc(3.5rem + 2px);
@@ -104,7 +103,6 @@ productivity.
                 </p>
             </header>
 
-            <!-- Region container instead of nested <main> -->
             <div class="p-4" role="region" aria-label="Task form">
                 <form method="post" id="taskForm" novalidate>
                     {% csrf_token %}
@@ -119,7 +117,6 @@ productivity.
                         </div>
                     {% endif %}
 
-                    <!-- Basic Information Section -->
                     <section class="form-section">
                         <h2 class="h5 mb-3">
                             <i class="bi bi-info-circle" aria-hidden="true"></i> Basic Information
@@ -160,7 +157,6 @@ productivity.
                         {% endif %}
                     </section>
 
-                    <!-- Assignment Section -->
                     <section class="form-section">
                         <h2 class="h5 mb-3">
                             <i class="bi bi-people" aria-hidden="true"></i> Assignment Details
@@ -183,7 +179,6 @@ productivity.
                         {% endif %}
                     </section>
 
-                    <!-- Priority and Scheduling Section -->
                     <section class="form-section">
                         <h2 class="h5 mb-3">
                             <i class="bi bi-calendar-event" aria-hidden="true"></i> Priority & Scheduling
@@ -225,7 +220,6 @@ productivity.
                         </div>
                     </section>
 
-                    <!-- Status and Additional Details Section -->
                     <section class="form-section">
                         <h2 class="h5 mb-3">
                             <i class="bi bi-gear" aria-hidden="true"></i> Additional Details
