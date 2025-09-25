@@ -6,19 +6,16 @@
     --dark-color: #212529;
 }
 
-/* Global Styles */
 body {
     font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
     line-height: 1.6;
 }
 
-/* Navigation Enhancements */
 .navbar-brand {
     font-weight: bold;
     font-size: 1.5rem;
 }
 
-/* Card Hover Effects */
 .card {
     transition: transform 0.2s ease-in-out, box-shadow 0.2s ease-in-out;
 }
@@ -28,26 +25,22 @@ body {
     box-shadow: 0 4px 8px rgba(0,0,0,0.1);
 }
 
-/* Task Status Badges */
 .status-pending { background-color: var(--warning-color) !important; }
 .status-in_progress { background-color: var(--primary-color) !important; }
 .status-completed { background-color: var(--success-color) !important; }
 .status-cancelled { background-color: var(--danger-color) !important; }
 
-/* Priority Indicators */
 .priority-low { border-left: 4px solid var(--success-color); }
 .priority-medium { border-left: 4px solid var(--warning-color); }
 .priority-high { border-left: 4px solid var(--danger-color); }
 .priority-urgent { border-left: 4px solid var(--dark-color); }
 
-/* Dashboard Statistics */
 .stat-card {
     border-radius: 10px;
     background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
     color: white;
 }
 
-/* Responsive Design */
 @media (max-width: 768px) {
     .hero-section h1 {
         font-size: 2rem;
@@ -58,13 +51,11 @@ body {
     }
 }
 
-/* Loading States */
 .loading {
     opacity: 0.7;
     pointer-events: none;
 }
 
-/* Form Enhancements */
 .form-control:focus {
     border-color: var(--primary-color);
     box-shadow: 0 0 0 0.2rem rgba(13, 110, 253, 0.25);

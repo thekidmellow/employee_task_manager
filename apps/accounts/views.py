@@ -1,9 +1,3 @@
-# apps/accounts/views.py
-"""
-User account management views
-Handles authentication, registration, and profile management
-"""
-
 from django.shortcuts import render, redirect
 from django.contrib.auth import login, authenticate
 from django.contrib.auth.decorators import login_required
@@ -11,17 +5,14 @@ from django.contrib.auth.models import User, Group
 from django.contrib.auth.forms import AuthenticationForm
 from django.contrib import messages
 from django.http import JsonResponse
-from django.views.decorators.http import require_POST
+from django.views.decorators.http import require_http_methods
 
 from .forms import UserRegistrationForm, UserProfileForm
 from apps.tasks.models import Task
 
 
 def custom_login_view(request):
-    """
-    Handles GET (show form) and POST (authenticate) for login.
-    Honors ?next= and remember_me.
-    """
+
     next_url = request.GET.get("next") or request.POST.get("next") or "/"
 
     if request.user.is_authenticated:
@@ -59,9 +50,7 @@ def custom_login_view(request):
 
 
 def register_view(request):
-    """
-    User registration view
-    """
+
     if request.user.is_authenticated:
         return redirect("core:dashboard")
 
@@ -104,9 +93,7 @@ def register_view(request):
 
 @login_required
 def profile_view(request):
-    """
-    User profile view and update
-    """
+
     user = request.user
     profile = getattr(user, "userprofile", None)
 
@@ -198,12 +185,13 @@ def profile_view(request):
     )
 
 
-@require_POST
+@require_http_methods(["GET", "POST"])
 def check_username_availability(request):
-    """
-    AJAX endpoint to check username availability
-    """
-    username = request.POST.get("username", "").strip()
+
+    if request.method == "GET":
+        username = request.GET.get("username", "").strip()
+    else:
+        username = request.POST.get("username", "").strip()
 
     if not username:
         return JsonResponse(
@@ -213,19 +201,14 @@ def check_username_availability(request):
         return JsonResponse(
             {
                 "available": False,
-                "message": (
-                    "Username must be at least 3 characters long"
-                ),
+                "message": "Username must be at least 3 characters long",
             }
         )
 
     exists = User.objects.filter(username__iexact=username).exists()
     if exists:
         return JsonResponse(
-            {
-                "available": False,
-                "message": "This username is already taken",
-            }
+            {"available": False, "message": "This username is already taken"}
         )
     return JsonResponse(
         {"available": True, "message": "Username is available"}
@@ -234,9 +217,7 @@ def check_username_availability(request):
 
 @login_required
 def dashboard_redirect_view(request):
-    """
-    Redirect to appropriate dashboard based on user role
-    """
+
     user = request.user
     if user.groups.filter(name="Managers").exists():
         return redirect("core:manager_dashboard")
@@ -245,9 +226,7 @@ def dashboard_redirect_view(request):
 
 @login_required
 def change_password_view(request):
-    """
-    Password change view
-    """
+
     from django.contrib.auth.forms import PasswordChangeForm
     from django.contrib.auth import update_session_auth_hash
 
@@ -276,9 +255,7 @@ def change_password_view(request):
 
 @login_required
 def delete_account_view(request):
-    """
-    Account deletion view (with confirmation)
-    """
+
     if request.method == "POST":
         pending_tasks = (
             Task.objects.filter(

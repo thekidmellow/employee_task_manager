@@ -125,15 +125,11 @@
 
 {% block extra_js %}
 <script>
-// Optional: Log 404 error for analytics
 console.warn('404 Error: Page not found - ' + window.location.href);
 
-// Add some interactive feedback
 document.addEventListener('DOMContentLoaded', function() {
-    // Auto-focus on the primary action button
     document.querySelector('.btn-primary').focus();
     
-    // Add a subtle animation to the error code
     const errorCode = document.querySelector('.error-code');
     if (errorCode) {
         errorCode.style.opacity = '0';

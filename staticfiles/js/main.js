@@ -1,9 +1,5 @@
-/* jshint esversion: 11, browser: true, devel: true */
-/* globals bootstrap, Chart */
-
 document.addEventListener('DOMContentLoaded', function() {
     
-    // Auto-dismiss alerts after 5 seconds
     const alerts = document.querySelectorAll('.alert:not(.alert-permanent)');
     alerts.forEach(function(alert) {
         setTimeout(function() {
@@ -14,7 +10,6 @@ document.addEventListener('DOMContentLoaded', function() {
         }, 5000);
     });
     
-    // Task status quick update via AJAX
     const statusForms = document.querySelectorAll('.status-update-form');
     statusForms.forEach(function(form) {
         form.addEventListener('submit', function(e) {
@@ -23,7 +18,6 @@ document.addEventListener('DOMContentLoaded', function() {
         });
     });
     
-    // Username availability checker
     const usernameField = document.getElementById('id_username');
     if (usernameField) {
         let debounceTimer;
@@ -33,7 +27,6 @@ document.addEventListener('DOMContentLoaded', function() {
         });
     }
     
-    // Form validation enhancements
     const forms = document.querySelectorAll('form[data-validate="true"]');
     forms.forEach(function(form) {
         form.addEventListener('submit', function(e) {
@@ -43,20 +36,17 @@ document.addEventListener('DOMContentLoaded', function() {
         });
     });
     
-    // Dashboard statistics refresh
     const dashboardStats = document.getElementById('dashboard-stats');
     if (dashboardStats) {
         refreshDashboardStats();
-        setInterval(refreshDashboardStats, 30000); // Refresh every 30 seconds
+        setInterval(refreshDashboardStats, 30000);
     }
 });
 
-// AJAX task status update function
 function updateTaskStatus(form) {
     const formData = new FormData(form);
     const submitBtn = form.querySelector('button[type="submit"]');
     
-    // Show loading state
     const originalText = submitBtn.innerHTML;
     submitBtn.innerHTML = '<i class="spinner-border spinner-border-sm"></i> Updating...';
     submitBtn.disabled = true;
@@ -71,7 +61,6 @@ function updateTaskStatus(form) {
     .then(response => response.json())
     .then(data => {
         if (data.success) {
-            // Update UI with new status
             const statusBadge = form.closest('.task-card').querySelector('.status-badge');
             if (statusBadge) {
                 statusBadge.textContent = data.status_display;
@@ -87,13 +76,11 @@ function updateTaskStatus(form) {
         showNotification('Network error occurred', 'error');
     })
     .finally(() => {
-        // Restore button state
         submitBtn.innerHTML = originalText;
         submitBtn.disabled = false;
     });
 }
 
-// Username availability checker
 function checkUsernameAvailability(username) {
     if (username.length < 3) return;
     
@@ -115,7 +102,6 @@ function checkUsernameAvailability(username) {
     });
 }
 
-// Form validation
 function validateForm(form) {
     let isValid = true;
     const requiredFields = form.querySelectorAll('[required]');
@@ -132,7 +118,6 @@ function validateForm(form) {
     return isValid;
 }
 
-// Show field error
 function showFieldError(field, message) {
     clearFieldError(field);
     const errorDiv = document.createElement('div');
@@ -151,7 +136,6 @@ function clearFieldError(field) {
     field.classList.remove('is-invalid');
 }
 
-// Dashboard statistics refresh
 function refreshDashboardStats() {
     fetch('/tasks/api/stats/')
     .then(response => response.json())
@@ -163,7 +147,6 @@ function refreshDashboardStats() {
     });
 }
 
-// Update statistics display
 function updateStatsDisplay(data) {
     const stats = data.status_stats;
     
@@ -183,7 +166,6 @@ function updateStatsDisplay(data) {
     });
 }
 
-// Show notification
 function showNotification(message, type = 'info') {
     const alertDiv = document.createElement('div');
     alertDiv.className = `alert alert-${type === 'error' ? 'danger' : type} alert-dismissible fade show`;
@@ -199,7 +181,6 @@ function showNotification(message, type = 'info') {
     if (container) {
         container.insertBefore(alertDiv, container.firstChild);
         
-        // Auto-dismiss after 5 seconds
         setTimeout(() => {
             if (alertDiv.parentNode) {
                 alertDiv.classList.remove('show');

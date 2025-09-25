@@ -5,13 +5,9 @@ from django.conf.urls.static import static
 
 urlpatterns = [
     path('admin/', admin.site.urls),
-
-    # Core + Accounts
     path('', include('apps.core.urls', namespace='core')),
     path('accounts/', include('apps.accounts.urls', namespace='accounts')),
-
     path('tasks/', include(('apps.tasks.urls', 'tasks'), namespace='tasks')),
-
     path('', include('django.contrib.auth.urls')),
 ]
 

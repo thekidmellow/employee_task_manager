@@ -68,7 +68,6 @@
 {% block content %}
 <section class="container-fluid py-4">
 
-    <!-- CSRF token for JS fetches (NEW) -->
     <input type="hidden" id="csrfToken" name="csrfmiddlewaretoken" value="{{ csrf_token }}">
 
     <div class="dashboard-header text-center">
@@ -76,9 +75,7 @@
         <p class="lead">Welcome back, {{ user.get_full_name }}! Here are your current tasks.</p>
     </div>
 
-    <!-- My Statistics -->
     <div class="row mb-4">
-        <!-- … unchanged stats cards … -->
         <div class="col-md-3 mb-3">
             <div class="task-card p-4 text-center">
                 <div class="progress-circle mx-auto mb-3" style="--progress: {{ completion_percentage }}">
@@ -111,7 +108,6 @@
     </div>
 
     <div class="row">
-        <!-- Today's Tasks -->
         <div class="col-lg-8 mb-4">
             <div class="task-card p-4">
                 <div class="d-flex justify-content-between align-items-center mb-3">
@@ -170,9 +166,7 @@
             </div>
         </div>
 
-        <!-- Quick Actions & Recent Activity -->
         <div class="col-lg-4">
-            <!-- Quick Actions -->
             <div class="task-card p-4 mb-4">
                 <h3 class="h5 mb-3">Quick Actions</h3>
                 <div class="d-grid gap-2">
@@ -185,7 +179,6 @@
                 </div>
             </div>
 
-            <!-- Recent Activity -->
             <div class="task-card p-4">
                 <h3 class="h5 mb-3">Recent Updates</h3>
                 <div style="max-height: 300px; overflow-y: auto;">
@@ -205,7 +198,6 @@
         </div>
     </div>
 
-    <!-- Weekly Progress -->
     <div class="row mt-4">
         <div class="col-12">
             <div class="task-card p-4">
@@ -233,7 +225,6 @@
 {% block extra_js %}
 <script>
 document.addEventListener('DOMContentLoaded', function() {
-    // Auto-refresh dashboard every 5 minutes
     setInterval(refreshDashboard, 300000);
 });
 
@@ -244,7 +235,6 @@ function updateTaskStatus(taskId, status) {
         return;
     }
 
-    // Build per-task URL (NEW: using tasks:update_task_status)
     const url = "{% url 'tasks:update_task_status' 0 %}".replace('0', taskId);
 
     fetch(url, {

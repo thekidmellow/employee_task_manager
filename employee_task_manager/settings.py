@@ -1,7 +1,3 @@
-"""
-Django settings for employee_task_manager project.
-"""
-
 import os
 from pathlib import Path
 
@@ -9,19 +5,14 @@ from decouple import config
 import dj_database_url
 from django.contrib.messages import constants as messages
 
-# Build paths inside the project like this: BASE_DIR / 'subdir'.
 BASE_DIR = Path(__file__).resolve().parent.parent
 
-# SECURITY WARNING: keep the secret key used in production secret!
-# SECRET_KEY = os.environ.get("SECRET_KEY")
 SECRET_KEY = config("SECRET_KEY", default="dev-only")
 
-# SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = config("DEBUG", default=True, cast=bool)
 
 ALLOWED_HOSTS = ["localhost", "127.0.0.1", ".herokuapp.com"]
 
-# Application definition
 INSTALLED_APPS = [
     "django.contrib.admin",
     "django.contrib.auth",
@@ -67,8 +58,6 @@ TEMPLATES = [
 
 WSGI_APPLICATION = "employee_task_manager.wsgi.application"
 
-# Database
-# Prefer Postgres if DATABASE_URL is set (Heroku, staging, prod)
 raw_db_url = config("DATABASE_URL", default="").strip()
 
 if raw_db_url:
@@ -87,7 +76,6 @@ if raw_db_url:
     )
     DATABASES = {"default": db}
 else:
-    # No DATABASE_URL → fall back to SQLite locally
     DATABASES = {
         "default": {
             "ENGINE": "django.db.backends.sqlite3",
@@ -95,7 +83,6 @@ else:
         }
     }
 
-# Password validation
 AUTH_PASSWORD_VALIDATORS = [
     {
         "NAME": (
@@ -117,18 +104,15 @@ AUTH_PASSWORD_VALIDATORS = [
     },
 ]
 
-# Internationalization
 LANGUAGE_CODE = "en-us"
 TIME_ZONE = "UTC"
 USE_I18N = True
 USE_TZ = True
 
-# Static files
 STATIC_URL = "/static/"
 STATIC_ROOT = BASE_DIR / "staticfiles"
 STATICFILES_DIRS = [BASE_DIR / "static"]
 
-# Django 5+ storage config
 if DEBUG:
     static_backend = "django.contrib.staticfiles.storage.StaticFilesStorage"
 else:
@@ -139,19 +123,15 @@ STORAGES = {
     "staticfiles": {"BACKEND": static_backend},
 }
 
-# Media files
 MEDIA_URL = "/media/"
 MEDIA_ROOT = BASE_DIR / "media"
 
-# Default primary key field type
 DEFAULT_AUTO_FIELD = "django.db.models.BigAutoField"
 
-# Login/Logout URLs
 LOGIN_URL = "accounts:login"
 LOGIN_REDIRECT_URL = "/"
 LOGOUT_REDIRECT_URL = "/"
 
-# Messages framework
 MESSAGE_TAGS = {
     messages.DEBUG: "alert-secondary",
     messages.INFO: "alert-info",

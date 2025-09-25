@@ -1,9 +1,3 @@
-# apps/tasks/forms.py
-"""
-Forms for task management functionality
-Demonstrates form validation and user input handling (LO3.1)
-"""
-
 from datetime import timedelta
 
 from django import forms
@@ -15,26 +9,11 @@ from .models import Task, TaskComment
 
 User = get_user_model()
 
-# Fields rendered with Bootstrap `.form-floating` need a non-empty
-# placeholder. We'll also ensure every widget gets a stable id like
-# `id_<fieldname>`.
 FLOATING_LABEL_FIELDS = {"title", "description", "notes"}
 
 
 class TaskCreationForm(forms.ModelForm):
-    """
-    Full create/edit form used on the Task create page.
 
-    Notable behaviors:
-    - Accepts an 'assignee' alias field (useful for tests or alternate UIs).
-    - Accepts both datetime-local and date-only strings for due_date.
-    - Treats date-only inputs as end-of-day (23:59) to avoid accidental
-      "past" rejections.
-    - Makes 'assigned_to' optional so 'assignee' alone can be used.
-    - On create, hides 'status' and defaults to 'pending'.
-    """
-
-    # Accept 'assignee' as an alias for 'assigned_to'
     assignee = forms.ModelChoiceField(
         queryset=User.objects.all(),
         required=False,
@@ -47,7 +26,7 @@ class TaskCreationForm(forms.ModelForm):
         fields = [
             "title",
             "description",
-            "assigned_to",  # kept so tests posting assigned_to still work
+            "assigned_to",
             "priority",
             "due_date",
             "status",
@@ -66,15 +45,12 @@ class TaskCreationForm(forms.ModelForm):
             "description": forms.Textarea(
                 attrs={
                     "class": "form-control",
-                    # required for .form-floating
                     "placeholder": " ",
-                    # rows + floating often clip; set height via CSS
                     "style": "height: 160px;",
                 }
             ),
             "assigned_to": forms.Select(attrs={"class": "form-select"}),
             "priority": forms.Select(attrs={"class": "form-select"}),
-            # HTML5 datetime-local input; field's input_formats handle parsing
             "due_date": forms.DateTimeInput(
                 attrs={"class": "form-control", "type": "datetime-local"},
                 format="%Y-%m-%dT%H:%M",
@@ -101,7 +77,6 @@ class TaskCreationForm(forms.ModelForm):
         kwargs.setdefault("auto_id", "id_%s")
         super().__init__(*args, **kwargs)
 
-        # Labels & help text
         self.fields["title"].label = "Task Title"
         self.fields["title"].help_text = (
             "Brief, descriptive title for the task (5–200 characters)"
@@ -123,48 +98,38 @@ class TaskCreationForm(forms.ModelForm):
             "When should this task be completed?"
         )
 
-        # Accept browser datetime-local and additional common formats,
-        # including date-only ISO ('YYYY-MM-DD') used in tests.
         self.fields["due_date"].input_formats = [
             "%Y-%m-%dT%H:%M",
             "%Y-%m-%d %H:%M",
             "%Y-%m-%d %H:%M:%S",
-            "%Y-%m-%d",   # date-only
-            "%m/%d/%Y",   # common US date-only (lenient)
-            "%d-%m-%Y",   # common EU date-only (lenient)
+            "%Y-%m-%d",
+            "%m/%d/%Y",
+            "%d-%m-%Y",
         ]
 
-        # Make assigned_to optional so 'assignee' alone is valid
         if "assigned_to" in self.fields:
             self.fields["assigned_to"].required = False
 
-        # On CREATE: make status optional, default to pending, and hide it
         if not self.instance.pk:
             self.fields["status"].required = False
             self.fields["status"].initial = "pending"
             self.fields["status"].widget = forms.HiddenInput()
 
-        # If editing, mirror current assignment into the synthetic alias field
         if self.instance and getattr(self.instance, "assigned_to", None):
             self.fields["assignee"].initial = self.instance.assigned_to
 
-        # Guarantee each widget has an id and set floating placeholders
         for name, field in self.fields.items():
             wid = field.widget
             wid.attrs.setdefault("id", f"id_{name}")
             if name in FLOATING_LABEL_FIELDS:
                 wid.attrs.setdefault("placeholder", " ")
 
-        # Do not restrict querysets by role here; views enforce permissions.
-
     def save(self, commit=True):
         obj = super().save(commit=False)
 
-        # Ensure status default on create
         if not self.instance.pk and not self.cleaned_data.get("status"):
             obj.status = "pending"
 
-        # Prefer 'assignee', else 'assigned_to'
         chosen = (
             self.cleaned_data.get("assignee")
             or self.cleaned_data.get("assigned_to")
@@ -208,19 +173,15 @@ class TaskCreationForm(forms.ModelForm):
     def clean_due_date(self):
         due_date = self.cleaned_data.get("due_date")
 
-        # Allow blank; the model's save() provides a safe default if missing
         if not due_date:
             return None
 
-        # Make timezone-aware to avoid warnings
         if timezone.is_naive(due_date):
             due_date = timezone.make_aware(
                 due_date,
                 timezone.get_current_timezone(),
             )
 
-        # If user entered a date-only (often parses as midnight),
-        # treat it as end-of-day.
         at_midnight = (0, 0, 0, 0)
         if (
             due_date.hour,
@@ -248,18 +209,15 @@ class TaskCreationForm(forms.ModelForm):
     def clean(self):
         cleaned_data = super().clean()
 
-        # Business rules
         priority = cleaned_data.get("priority")
         due_date = cleaned_data.get("due_date")
         status = cleaned_data.get("status")
 
-        # New tasks cannot start as completed
         if not self.instance.pk and status == "completed":
             raise ValidationError(
                 "New tasks cannot be created with completed status."
             )
 
-        # Urgent tasks should be within 3 days (only if a due_date was set)
         if priority == "urgent" and due_date:
             if due_date > timezone.now() + timedelta(days=3):
                 raise ValidationError(
@@ -271,7 +229,6 @@ class TaskCreationForm(forms.ModelForm):
 
 
 class TaskUpdateForm(forms.ModelForm):
-    """Form for employees to update only the task status."""
 
     class Meta:
         model = Task
@@ -308,7 +265,6 @@ class TaskUpdateForm(forms.ModelForm):
                 f"Cannot change status from {current_status} to {new_status}."
             )
 
-        # Employees cannot set back to pending after work started
         if (
             self.user
             and not self.user.groups.filter(name="Managers").exists()
@@ -323,7 +279,6 @@ class TaskUpdateForm(forms.ModelForm):
 
 
 class TaskCommentForm(forms.ModelForm):
-    """Form for adding comments to tasks"""
 
     class Meta:
         model = TaskComment
@@ -360,7 +315,6 @@ class TaskCommentForm(forms.ModelForm):
 
 
 class TaskFilterForm(forms.Form):
-    """Form for filtering tasks in list view"""
 
     STATUS_CHOICES = [("", "All Statuses")] + Task.STATUS_CHOICES
     PRIORITY_CHOICES = [("", "All Priorities")] + Task.PRIORITY_CHOICES
@@ -420,5 +374,4 @@ class TaskFilterForm(forms.Form):
                 self.fields["assigned_to"].widget.attrs["disabled"] = True
 
 
-# Keep this alias so tests can import TaskForm
 TaskForm = TaskCreationForm

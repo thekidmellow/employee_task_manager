@@ -11,23 +11,15 @@
 (function(window, document) {
     'use strict';
 
-    /**
-     * Main application object
-     */
     const TaskManager = {
-        // Configuration
         config: {
             alertTimeout: 5000,
             debounceDelay: 500,
             animationDuration: 300
         },
 
-        // Cache DOM elements
         elements: {},
 
-        /**
-         * Initialize the application
-         */
         init: function() {
             this.cacheElements();
             this.bindEvents();
@@ -37,9 +29,6 @@
             console.log('Task Manager initialized successfully');
         },
 
-        /**
-         * Cache frequently used DOM elements
-         */
         cacheElements: function() {
             this.elements = {
                 alerts: document.querySelectorAll('.alert:not(.alert-permanent)'),
@@ -51,37 +40,24 @@
             };
         },
 
-        /**
-         * Bind event listeners
-         */
         bindEvents: function() {
-            // Auto-dismiss alerts
             this.initAlertSystem();
 
-            // Status update forms
             this.initStatusUpdates();
 
-            // Username availability checker
             this.initUsernameChecker();
 
-            // Form validation
             this.initFormValidation();
 
-            // Dashboard auto-refresh
             this.initDashboardRefresh();
 
-            // Global keyboard shortcuts
             this.initKeyboardShortcuts();
 
-            // Window events
             window.addEventListener('beforeunload', this.handleBeforeUnload.bind(this));
             window.addEventListener('online', this.handleOnline.bind(this));
             window.addEventListener('offline', this.handleOffline.bind(this));
         },
 
-        /**
-         * Initialize components
-         */
         initializeComponents: function() {
             this.initTooltips();
             this.initPopovers();
@@ -89,9 +65,6 @@
             this.initCardAnimations();
         },
 
-        /**
-         * Alert system initialization
-         */
         initAlertSystem: function() {
             this.elements.alerts.forEach(alert => {
                 setTimeout(() => {
@@ -102,9 +75,6 @@
             });
         },
 
-        /**
-         * Dismiss alert with animation
-         */
         dismissAlert: function(alert) {
             alert.classList.remove('show');
             setTimeout(() => {
@@ -114,9 +84,6 @@
             }, this.config.animationDuration);
         },
 
-        /**
-         * Status update system
-         */
         initStatusUpdates: function() {
             this.elements.statusForms.forEach(form => {
                 form.addEventListener('submit', (e) => {
@@ -126,19 +93,14 @@
             });
         },
 
-        /**
-         * Update task status via AJAX
-         */
         updateTaskStatus: function(form) {
             const formData = new FormData(form);
             const submitBtn = form.querySelector('button[type="submit"]');
             
-            // Show loading state
             const originalText = submitBtn.innerHTML;
             submitBtn.innerHTML = '<span class="spinner-border spinner-border-sm me-2" role="status" aria-hidden="true"></span>Updating...';
             submitBtn.disabled = true;
 
-            // Get CSRF token
             const csrfToken = this.getCSRFToken();
             if (!csrfToken) {
                 this.showNotification('Security token missing. Please refresh the page.', 'error');
@@ -146,7 +108,6 @@
                 return;
             }
 
-            // Make request
             fetch(form.action, {
                 method: 'POST',
                 body: formData,
@@ -177,9 +138,6 @@
             });
         },
 
-        /**
-         * Handle successful status update
-         */
         handleStatusUpdateSuccess: function(form, data) {
             const taskCard = form.closest('.task-card');
             if (taskCard && data.status_display && data.status_color) {
@@ -189,7 +147,6 @@
                     statusBadge.className = `badge bg-${data.status_color} status-badge`;
                 }
 
-                // Update progress bar if present
                 const progressBar = taskCard.querySelector('.progress-bar');
                 if (progressBar && data.progress_percentage !== undefined) {
                     progressBar.style.width = `${data.progress_percentage}%`;
@@ -198,9 +155,6 @@
             }
         },
 
-        /**
-         * Username availability checker
-         */
         initUsernameChecker: function() {
             if (!this.elements.usernameField) return;
 
@@ -213,9 +167,6 @@
             });
         },
 
-        /**
-         * Check username availability
-         */
         checkUsernameAvailability: function(username) {
             if (username.length < 3) return;
 
@@ -248,9 +199,6 @@
                 });
         },
 
-        /**
-         * Form validation system
-         */
         initFormValidation: function() {
             const validationForms = document.querySelectorAll('form[data-validate="true"]');
             
@@ -263,14 +211,10 @@
             });
         },
 
-        /**
-         * Validate form
-         */
         validateForm: function(form) {
             let isValid = true;
             const requiredFields = form.querySelectorAll('[required]');
 
-            // Clear previous errors
             form.querySelectorAll('.is-invalid').forEach(field => {
                 field.classList.remove('is-invalid');
             });
@@ -280,7 +224,6 @@
                 }
             });
 
-            // Validate required fields
             requiredFields.forEach(field => {
                 if (!field.value.trim()) {
                     this.showFieldError(field, 'This field is required');
@@ -288,7 +231,6 @@
                 }
             });
 
-            // Email validation
             const emailFields = form.querySelectorAll('input[type="email"]');
             emailFields.forEach(field => {
                 if (field.value && !this.isValidEmail(field.value)) {
@@ -297,7 +239,6 @@
                 }
             });
 
-            // Password matching
             const passwordFields = form.querySelectorAll('input[type="password"]');
             if (passwordFields.length === 2) {
                 const [password1, password2] = passwordFields;
@@ -310,9 +251,6 @@
             return isValid;
         },
 
-        /**
-         * Show field error
-         */
         showFieldError: function(field, message) {
             field.classList.add('is-invalid');
             
@@ -326,21 +264,15 @@
             errorElement.textContent = message;
         },
 
-        /**
-         * Dashboard refresh system
-         */
         initDashboardRefresh: function() {
             if (this.elements.dashboardStats) {
                 this.refreshDashboardStats();
                 setInterval(() => {
                     this.refreshDashboardStats();
-                }, 30000); // Refresh every 30 seconds
+                }, 30000);
             }
         },
 
-        /**
-         * Refresh dashboard statistics
-         */
         refreshDashboardStats: function() {
             fetch('/tasks/api/stats/')
                 .then(response => {
@@ -357,9 +289,6 @@
                 });
         },
 
-        /**
-         * Update statistics display
-         */
         updateStatsDisplay: function(data) {
             const stats = data.status_stats || {};
             
@@ -379,9 +308,6 @@
             });
         },
 
-        /**
-         * Animate number change
-         */
         animateNumber: function(element, start, end) {
             const duration = 1000;
             const stepTime = 50;
@@ -400,12 +326,9 @@
             }, stepTime);
         },
 
-        /**
-         * Initialize keyboard shortcuts
-         */
         initKeyboardShortcuts: function() {
             document.addEventListener('keydown', (e) => {
-                // Ctrl/Cmd + K for search
+
                 if ((e.ctrlKey || e.metaKey) && e.key === 'k') {
                     e.preventDefault();
                     const searchField = document.querySelector('input[type="search"], input[name="search"]');
@@ -414,7 +337,6 @@
                     }
                 }
 
-                // Escape to close modals/dropdowns
                 if (e.key === 'Escape') {
                     const openDropdowns = document.querySelectorAll('.dropdown-menu.show');
                     openDropdowns.forEach(dropdown => {
@@ -427,9 +349,6 @@
             });
         },
 
-        /**
-         * Initialize tooltips
-         */
         initTooltips: function() {
             const tooltipElements = document.querySelectorAll('[data-bs-toggle="tooltip"]');
             if (tooltipElements.length && window.bootstrap) {
@@ -439,9 +358,6 @@
             }
         },
 
-        /**
-         * Initialize popovers
-         */
         initPopovers: function() {
             const popoverElements = document.querySelectorAll('[data-bs-toggle="popover"]');
             if (popoverElements.length && window.bootstrap) {
@@ -451,9 +367,6 @@
             }
         },
 
-        /**
-         * Initialize progress bars
-         */
         initProgressBars: function() {
             const progressBars = document.querySelectorAll('.progress-bar');
             
@@ -476,9 +389,6 @@
             });
         },
 
-        /**
-         * Initialize card animations
-         */
         initCardAnimations: function() {
             const cards = document.querySelectorAll('.card');
             
@@ -499,26 +409,17 @@
             });
         },
 
-        /**
-         * Enhance accessibility
-         */
         enhanceAccessibility: function() {
-            // Add skip links
+
             this.addSkipLinks();
 
-            // Enhance form labels
             this.enhanceFormLabels();
 
-            // Add ARIA attributes
             this.addAriaAttributes();
 
-            // Focus management
             this.initFocusManagement();
         },
 
-        /**
-         * Add skip links for keyboard navigation
-         */
         addSkipLinks: function() {
             const skipLink = document.querySelector('a[href="#main-content"]');
             if (!skipLink) {
@@ -530,9 +431,6 @@
             }
         },
 
-        /**
-         * Enhance form labels
-         */
         enhanceFormLabels: function() {
             const inputs = document.querySelectorAll('input, select, textarea');
             
@@ -549,17 +447,12 @@
             });
         },
 
-        /**
-         * Add ARIA attributes
-         */
         addAriaAttributes: function() {
-            // Add role attributes to navigation
             const navElements = document.querySelectorAll('nav:not([role])');
             navElements.forEach(nav => {
                 nav.setAttribute('role', 'navigation');
             });
 
-            // Add landmark roles
             const main = document.querySelector('main:not([role])');
             if (main) {
                 main.setAttribute('role', 'main');
@@ -571,22 +464,14 @@
             }
         },
 
-        /**
-         * Initialize focus management
-         */
         initFocusManagement: function() {
-            // Focus first error field on form submission
             document.addEventListener('invalid', (e) => {
                 e.target.focus();
             }, true);
 
-            // Announce page changes for screen readers
             this.announcePageChanges();
         },
 
-        /**
-         * Announce page changes for screen readers
-         */
         announcePageChanges: function() {
             const pageTitle = document.title;
             const announcer = document.createElement('div');
@@ -601,9 +486,6 @@
             }, 1000);
         },
 
-        /**
-         * Handle window beforeunload
-         */
         handleBeforeUnload: function(e) {
             const forms = document.querySelectorAll('form');
             const hasUnsavedChanges = Array.from(forms).some(form => {
@@ -616,23 +498,14 @@
             }
         },
 
-        /**
-         * Handle online event
-         */
         handleOnline: function() {
             this.showNotification('Connection restored', 'success');
         },
 
-        /**
-         * Handle offline event
-         */
         handleOffline: function() {
             this.showNotification('Connection lost. Some features may not work.', 'warning');
         },
 
-        /**
-         * Show notification
-         */
         showNotification: function(message, type = 'info') {
             const iconMap = {
                 'success': 'check-circle',
@@ -657,16 +530,12 @@
             if (container) {
                 container.insertBefore(alertDiv, container.firstChild);
 
-                // Auto-dismiss
                 setTimeout(() => {
                     this.dismissAlert(alertDiv);
                 }, this.config.alertTimeout);
             }
         },
 
-        /**
-         * Utility functions
-         */
         getCSRFToken: function() {
             return document.querySelector('[name=csrfmiddlewaretoken]')?.value ||
                    document.querySelector('meta[name="csrf-token"]')?.getAttribute('content');
@@ -682,9 +551,6 @@
             button.disabled = false;
         },
 
-        /**
-         * Debounce function
-         */
         debounce: function(func, wait) {
             let timeout;
             return function executedFunction(...args) {
@@ -697,9 +563,6 @@
             };
         },
 
-        /**
-         * Throttle function
-         */
         throttle: function(func, limit) {
             let inThrottle;
             return function() {
@@ -714,27 +577,18 @@
         }
     };
 
-    /**
-     * Initialize when DOM is ready
-     */
     if (document.readyState === 'loading') {
         document.addEventListener('DOMContentLoaded', () => TaskManager.init());
     } else {
         TaskManager.init();
     }
 
-    /**
-     * Expose public API
-     */
     window.TaskManager = {
         showNotification: TaskManager.showNotification.bind(TaskManager),
         updateTaskStatus: TaskManager.updateTaskStatus.bind(TaskManager),
         validateForm: TaskManager.validateForm.bind(TaskManager)
     };
 
-    /**
-     * Legacy function support for backwards compatibility
-     */
     window.updateTaskStatus = function(form) {
         TaskManager.updateTaskStatus(form);
     };

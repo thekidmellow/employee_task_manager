@@ -33,7 +33,6 @@ team collaboration tools.{% endblock %}
                     {% csrf_token %}
                     <input type="hidden" name="next" value="{{ next|default:'/' }}">
 
-                    <!-- Username -->
                     <div class="mb-3">
                         <label for="id_username" class="form-label">
                             <i class="bi bi-person" aria-hidden="true"></i> Username
@@ -46,7 +45,6 @@ team collaboration tools.{% endblock %}
                         {% endif %}
                     </div>
 
-                    <!-- Password -->
                     <div class="mb-3">
                         <label for="id_password" class="form-label">
                             <i class="bi bi-lock" aria-hidden="true"></i> Password
@@ -65,7 +63,6 @@ team collaboration tools.{% endblock %}
                         {% endif %}
                     </div>
 
-                    <!-- Remember Me -->
                     <div class="mb-3 form-check">
                         {% if request.method == 'POST' and request.POST.remember_me %}
                         <input type="checkbox" class="form-check-input" id="rememberMe" name="remember_me" checked>
@@ -83,7 +80,6 @@ team collaboration tools.{% endblock %}
                     </div>
                 </form>
 
-                <!-- Links -->
                 <div class="text-center mt-4">
                     <hr>
                     <p class="mb-2">
@@ -101,7 +97,6 @@ team collaboration tools.{% endblock %}
             </div>
         </div>
 
-        <!-- Demo credentials (remove in production) -->
         <div class="card mt-3 border-info">
             <div class="card-header bg-info text-white">
                 <small><i class="bi bi-info-circle" aria-hidden="true"></i> Demo Credentials</small>
