@@ -83,14 +83,12 @@ View and manage your assigned tasks with real-time status updates and priority i
     {% endif %}
 </header>
 
-<!-- Search and Filter Panel -->
 <section class="filter-section p-4 mb-4" aria-labelledby="filter-heading">
     <h2 id="filter-heading" class="h5 mb-3">
         <i class="bi bi-funnel" aria-hidden="true"></i> Search and Filter Tasks
     </h2>
 
     <form method="get" class="row g-3" role="search">
-        <!-- Search Input -->
         <div class="col-md-4">
             <label for="search" class="form-label">Search Tasks</label>
             <div class="input-group">
@@ -101,7 +99,6 @@ View and manage your assigned tasks with real-time status updates and priority i
             <div id="searchHelp" class="form-text">Search in task titles and descriptions</div>
         </div>
 
-        <!-- Status Filter -->
         <div class="col-md-2">
             <label for="status" class="form-label">Status</label>
             <select class="form-select" id="status" name="status" aria-label="Filter by task status">
@@ -113,7 +110,6 @@ View and manage your assigned tasks with real-time status updates and priority i
         </div>
 
 
-        <!-- Priority Filter -->
         <div class="col-md-2">
             <label for="priority" class="form-label">Priority</label>
             <select class="form-select" id="priority" name="priority" aria-label="Filter by task priority">
@@ -124,14 +120,12 @@ View and manage your assigned tasks with real-time status updates and priority i
             </select>
         </div>
 
-        <!-- Due Date Filter -->
         <div class="col-md-2">
             <label for="due_date" class="form-label">Due Date</label>
             <input type="date" class="form-control" id="due_date" name="due_date" value="{{ request.GET.due_date }}"
                 aria-label="Filter by due date">
         </div>
 
-        <!-- Filter Actions -->
         <div class="col-md-2 d-flex align-items-end">
             <div class="btn-group w-100" role="group" aria-label="Filter actions">
                 <button type="submit" class="btn btn-outline-primary" aria-label="Apply filters">
@@ -145,7 +139,6 @@ View and manage your assigned tasks with real-time status updates and priority i
     </form>
 </section>
 
-<!-- Task Statistics -->
 <section class="task-stats rounded-3 p-4 mb-4" aria-labelledby="stats-heading">
     <h2 id="stats-heading" class="h5 mb-3">Task Summary</h2>
     <div class="row text-center">
@@ -184,7 +177,6 @@ View and manage your assigned tasks with real-time status updates and priority i
     </div>
 </section>
 
-<!-- Task List -->
 {% if tasks %}
 <section aria-labelledby="tasks-heading">
     <h2 id="tasks-heading" class="visually-hidden">Task List</h2>
@@ -199,7 +191,6 @@ View and manage your assigned tasks with real-time status updates and priority i
                         {{ task.get_priority_display }} Priority
                     </span>
                     {% if task.is_overdue %}
-                    <!-- Removed aria-label; visible text already present -->
                     <span class="badge bg-danger status-badge">
                         <i class="bi bi-exclamation-triangle" aria-hidden="true"></i> Overdue
                     </span>
@@ -239,7 +230,6 @@ View and manage your assigned tasks with real-time status updates and priority i
                         </span>
                     </div>
 
-                    <!-- Progress Bar with safe defaults -->
                     {% with pct=task.get_progress_percentage|default_if_none:"0"|default:"0"|floatformat:0 %}
                     <div class="mb-3">
                         <div class="d-flex justify-content-between align-items-center mb-1">
@@ -281,7 +271,6 @@ View and manage your assigned tasks with real-time status updates and priority i
         {% endfor %}
     </div>
 
-    <!-- Pagination -->
     {% if is_paginated %}
     <nav aria-label="Task pagination" class="mt-4">
         <ul class="pagination justify-content-center">
@@ -325,7 +314,6 @@ View and manage your assigned tasks with real-time status updates and priority i
     {% endif %}
 </section>
 {% else %}
-<!-- No Tasks Message -->
 <section class="text-center py-5" aria-labelledby="no-tasks-heading">
     <i class="bi bi-inbox display-1 text-muted" aria-hidden="true"></i>
     <h2 id="no-tasks-heading" class="mt-3">No Tasks Found</h2>
@@ -351,10 +339,6 @@ View and manage your assigned tasks with real-time status updates and priority i
 
 {% block extra_js %}
 <script>
-    /**
-     * Task List JavaScript functionality
-     * Handles AJAX status updates, auto-filtering, and UI interactions
-     */
     (function () {
         'use strict';
 
