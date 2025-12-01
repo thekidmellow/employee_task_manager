@@ -1,13 +1,3 @@
-/**
- * Employee Task Manager - Main JavaScript Module
- * 
- * This module provides core JavaScript functionality for the Employee Task Manager
- * including AJAX operations, form enhancements, real-time updates, and accessibility features.
- * 
- * @author Employee Task Manager Team
- * @version 2.0.0
- */
-
 (function(window, document) {
     'use strict';
 
