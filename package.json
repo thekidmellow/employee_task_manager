@@ -1,0 +1,42 @@
+{
+  "name": "employee_task_manager",
+  "private": true,
+  "type": "commonjs",
+  "engines": {
+    "node": ">=18"
+  },
+  "scripts": {
+    "test:js": "jest",
+    "test:js:coverage": "jest --coverage",
+    "test:js:watch": "jest --watch"
+  },
+  "devDependencies": {
+    "@testing-library/dom": "^9.3.3",
+    "@testing-library/jest-dom": "^5.17.0",
+    "jest": "^29.7.0",
+    "jsdom": "^24.0.0"
+  },
+  "jest": {
+    "testEnvironment": "jsdom",
+    "setupFiles": [
+      "<rootDir>/static/js/tests/prep.js"
+    ],
+    "setupFilesAfterEnv": [
+      "<rootDir>/static/js/tests/setup.js"
+    ],
+    "testMatch": [
+      "<rootDir>/static/js/tests/**/*.test.js"
+    ],
+    "collectCoverage": true,
+    "coverageDirectory": "test_results/js-coverage",
+    "collectCoverageFrom": [
+      "static/js/**/*.js",
+      "!static/js/tests/**",
+      "!static/js/vendor/**",
+      "!static/js/main.js"
+    ],
+    "verbose": true,
+    "bail": 1,
+    "testTimeout": 10000
+  }
+}
