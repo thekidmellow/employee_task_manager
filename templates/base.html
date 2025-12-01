@@ -24,7 +24,7 @@
 </head>
 
 <body>
-    <a href="#main-content" class="visually-hidden-focusable">Skip to main content</a>
+    <a href="#main-content" class="visually-hidden-focusable skip-link">Skip to main content</a>
 
     <nav class="navbar navbar-expand-lg navbar-dark bg-primary" aria-label="Main navigation">
         <div class="container">
@@ -115,7 +115,7 @@
         </div>
     </nav>
 
-    <main id="main-content" class="container mt-4">
+    <main id="main-content" class="container mt-4" tabindex="-1">
         {% if messages %}
         <div class="messages-container" role="alert" aria-live="polite">
             {% for message in messages %}
