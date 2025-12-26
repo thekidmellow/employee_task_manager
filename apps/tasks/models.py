@@ -8,7 +8,6 @@ User = get_user_model()
 
 
 class Task(models.Model):
-
     STATUS_CHOICES = [
         ("pending", "Pending"),
         ("in_progress", "In Progress"),
@@ -25,20 +24,10 @@ class Task(models.Model):
 
     title = models.CharField(
         max_length=200,
-        validators=[
-            MinLengthValidator(
-                5,
-                "Title must be at least 5 characters long",
-            )
-        ],
+        validators=[MinLengthValidator(5, "Title must be at least 5 characters long")],
     )
     description = models.TextField(
-        validators=[
-            MinLengthValidator(
-                10,
-                "Description must be at least 10 characters long",
-            )
-        ],
+        validators=[MinLengthValidator(10, "Description must be at least 10 characters long")],
     )
     assigned_to = models.ForeignKey(
         User,
@@ -52,16 +41,8 @@ class Task(models.Model):
         related_name="created_tasks",
         help_text="Manager who created this task",
     )
-    status = models.CharField(
-        max_length=20,
-        choices=STATUS_CHOICES,
-        default="pending",
-    )
-    priority = models.CharField(
-        max_length=10,
-        choices=PRIORITY_CHOICES,
-        default="medium",
-    )
+    status = models.CharField(max_length=20, choices=STATUS_CHOICES, default="pending")
+    priority = models.CharField(max_length=10, choices=PRIORITY_CHOICES, default="medium")
     due_date = models.DateTimeField()
 
     estimated_hours = models.DecimalField(
@@ -69,16 +50,12 @@ class Task(models.Model):
         decimal_places=2,
         null=True,
         blank=True,
-        help_text=(
-            "Estimated time (in hours) required to complete the task"
-        ),
+        help_text="Estimated time (in hours) required to complete the task",
     )
     notes = models.TextField(
         null=True,
         blank=True,
-        help_text=(
-            "Additional notes, special instructions, or context"
-        ),
+        help_text="Additional notes, special instructions, or context",
     )
 
     created_at = models.DateTimeField(auto_now_add=True)
@@ -107,21 +84,23 @@ class Task(models.Model):
     def __setattr__(self, name, value):
         if name == "due_date" and isinstance(value, datetime):
             from django.utils import timezone as _tz
-
             if _tz.is_naive(value):
-                value = _tz.make_aware(
-                    value,
-                    _tz.get_current_timezone(),
-                )
+                value = _tz.make_aware(value, _tz.get_current_timezone())
         super().__setattr__(name, value)
 
     def __str__(self):
         return f"{self.title} - {self.get_status_display()}"
 
     def save(self, *args, **kwargs):
-
         if not getattr(self, "due_date", None):
             self.due_date = timezone.now() + timedelta(days=7)
+
+        if isinstance(self.due_date, str):
+            try:
+                parsed = datetime.fromisoformat(self.due_date.strip())
+            except ValueError:
+                parsed = datetime.fromisoformat(self.due_date.strip() + ":00")
+            self.due_date = parsed
 
         if timezone.is_naive(self.due_date):
             self.due_date = timezone.make_aware(
@@ -131,7 +110,6 @@ class Task(models.Model):
 
         if self.status == "completed" and not self.completed_at:
             self.completed_at = timezone.now()
-
         if self.status != "completed" and self.completed_at:
             self.completed_at = None
 
@@ -139,21 +117,18 @@ class Task(models.Model):
 
     @property
     def is_overdue(self):
-
         if self.status == "completed":
             return False
         return timezone.now() > self.due_date
 
     @property
     def days_until_due(self):
-
         if self.status == "completed":
             return 0
         delta = self.due_date - timezone.now()
         return delta.days if delta.days > 0 else 0
 
     def get_priority_color(self):
-
         priority_colors = {
             "low": "text-success",
             "medium": "text-warning",
@@ -162,8 +137,16 @@ class Task(models.Model):
         }
         return priority_colors.get(self.priority, "text-secondary")
 
-    def get_status_color(self):
+    def get_priority_badge_color(self):
+        priority_badges = {
+            "low": "success",
+            "medium": "warning",
+            "high": "danger",
+            "urgent": "dark",
+        }
+        return priority_badges.get(self.priority, "secondary")
 
+    def get_status_color(self):
         status_colors = {
             "pending": "secondary",
             "in_progress": "primary",
@@ -174,20 +157,10 @@ class Task(models.Model):
 
 
 class TaskComment(models.Model):
-
-    task = models.ForeignKey(
-        Task,
-        on_delete=models.CASCADE,
-        related_name="comments",
-    )
+    task = models.ForeignKey(Task, on_delete=models.CASCADE, related_name="comments")
     user = models.ForeignKey(User, on_delete=models.CASCADE)
     comment = models.TextField(
-        validators=[
-            MinLengthValidator(
-                5,
-                "Comment must be at least 5 characters long",
-            )
-        ]
+        validators=[MinLengthValidator(5, "Comment must be at least 5 characters long")]
     )
     created_at = models.DateTimeField(auto_now_add=True)
 
@@ -195,7 +168,4 @@ class TaskComment(models.Model):
         ordering = ["-created_at"]
 
     def __str__(self):
-        return (
-            f"Comment by {self.user.username} on "
-            f"{self.task.title}"
-        )
+        return f"Comment by {self.user.username} on {self.task.title}"

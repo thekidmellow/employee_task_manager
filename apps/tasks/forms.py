@@ -13,7 +13,6 @@ FLOATING_LABEL_FIELDS = {"title", "description", "notes"}
 
 
 class TaskCreationForm(forms.ModelForm):
-
     assignee = forms.ModelChoiceField(
         queryset=User.objects.all(),
         required=False,
@@ -37,7 +36,6 @@ class TaskCreationForm(forms.ModelForm):
             "title": forms.TextInput(
                 attrs={
                     "class": "form-control",
-                    # required for .form-floating
                     "placeholder": " ",
                     "maxlength": 200,
                 }
@@ -84,19 +82,14 @@ class TaskCreationForm(forms.ModelForm):
 
         self.fields["description"].label = "Description"
         self.fields["description"].help_text = (
-            "Detailed description of what needs to be done "
-            "(minimum 10 characters)"
+            "Detailed description of what needs to be done (minimum 10 characters)"
         )
 
         self.fields["priority"].label = "Priority Level"
-        self.fields["priority"].help_text = (
-            "Set the importance level of this task"
-        )
+        self.fields["priority"].help_text = "Set the importance level of this task"
 
         self.fields["due_date"].label = "Due Date & Time"
-        self.fields["due_date"].help_text = (
-            "When should this task be completed?"
-        )
+        self.fields["due_date"].help_text = "When should this task be completed?"
 
         self.fields["due_date"].input_formats = [
             "%Y-%m-%dT%H:%M",
@@ -130,10 +123,7 @@ class TaskCreationForm(forms.ModelForm):
         if not self.instance.pk and not self.cleaned_data.get("status"):
             obj.status = "pending"
 
-        chosen = (
-            self.cleaned_data.get("assignee")
-            or self.cleaned_data.get("assigned_to")
-        )
+        chosen = self.cleaned_data.get("assignee") or self.cleaned_data.get("assigned_to")
         if chosen is not None:
             obj.assigned_to = chosen
 
@@ -144,43 +134,29 @@ class TaskCreationForm(forms.ModelForm):
     def clean_title(self):
         title = self.cleaned_data.get("title", "").strip()
         if len(title) < 5:
-            raise ValidationError(
-                "Task title must be at least 5 characters long."
-            )
+            raise ValidationError("Task title must be at least 5 characters long.")
         if len(title) > 200:
-            raise ValidationError(
-                "Task title cannot exceed 200 characters."
-            )
+            raise ValidationError("Task title cannot exceed 200 characters.")
         forbidden_words = ["spam", "test123", "dummy"]
         if any(word in title.lower() for word in forbidden_words):
-            raise ValidationError(
-                "Please use a professional task title."
-            )
+            raise ValidationError("Please use a professional task title.")
         return title
 
     def clean_description(self):
         description = self.cleaned_data.get("description", "").strip()
         if len(description) < 10:
-            raise ValidationError(
-                "Task description must be at least 10 characters long."
-            )
+            raise ValidationError("Task description must be at least 10 characters long.")
         if len(description) > 2000:
-            raise ValidationError(
-                "Task description cannot exceed 2000 characters."
-            )
+            raise ValidationError("Task description cannot exceed 2000 characters.")
         return description
 
     def clean_due_date(self):
         due_date = self.cleaned_data.get("due_date")
-
         if not due_date:
             return None
 
         if timezone.is_naive(due_date):
-            due_date = timezone.make_aware(
-                due_date,
-                timezone.get_current_timezone(),
-            )
+            due_date = timezone.make_aware(due_date, timezone.get_current_timezone())
 
         at_midnight = (0, 0, 0, 0)
         if (
@@ -189,20 +165,13 @@ class TaskCreationForm(forms.ModelForm):
             due_date.second,
             due_date.microsecond,
         ) == at_midnight:
-            due_date = due_date.replace(
-                hour=23,
-                minute=59,
-                second=0,
-                microsecond=0,
-            )
+            due_date = due_date.replace(hour=23, minute=59, second=0, microsecond=0)
 
         now = timezone.now()
         if due_date <= now:
             raise ValidationError("Due date must be in the future.")
         if due_date > now + timedelta(days=365):
-            raise ValidationError(
-                "Due date cannot be more than 1 year in the future."
-            )
+            raise ValidationError("Due date cannot be more than 1 year in the future.")
 
         return due_date
 
@@ -214,22 +183,18 @@ class TaskCreationForm(forms.ModelForm):
         status = cleaned_data.get("status")
 
         if not self.instance.pk and status == "completed":
-            raise ValidationError(
-                "New tasks cannot be created with completed status."
-            )
+            raise ValidationError("New tasks cannot be created with completed status.")
 
         if priority == "urgent" and due_date:
             if due_date > timezone.now() + timedelta(days=3):
                 raise ValidationError(
-                    "Urgent priority tasks should have a due date within "
-                    "3 days."
+                    "Urgent priority tasks should have a due date within 3 days."
                 )
 
         return cleaned_data
 
 
 class TaskUpdateForm(forms.ModelForm):
-
     class Meta:
         model = Task
         fields = ["status"]
@@ -239,15 +204,11 @@ class TaskUpdateForm(forms.ModelForm):
         self.user = kwargs.pop("user", None)
         kwargs.setdefault("auto_id", "id_%s")
         super().__init__(*args, **kwargs)
+
         self.fields["status"].label = "Task Status"
-        self.fields["status"].help_text = (
-            "Update the current status of this task"
-        )
+        self.fields["status"].help_text = "Update the current status of this task"
         self.fields["status"].widget.attrs.setdefault("id", "id_status")
-        self.fields["status"].widget.attrs.setdefault(
-            "aria-describedby",
-            "id_status_helptext",
-        )
+        self.fields["status"].widget.attrs.setdefault("aria-describedby", "id_status_helptext")
 
     def clean_status(self):
         new_status = self.cleaned_data.get("status")
@@ -279,7 +240,6 @@ class TaskUpdateForm(forms.ModelForm):
 
 
 class TaskCommentForm(forms.ModelForm):
-
     class Meta:
         model = TaskComment
         fields = ["comment"]
@@ -297,25 +257,18 @@ class TaskCommentForm(forms.ModelForm):
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
         self.fields["comment"].label = "Your Comment"
-        self.fields["comment"].help_text = (
-            "Share updates, ask questions, or provide feedback"
-        )
+        self.fields["comment"].help_text = "Share updates, ask questions, or provide feedback"
 
     def clean_comment(self):
         comment = self.cleaned_data.get("comment", "").strip()
         if len(comment) < 5:
-            raise ValidationError(
-                "Comment must be at least 5 characters long."
-            )
+            raise ValidationError("Comment must be at least 5 characters long.")
         if len(comment) > 1000:
-            raise ValidationError(
-                "Comment cannot exceed 1000 characters."
-            )
+            raise ValidationError("Comment cannot exceed 1000 characters.")
         return comment
 
 
 class TaskFilterForm(forms.Form):
-
     STATUS_CHOICES = [("", "All Statuses")] + Task.STATUS_CHOICES
     PRIORITY_CHOICES = [("", "All Priorities")] + Task.PRIORITY_CHOICES
 
@@ -325,9 +278,7 @@ class TaskFilterForm(forms.Form):
         widget=forms.TextInput(
             attrs={
                 "class": "form-control",
-                "placeholder": (
-                    "Search tasks by title or description..."
-                ),
+                "placeholder": "Search tasks by title or description...",
             }
         ),
     )
@@ -361,15 +312,11 @@ class TaskFilterForm(forms.Form):
                 if employees.exists():
                     self.fields["assigned_to"].queryset = employees
                 else:
-                    self.fields["assigned_to"].queryset = (
-                        User.objects.filter(is_superuser=False).exclude(
-                            groups__name="Managers"
-                        )
-                    )
+                    self.fields["assigned_to"].queryset = User.objects.filter(
+                        is_superuser=False
+                    ).exclude(groups__name="Managers")
             else:
-                self.fields["assigned_to"].queryset = User.objects.filter(
-                    id=user.id
-                )
+                self.fields["assigned_to"].queryset = User.objects.filter(id=user.id)
                 self.fields["assigned_to"].initial = user
                 self.fields["assigned_to"].widget.attrs["disabled"] = True
 

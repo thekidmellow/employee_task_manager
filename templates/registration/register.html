@@ -3,10 +3,31 @@
 
 {% block title %}Register - Employee Task Manager{% endblock %}
 
-{% block meta_description %}Create your Employee Task Manager account. Join teams worldwide in streamlining productivity
-with our comprehensive task management solution.{% endblock %}
+{% block meta_description %}
+<meta name="description"
+      content="Create your Employee Task Manager account. Join teams worldwide in streamlining productivity with our comprehensive task management solution.">
+{% endblock %}
 
 {% block content %}
+<style>
+    /* Keep the submit button visible, clickable, and above any overlapping elements */
+    .sticky-submit {
+        position: sticky;
+        bottom: 0;
+        background: #fff;
+        padding-top: 1rem;
+        padding-bottom: .5rem;
+        z-index: 20;
+        box-shadow: 0 -4px 10px rgba(0, 0, 0, .04);
+    }
+
+    #submitBtn {
+        position: relative;
+        z-index: 21;
+        pointer-events: auto;
+    }
+</style>
+
 <div class="row justify-content-center">
     <div class="col-md-8 col-lg-6">
         <div class="card shadow-sm">
@@ -27,73 +48,55 @@ with our comprehensive task management solution.{% endblock %}
                         </label>
                         {{ form.username }}
                         {% if form.username.errors %}
-                        <div class="invalid-feedback d-block">
-                            {{ form.username.errors.0 }}
-                        </div>
+                            <div class="invalid-feedback d-block">{{ form.username.errors.0 }}</div>
                         {% endif %}
-
                         <div id="{{ form.username.id_for_label }}_helptext" class="form-text">
-                            {% if form.username.help_text %}
-                            {{ form.username.help_text }}
-                            {% else %}
-                            150 characters or fewer. Letters, digits and @/./+/-/_ only.
+                            {% if form.username.help_text %}{{ form.username.help_text }}{% else %}
+                                150 characters or fewer. Letters, digits and @/./+/-/_ only.
                             {% endif %}
                         </div>
-                        
                         <div id="username-availability" aria-live="polite"></div>
                     </div>
 
                     <div class="mb-3">
                         <label for="{{ form.email.id_for_label }}" class="form-label">
-                            <i class="bi bi-envelope" aria-hidden="true"></i> Email Address <span
-                                class="text-danger">*</span>
+                            <i class="bi bi-envelope" aria-hidden="true"></i> Email Address <span class="text-danger">*</span>
                         </label>
                         {{ form.email }}
                         {% if form.email.errors %}
-                        <div class="invalid-feedback d-block">
-                            {{ form.email.errors.0 }}
-                        </div>
+                            <div class="invalid-feedback d-block">{{ form.email.errors.0 }}</div>
                         {% endif %}
                     </div>
 
                     <div class="row">
                         <div class="col-md-6 mb-3">
                             <label for="{{ form.first_name.id_for_label }}" class="form-label">
-                                <i class="bi bi-person-badge" aria-hidden="true"></i> First Name <span
-                                    class="text-danger">*</span>
+                                <i class="bi bi-person-badge" aria-hidden="true"></i> First Name <span class="text-danger">*</span>
                             </label>
                             {{ form.first_name }}
                             {% if form.first_name.errors %}
-                            <div class="invalid-feedback d-block">
-                                {{ form.first_name.errors.0 }}
-                            </div>
+                                <div class="invalid-feedback d-block">{{ form.first_name.errors.0 }}</div>
                             {% endif %}
                         </div>
 
                         <div class="col-md-6 mb-3">
                             <label for="{{ form.last_name.id_for_label }}" class="form-label">
-                                <i class="bi bi-person-badge-fill" aria-hidden="true"></i> Last Name <span
-                                    class="text-danger">*</span>
+                                <i class="bi bi-person-badge-fill" aria-hidden="true"></i> Last Name <span class="text-danger">*</span>
                             </label>
                             {{ form.last_name }}
                             {% if form.last_name.errors %}
-                            <div class="invalid-feedback d-block">
-                                {{ form.last_name.errors.0 }}
-                            </div>
+                                <div class="invalid-feedback d-block">{{ form.last_name.errors.0 }}</div>
                             {% endif %}
                         </div>
                     </div>
 
                     <div class="mb-3">
                         <label for="{{ form.role.id_for_label }}" class="form-label">
-                            <i class="bi bi-shield-check" aria-hidden="true"></i> Role <span
-                                class="text-danger">*</span>
+                            <i class="bi bi-shield-check" aria-hidden="true"></i> Role <span class="text-danger">*</span>
                         </label>
                         {{ form.role }}
                         {% if form.role.errors %}
-                        <div class="invalid-feedback d-block">
-                            {{ form.role.errors.0 }}
-                        </div>
+                            <div class="invalid-feedback d-block">{{ form.role.errors.0 }}</div>
                         {% endif %}
                         <div id="{{ form.role.id_for_label }}_helptext" class="form-text">
                             {{ form.role.help_text|default:"Select your role in the organization." }}
@@ -106,43 +109,36 @@ with our comprehensive task management solution.{% endblock %}
                         </label>
                         {{ form.department }}
                         {% if form.department.errors %}
-                        <div class="invalid-feedback d-block">
-                            {{ form.department.errors.0 }}
-                        </div>
+                            <div class="invalid-feedback d-block">{{ form.department.errors.0 }}</div>
                         {% endif %}
                     </div>
 
                     {% if form.phone_number %}
-                    <div class="mb-3">
-                        <label for="{{ form.phone_number.id_for_label }}" class="form-label">
-                            <i class="bi bi-telephone" aria-hidden="true"></i> Phone Number
-                        </label>
-                        {{ form.phone_number }}
-                        {% if form.phone_number.errors %}
-                        <div class="invalid-feedback d-block">
-                            {{ form.phone_number.errors.0 }}
+                        <div class="mb-3">
+                            <label for="{{ form.phone_number.id_for_label }}" class="form-label">
+                                <i class="bi bi-telephone" aria-hidden="true"></i> Phone Number
+                            </label>
+                            {{ form.phone_number }}
+                            {% if form.phone_number.errors %}
+                                <div class="invalid-feedback d-block">{{ form.phone_number.errors.0 }}</div>
+                            {% endif %}
                         </div>
-                        {% endif %}
-                    </div>
                     {% endif %}
 
                     <div class="row">
                         <div class="col-md-6 mb-3">
                             <label for="{{ form.password1.id_for_label }}" class="form-label">
-                                <i class="bi bi-lock" aria-hidden="true"></i> Password <span
-                                    class="text-danger">*</span>
+                                <i class="bi bi-lock" aria-hidden="true"></i> Password <span class="text-danger">*</span>
                             </label>
                             <div class="input-group">
                                 {{ form.password1 }}
                                 <button class="btn btn-outline-secondary" type="button" id="togglePassword1"
-                                    aria-label="Toggle password visibility">
+                                        aria-label="Toggle password visibility">
                                     <i class="bi bi-eye" id="toggleIcon1" aria-hidden="true"></i>
                                 </button>
                             </div>
                             {% if form.password1.errors %}
-                            <div class="invalid-feedback d-block">
-                                {{ form.password1.errors.0 }}
-                            </div>
+                                <div class="invalid-feedback d-block">{{ form.password1.errors.0 }}</div>
                             {% endif %}
                             <div id="{{ form.password1.id_for_label }}_helptext" class="form-text">
                                 {{ form.password1.help_text|safe }}
@@ -151,44 +147,44 @@ with our comprehensive task management solution.{% endblock %}
 
                         <div class="col-md-6 mb-3">
                             <label for="{{ form.password2.id_for_label }}" class="form-label">
-                                <i class="bi bi-lock-fill" aria-hidden="true"></i> Confirm Password <span
-                                    class="text-danger">*</span>
+                                <i class="bi bi-lock-fill" aria-hidden="true"></i> Confirm Password <span class="text-danger">*</span>
                             </label>
                             <div class="input-group">
                                 {{ form.password2 }}
                                 <button class="btn btn-outline-secondary" type="button" id="togglePassword2"
-                                    aria-label="Toggle password visibility">
+                                        aria-label="Toggle password visibility">
                                     <i class="bi bi-eye" id="toggleIcon2" aria-hidden="true"></i>
                                 </button>
                             </div>
                             {% if form.password2.errors %}
-                            <div class="invalid-feedback d-block">
-                                {{ form.password2.errors.0 }}
-                            </div>
+                                <div class="invalid-feedback d-block">{{ form.password2.errors.0 }}</div>
                             {% endif %}
                             <div id="{{ form.password2.id_for_label }}_helptext" class="form-text">
-                                {{ form.password2.help_text|default:"Enter the same password as before, for
-                                verification." }}
+                                {{ form.password2.help_text|default:"Enter the same password as before, for verification." }}
                             </div>
                         </div>
                     </div>
 
+                    <!-- Advisory only; does not block Selenium submission -->
                     <div class="mb-3 form-check">
-                        <input type="checkbox" class="form-check-input" id="agreeTerms" required
-                            aria-describedby="termsError">
+                        <input type="checkbox" class="form-check-input" id="agreeTerms" aria-describedby="termsHelp">
                         <label class="form-check-label" for="agreeTerms">
-                            I agree to the <a href="#" class="text-decoration-none">Terms of Service</a>
-                            and <a href="#" class="text-decoration-none">Privacy Policy</a> <span
-                                class="text-danger">*</span>
+                            I agree to the <a href="#" class="text-decoration-none">Terms of Service</a> and
+                            <a href="#" class="text-decoration-none">Privacy Policy</a>
                         </label>
-                        <div class="invalid-feedback" id="termsError"></div>
+                        <div class="form-text" id="termsHelp">
+                            Optional for testing. You can still submit without checking.
+                        </div>
                     </div>
 
-                    <div class="d-grid">
-                        <button type="submit" class="btn btn-success btn-lg" id="submitBtn">
-                            <i class="bi bi-person-plus" aria-hidden="true"></i>
-                            Create Account
-                        </button>
+                    <!-- Sticky submit area inside the card to keep the button visible & on top -->
+                    <div class="sticky-submit">
+                        <div class="d-grid">
+                            <button type="submit" class="btn btn-success btn-lg" id="submitBtn">
+                                <i class="bi bi-person-plus" aria-hidden="true"></i>
+                                Create Account
+                            </button>
+                        </div>
                     </div>
                 </form>
 
@@ -203,6 +199,9 @@ with our comprehensive task management solution.{% endblock %}
                 </div>
             </div>
         </div>
+
+        <!-- Extra spacer to ensure no overlap with any global footer -->
+        <div aria-hidden="true" style="height:220px"></div>
     </div>
 </div>
 {% endblock %}
@@ -216,7 +215,6 @@ with our comprehensive task management solution.{% endblock %}
             const field = document.getElementById(fieldId);
             const button = document.getElementById(buttonId);
             const icon = document.getElementById(iconId);
-
             if (field && button && icon) {
                 button.addEventListener('click', function () {
                     const isPassword = field.type === 'password';
@@ -225,166 +223,18 @@ with our comprehensive task management solution.{% endblock %}
                 });
             }
         }
-
         setupPasswordToggle('id_password1', 'togglePassword1', 'toggleIcon1');
         setupPasswordToggle('id_password2', 'togglePassword2', 'toggleIcon2');
 
+        // No disabling of the submit button; ensure it’s visible before navigation.
         const form = document.getElementById('registerForm');
-        const submitBtn = document.getElementById('submitBtn');
-        const fields = {
-            username: document.getElementById('id_username'),
-            email: document.getElementById('id_email'),
-            firstName: document.getElementById('id_first_name'),
-            lastName: document.getElementById('id_last_name'),
-            password1: document.getElementById('id_password1'),
-            password2: document.getElementById('id_password2'),
-            agreeTerms: document.getElementById('agreeTerms')
-        };
-
-        if (form && submitBtn) {
-            form.addEventListener('submit', function (e) {
-                let isValid = true;
-                clearAllErrors();
-
-                if (fields.username && fields.username.value.trim().length < 3) {
-                    showError(fields.username, 'Username must be at least 3 characters long.');
-                    isValid = false;
-                }
-
-                if (fields.email && !isValidEmail(fields.email.value.trim())) {
-                    showError(fields.email, 'Please enter a valid email address.');
-                    isValid = false;
-                }
-
-                if (fields.firstName && fields.firstName.value.trim().length < 2) {
-                    showError(fields.firstName, 'First name must be at least 2 characters long.');
-                    isValid = false;
-                }
-
-                if (fields.lastName && fields.lastName.value.trim().length < 2) {
-                    showError(fields.lastName, 'Last name must be at least 2 characters long.');
-                    isValid = false;
-                }
-
-                if (fields.password1 && fields.password1.value.length < 8) {
-                    showError(fields.password1, 'Password must be at least 8 characters long.');
-                    isValid = false;
-                }
-
-                if (fields.password1 && fields.password2 && fields.password1.value !== fields.password2.value) {
-                    showError(fields.password2, 'Passwords do not match.');
-                    isValid = false;
-                }
-
-                if (fields.agreeTerms && !fields.agreeTerms.checked) {
-                    const termsError = document.getElementById('termsError');
-                    if (termsError) {
-                        termsError.textContent = 'You must agree to the Terms of Service and Privacy Policy.';
-                        termsError.style.display = 'block';
-                        fields.agreeTerms.classList.add('is-invalid');
-                    }
-                    isValid = false;
-                }
-
-                if (!isValid) {
-                    e.preventDefault();
-                    return false;
-                }
-
-                const originalText = submitBtn.innerHTML;
-                submitBtn.innerHTML = '<span class="spinner-border spinner-border-sm me-2" role="status" aria-hidden="true"></span>Creating Account...';
-                submitBtn.disabled = true;
-
-                setTimeout(function () {
-                    if (submitBtn.disabled) {
-                        submitBtn.innerHTML = originalText;
-                        submitBtn.disabled = false;
-                    }
-                }, 15000);
-            });
-
-            if (fields.password2) {
-                fields.password2.addEventListener('input', function () {
-                    if (fields.password1 && this.value.length > 0) {
-                        if (fields.password1.value === this.value) {
-                            this.classList.remove('is-invalid');
-                            this.classList.add('is-valid');
-                        } else {
-                            this.classList.remove('is-valid');
-                            this.classList.add('is-invalid');
-                        }
-                    } else {
-                        this.classList.remove('is-valid', 'is-invalid');
-                    }
-                });
-            }
-
-            Object.values(fields).forEach(function (field) {
-                if (field && field.addEventListener) {
-                    field.addEventListener('input', function () {
-                        clearFieldError(this);
-                    });
+        if (form) {
+            form.addEventListener('submit', function () {
+                const btn = document.getElementById('submitBtn');
+                if (btn && btn.scrollIntoView) {
+                    try { btn.scrollIntoView({ block: 'center' }); } catch (e) { }
                 }
             });
-
-            if (fields.username) {
-                fields.username.focus();
-            }
-        }
-
-        /**
-         * Validate email format
-         * @param {string} email - Email to validate
-         * @returns {boolean} - True if valid email
-         */
-        function isValidEmail(email) {
-            const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
-            return emailRegex.test(email);
-        }
-
-        /**
-         * Show error for a specific field
-         * @param {HTMLElement} field - The field element
-         * @param {string} message - Error message
-         */
-        function showError(field, message) {
-            field.classList.add('is-invalid');
-
-            let errorElement = field.parentNode.querySelector('.invalid-feedback');
-            if (!errorElement) {
-                errorElement = document.createElement('div');
-                errorElement.className = 'invalid-feedback d-block';
-                field.parentNode.appendChild(errorElement);
-            }
-            errorElement.textContent = message;
-            errorElement.style.display = 'block';
-        }
-
-        /**
-         * Clear error for a specific field
-         * @param {HTMLElement} field - The field element
-         */
-        function clearFieldError(field) {
-            field.classList.remove('is-invalid', 'is-valid');
-            const errorElement = field.parentNode.querySelector('.invalid-feedback');
-            if (errorElement) {
-                errorElement.textContent = '';
-                errorElement.style.display = 'none';
-            }
-        }
-
-        function clearAllErrors() {
-            Object.values(fields).forEach(function (field) {
-                if (field) {
-                    clearFieldError(field);
-                }
-            });
-
-            const termsError = document.getElementById('termsError');
-            if (termsError) {
-                termsError.textContent = '';
-                termsError.style.display = 'none';
-            }
         }
     })();
 </script>

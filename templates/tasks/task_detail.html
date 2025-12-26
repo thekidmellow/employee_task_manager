@@ -1,85 +1,13 @@
 {% extends 'base.html' %}
 {% load static %}
 
-{% block title %}{{ task.title }} - Employee Task Manager{% endblock %}
+{% block title %}
+{{ task.title }} - Employee Task Manager
+{% endblock %}
 
-{% block meta_description %}View detailed information for task: {{ task.title }}. Track progress, manage status updates,
-and collaborate with team members on task completion.{% endblock %}
-
-{% block extra_css %}
-<style>
-    .task-header {
-        background: linear-gradient(135deg, rgba(13, 110, 253, 0.1) 0%, rgba(13, 110, 253, 0.05) 100%);
-        border-left: 5px solid;
-        border-radius: 0.75rem;
-    }
-    .priority-high { border-left-color: #dc3545; }
-    .priority-medium { border-left-color: #ffc107; }
-    .priority-low { border-left-color: #198754; }
-    .priority-urgent { border-left-color: #6f42c1; }
-
-    .comment-item {
-        border-left: 3px solid #e9ecef;
-        transition: all 0.3s ease;
-        border-radius: 0.5rem;
-        background: rgba(248, 249, 250, 0.5);
-    }
-    .comment-item:hover {
-        border-left-color: #0d6efd;
-        background: rgba(13, 110, 253, 0.05);
-        transform: translateX(5px);
-    }
-
-    .timeline-item { position: relative; padding-left: 2.5rem; padding-bottom: 1.5rem; }
-    .timeline-item::before {
-        content: '';
-        position: absolute;
-        left: 0.75rem; top: 0.5rem;
-        width: 0.75rem; height: 0.75rem;
-        background: linear-gradient(135deg, #0d6efd, #0b5ed7);
-        border-radius: 50%;
-        border: 3px solid #fff;
-        box-shadow: 0 0 0 3px rgba(13, 110, 253, 0.2);
-    }
-    .timeline-item::after {
-        content: '';
-        position: absolute;
-        left: 1.125rem; top: 1.25rem;
-        width: 2px; height: calc(100% - 1rem);
-        background: linear-gradient(to bottom, rgba(13, 110, 253, 0.3), transparent);
-    }
-    .timeline-item:last-child::after { display: none; }
-
-    .progress-circle {
-        width: 100px; height: 100px; border-radius: 50%;
-        background: conic-gradient(#0d6efd 0deg,
-                #0d6efd calc(var(--progress) * 3.6deg),
-                #e9ecef calc(var(--progress) * 3.6deg),
-                #e9ecef 360deg);
-        display: flex; align-items: center; justify-content: center;
-        position: relative; margin: 0 auto;
-    }
-    .progress-circle::before {
-        content: '';
-        position: absolute;
-        width: 70px; height: 70px; border-radius: 50%;
-        background: #fff;
-    }
-    .progress-circle span {
-        position: relative; z-index: 1; font-weight: bold; font-size: 1.1rem; color: #495057;
-    }
-
-    .action-card {
-        background: linear-gradient(135deg, rgba(40, 167, 69, 0.1) 0%, rgba(40, 167, 69, 0.05) 100%);
-        border: 1px solid rgba(40, 167, 69, 0.2);
-    }
-    .status-transition { transition: all 0.3s ease; }
-
-    .detail-row { border-bottom: 1px solid rgba(0, 0, 0, 0.05); padding: 1rem 0; }
-    .detail-row:last-child { border-bottom: none; }
-
-    .badge-custom { font-size: 0.85rem; padding: 0.5rem 1rem; border-radius: 2rem; }
-</style>
+{% block meta_description %}
+<meta name="description"
+      content="View detailed information for task: {{ task.title }}. Track progress, manage status updates, and collaborate with team members on task completion.">
 {% endblock %}
 
 {% block content %}
@@ -87,45 +15,55 @@ and collaborate with team members on task completion.{% endblock %}
     <div class="row align-items-center">
         <div class="col-md-8">
             <h1 class="mb-2">{{ task.title }}</h1>
-            <div class="d-flex flex-wrap gap-2 mb-3">
-                <span class="badge bg-{{ task.get_priority_color }} badge-custom">
+
+            <div class="d-flex flex-wrap gap-2 mb-3 align-items-center">
+                <span class="badge bg-{{ task.get_priority_badge_color }} badge-custom">
                     <i class="bi bi-exclamation-triangle" aria-hidden="true"></i>
                     {{ task.get_priority_display }} Priority
                 </span>
-                <span class="badge bg-{{ task.get_status_color }} badge-custom status-transition">
+
+                <span class="badge bg-secondary badge-custom status-transition">
                     <i class="bi bi-flag" aria-hidden="true"></i>
-                    {{ task.get_status_display }}
+                    <span id="status-label">{{ task.get_status_display }}</span>
                 </span>
-                {% if task.is_overdue %}
-                <span class="badge bg-danger badge-custom">
-                    <i class="bi bi-clock" aria-hidden="true"></i> Overdue
-                </span>
-                {% endif %}
-                {% if task.estimated_hours %}
-                <span class="badge bg-info badge-custom">
-                    <i class="bi bi-stopwatch" aria-hidden="true"></i>
-                    {{ task.estimated_hours }}h estimated
-                </span>
-                {% endif %}
+
+                <form method="post" class="d-inline ms-3" id="statusForm" onsubmit="return false;">
+                    {% csrf_token %}
+                    <select
+                        name="status"
+                        id="status-select"
+                        class="form-select form-select-sm w-auto d-inline-block"
+                        aria-label="Update task status"
+                    >
+                        {% for value, label in task.STATUS_CHOICES %}
+                            <option value="{{ value }}" {% if task.status == value %}selected{% endif %}>
+                                {{ label }}
+                            </option>
+                        {% endfor %}
+                    </select>
+                </form>                
             </div>
+
             <p class="text-muted mb-0">
-                Created by {{ task.created_by.get_full_name|default:task.created_by.username }}
+                Created by {{ task.created_by.username }}
                 on <time datetime="{{ task.created_at|date:'Y-m-d' }}">{{ task.created_at|date:"F j, Y" }}</time>
             </p>
         </div>
+
         <div class="col-md-4 text-md-end">
-            {% if user.userprofile.is_manager or task.assigned_to == user %}
             <div class="btn-group" role="group" aria-label="Task actions">
-                <a href="{% url 'tasks:task_update' task.pk %}" class="btn btn-outline-primary" aria-label="Edit task details">
+                <a href="{% url 'tasks:task_update' task.pk %}" class="btn btn-outline-primary"
+                   aria-label="Edit task details">
                     <i class="bi bi-pencil" aria-hidden="true"></i> Edit
                 </a>
-                {% if user.userprofile.is_manager %}
-                <button type="button" class="btn btn-outline-danger" onclick="deleteTask({{ task.pk }})" aria-label="Delete task">
+
+                <button type="button"
+                        class="btn btn-danger"
+                        onclick="deleteTask({{ task.pk }})"
+                        aria-label="Delete task">
                     <i class="bi bi-trash" aria-hidden="true"></i> Delete
                 </button>
-                {% endif %}
             </div>
-            {% endif %}
         </div>
     </div>
 </header>
@@ -138,11 +76,16 @@ and collaborate with team members on task completion.{% endblock %}
                     <i class="bi bi-info-circle" aria-hidden="true"></i> Task Details
                 </h2>
             </header>
+
             <div class="card-body">
                 <div class="detail-row">
                     <div class="row">
                         <div class="col-sm-3"><strong>Description:</strong></div>
-                        <div class="col-sm-9"><div class="text-break">{{ task.description|linebreaks }}</div></div>
+                        <div class="col-sm-9">
+                            <div class="text-break">
+                                {{ task.description|linebreaks }}
+                            </div>
+                        </div>
                     </div>
                 </div>
 
@@ -156,10 +99,7 @@ and collaborate with team members on task completion.{% endblock %}
                                     <div class="fw-semibold">
                                         {{ task.assigned_to.get_full_name|default:task.assigned_to.username }}
                                     </div>
-                                    <small class="text-muted">{{ task.assigned_to.userprofile.get_role_display }}</small>
-                                    {% if task.assigned_to.userprofile.department %}
-                                        <small class="text-muted"> • {{ task.assigned_to.userprofile.department }}</small>
-                                    {% endif %}
+                                    <small class="text-muted">Employee</small>
                                 </div>
                             </div>
                         </div>
@@ -172,7 +112,7 @@ and collaborate with team members on task completion.{% endblock %}
                         <div class="col-sm-9">
                             <i class="bi bi-person-plus me-1 text-secondary" aria-hidden="true"></i>
                             {{ task.created_by.get_full_name|default:task.created_by.username }}
-                            <span class="badge bg-secondary ms-2">{{ task.created_by.userprofile.get_role_display }}</span>
+                            <span class="badge bg-secondary ms-2">Manager</span>
                         </div>
                     </div>
                 </div>
@@ -182,105 +122,28 @@ and collaborate with team members on task completion.{% endblock %}
                         <div class="col-sm-3"><strong>Due Date:</strong></div>
                         <div class="col-sm-9">
                             <i class="bi bi-calendar-event me-1 text-primary" aria-hidden="true"></i>
-                            <time datetime="{{ task.due_date|date:'Y-m-d' }}">{{ task.due_date|date:"l, F j, Y" }}</time>
-                            <div class="mt-1">
-                                <small class="text-muted">
-                                    {% if task.is_overdue %}
-                                        <span class="text-danger">
-                                            <i class="bi bi-exclamation-triangle" aria-hidden="true"></i>
-                                            {{ task.due_date|timesince }} overdue
-                                        </span>
-                                    {% else %}
-                                        <i class="bi bi-clock" aria-hidden="true"></i>
-                                        {{ task.due_date|timeuntil }} remaining
-                                    {% endif %}
-                                </small>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-
-                {% if task.notes %}
-                <div class="detail-row">
-                    <div class="row">
-                        <div class="col-sm-3"><strong>Additional Notes:</strong></div>
-                        <div class="col-sm-9"><div class="bg-light p-3 rounded">{{ task.notes|linebreaks }}</div></div>
-                    </div>
-                </div>
-                {% endif %}
-
-                <div class="row align-items-center">
-                    <div class="col-sm-3"><strong>Progress:</strong></div>
-                    <div class="col-sm-9">
-                        <div class="row align-items-center">
-                            <div class="col-auto">
-                                <div class="progress-circle"
-                                    style="--progress: {{ task.get_progress_percentage|default:0 }}"
-                                    role="progressbar"
-                                    aria-valuenow="{{ task.get_progress_percentage|default:0 }}"
-                                    aria-valuemin="0" aria-valuemax="100">
-                                    <span>{{ task.get_progress_percentage|default:0 }}%</span>
-                                </div>
-                            </div>
-                            <div class="col">
-                                <div class="text-muted small">
-                                    {% if task.status == 'pending' %}
-                                        Task is waiting to be started
-                                    {% elif task.status == 'in_progress' %}
-                                        Task is actively being worked on
-                                    {% elif task.status == 'completed' %}
-                                        Task has been completed successfully
-                                    {% else %}
-                                        Task status: {{ task.get_status_display }}
-                                    {% endif %}
-                                </div>
-                            </div>
+                            {% if task.due_date %}
+                                <time datetime="{{ task.due_date|date:'Y-m-d' }}">
+                                    {{ task.due_date|date:"l, F j, Y" }}
+                                </time>
+                            {% else %}
+                                <span class="text-muted">No due date set</span>
+                            {% endif %}
                         </div>
                     </div>
                 </div>
             </div>
         </section>
-
-        {% if task.assigned_to == user %}
-        <section class="action-card card mb-4">
-            <header class="card-header bg-success text-white">
-                <h2 class="h5 mb-0"><i class="bi bi-lightning" aria-hidden="true"></i> Quick Actions</h2>
-            </header>
-            <div class="card-body">
-                <div class="btn-group w-100" role="group" aria-label="Task status actions">
-                    {% if task.status == 'pending' %}
-                    <button type="button" class="btn btn-outline-info" onclick="updateTaskStatus('in_progress')" aria-label="Start working on this task">
-                        <i class="bi bi-play-circle" aria-hidden="true"></i> Start Task
-                    </button>
-                    {% endif %}
-                    {% if task.status == 'in_progress' %}
-                    <button type="button" class="btn btn-outline-warning" onclick="updateTaskStatus('pending')" aria-label="Pause work on this task">
-                        <i class="bi bi-pause-circle" aria-hidden="true"></i> Pause Task
-                    </button>
-                    {% endif %}
-                    {% if task.status != 'completed' %}
-                    <button type="button" class="btn btn-outline-success" onclick="updateTaskStatus('completed')" aria-label="Mark task as completed">
-                        <i class="bi bi-check-circle" aria-hidden="true"></i> Mark Complete
-                    </button>
-                    {% endif %}
-                    {% if task.status == 'completed' and user.userprofile.is_manager %}
-                    <button type="button" class="btn btn-outline-secondary" onclick="updateTaskStatus('in_progress')" aria-label="Reopen this task">
-                        <i class="bi bi-arrow-clockwise" aria-hidden="true"></i> Reopen Task
-                    </button>
-                    {% endif %}
-                </div>
-            </div>
-        </section>
-        {% endif %}
 
         <section class="card">
             <header class="card-header">
                 <h2 class="h5 mb-0">
                     <i class="bi bi-chat-dots" aria-hidden="true"></i>
                     Comments & Updates
-                    <span class="badge bg-secondary ms-2">{{ task.comments.count }}</span>
+                    <span class="badge bg-secondary ms-2">{{ comments.count }}</span>
                 </h2>
             </header>
+
             <div class="card-body">
                 <form method="post" class="mb-4" id="commentForm">
                     {% csrf_token %}
@@ -289,8 +152,8 @@ and collaborate with team members on task completion.{% endblock %}
                             <i class="bi bi-chat-square-text" aria-hidden="true"></i> Add a comment or update:
                         </label>
                         <textarea class="form-control" id="comment" name="comment" rows="4"
-                                placeholder="Share progress updates, ask questions, or provide feedback..."
-                                required aria-describedby="commentHelp"></textarea>
+                                  placeholder="Share progress updates, ask questions, or provide feedback..."
+                                  required aria-describedby="commentHelp"></textarea>
                         <div id="commentHelp" class="form-text">
                             Use this space to communicate progress, ask questions, or share important updates about this task.
                         </div>
@@ -300,27 +163,25 @@ and collaborate with team members on task completion.{% endblock %}
                     </button>
                 </form>
 
-                {% with comments=task.comments.all %}
-                {% if comments|length %}
-                    <div class="comments-list" role="list" aria-label="Task comments">
+                {% if comments %}
+                    <div class="list-group">
                         {% for comment in comments %}
-                        <article class="comment-item p-3 mb-3" role="listitem">
-                            <header class="d-flex justify-content-between align-items-start mb-2">
-                                <div class="d-flex align-items-center">
-                                    <i class="bi bi-person-circle me-2 text-primary" aria-hidden="true"></i>
+                            <article class="list-group-item comment-item mb-2">
+                                <div class="d-flex justify-content-between align-items-start">
                                     <div>
-                                        <strong>{{ comment.author.get_full_name|default:comment.author.username }}</strong>
-                                        <span class="badge bg-secondary ms-2">{{ comment.author.userprofile.get_role_display }}</span>
+                                        <strong>{{ comment.user.get_full_name|default:comment.user.username }}</strong>
+                                        <div class="text-muted small">
+                                            <time datetime="{{ comment.created_at|date:'c' }}">
+                                                {{ comment.created_at|date:"M d, Y H:i" }}
+                                            </time>
+                                        </div>
                                     </div>
                                 </div>
-                                <small class="text-muted">
-                                    <time datetime="{{ comment.created_at|date:'Y-m-d\\TH:i:s' }}Z">
-                                        {{ comment.created_at|date:"M d, Y \\a\\t H:i" }}
-                                    </time>
-                                </small>
-                            </header>
-                            <div class="comment-content">{{ comment.content|linebreaks }}</div>
-                        </article>
+
+                                <p class="mb-0 mt-2 text-break">
+                                    {{ comment.comment|linebreaksbr }}
+                                </p>
+                            </article>
                         {% endfor %}
                     </div>
                 {% else %}
@@ -330,7 +191,6 @@ and collaborate with team members on task completion.{% endblock %}
                         <p class="mb-0">Be the first to add an update or comment on this task!</p>
                     </div>
                 {% endif %}
-                {% endwith %}
             </div>
         </section>
     </div>
@@ -345,72 +205,24 @@ and collaborate with team members on task completion.{% endblock %}
                     <div class="timeline-item">
                         <strong>Task Created</strong>
                         <div class="text-muted small">
-                            <time datetime="{{ task.created_at|date:'Y-m-d\\TH:i:s' }}Z">
+                            <time datetime="{{ task.created_at|date:'c' }}">
                                 {{ task.created_at|date:"M d, Y \\a\\t H:i" }}
                             </time>
                             <div>by {{ task.created_by.get_full_name|default:task.created_by.username }}</div>
                         </div>
                     </div>
 
-                    {% if task.updated_at != task.created_at %}
                     <div class="timeline-item">
                         <strong>Last Updated</strong>
                         <div class="text-muted small">
-                            <time datetime="{{ task.updated_at|date:'Y-m-d\\TH:i:s' }}Z">
+                            <time datetime="{{ task.updated_at|date:'c' }}">
                                 {{ task.updated_at|date:"M d, Y \\a\\t H:i" }}
                             </time>
                         </div>
                     </div>
-                    {% endif %}
-
-                    {% if task.status == 'completed' and task.completed_at %}
-                    <div class="timeline-item">
-                        <strong>Task Completed</strong>
-                        <div class="text-success small">
-                            <i class="bi bi-check-circle" aria-hidden="true"></i>
-                            <time datetime="{{ task.completed_at|date:'Y-m-d\\TH:i:s' }}Z">
-                                {{ task.completed_at|date:"M d, Y \\a\\t H:i" }}
-                            </time>
-                        </div>
-                    </div>
-                    {% endif %}
-
-                    {% if task.is_overdue %}
-                    <div class="timeline-item">
-                        <strong>Due Date Passed</strong>
-                        <div class="text-danger small">
-                            <i class="bi bi-exclamation-triangle" aria-hidden="true"></i>
-                            Task became overdue on {{ task.due_date|date:"M d, Y" }}
-                        </div>
-                    </div>
-                    {% endif %}
                 </div>
             </div>
         </section>
-
-        {% if related_tasks %}
-        <section class="card mb-4">
-            <header class="card-header">
-                <h2 class="h5 mb-0"><i class="bi bi-link" aria-hidden="true"></i> Related Tasks</h2>
-            </header>
-            <div class="card-body">
-                <div role="list">
-                    {% for related in related_tasks %}
-                    <div class="mb-3 pb-2 border-bottom" role="listitem">
-                        <a href="{% url 'tasks:task_detail' related.pk %}" class="text-decoration-none fw-semibold">
-                            {{ related.title }}
-                        </a>
-                        <div class="mt-1">
-                            <span class="badge bg-{{ related.get_status_color }} badge-sm">{{ related.get_status_display }}</span>
-                            <span class="badge bg-{{ related.get_priority_color }} badge-sm">{{ related.get_priority_display }}</span>
-                        </div>
-                        <small class="text-muted d-block">Due: {{ related.due_date|date:"M d, Y" }}</small>
-                    </div>
-                    {% endfor %}
-                </div>
-            </div>
-        </section>
-        {% endif %}
 
         <section class="card">
             <header class="card-header">
@@ -421,15 +233,10 @@ and collaborate with team members on task completion.{% endblock %}
                     <a href="{% url 'tasks:task_list' %}" class="btn btn-outline-primary" aria-label="Return to task list">
                         <i class="bi bi-arrow-left" aria-hidden="true"></i> Back to Tasks
                     </a>
-                    {% if user.userprofile.is_manager %}
-                    <a href="{% url 'core:manager_dashboard' %}" class="btn btn-outline-secondary" aria-label="Go to manager dashboard">
+
+                    <a href="/dashboard/" class="btn btn-outline-secondary" aria-label="Go to dashboard">
                         <i class="bi bi-speedometer2" aria-hidden="true"></i> Dashboard
                     </a>
-                    {% else %}
-                    <a href="{% url 'core:employee_dashboard' %}" class="btn btn-outline-secondary" aria-label="Go to my dashboard">
-                        <i class="bi bi-person-workspace" aria-hidden="true"></i> My Dashboard
-                    </a>
-                    {% endif %}
                 </div>
             </div>
         </section>
@@ -438,171 +245,73 @@ and collaborate with team members on task completion.{% endblock %}
 {% endblock %}
 
 {% block extra_js %}
-<script>
+<script type="text/javascript">
 (function () {
     'use strict';
 
-    window.updateTaskStatus = function (status) {
-        const statusText = status.replace('_', ' ').replace(/\b\w/g, l => l.toUpperCase());
-        if (!confirm(`Are you sure you want to change the task status to "${statusText}"?`)) return;
-
-        const csrfToken = document.querySelector('[name=csrfmiddlewaretoken]')?.value;
-        if (!csrfToken) { showAlert('Security token missing. Please refresh the page and try again.', 'danger'); return; }
-
-        const statusButtons = document.querySelectorAll('[onclick*="updateTaskStatus"]');
-        statusButtons.forEach(btn => {
-            btn.disabled = true;
-            btn.innerHTML = '<span class="spinner-border spinner-border-sm me-2"></span>Updating...';
-        });
-
-        fetch('{% url "tasks:update_task_status" task.pk %}', {
-            method: 'POST',
-            headers: { 'Content-Type': 'application/json', 'X-CSRFToken': csrfToken },
-            body: JSON.stringify({ status })
-        })
-        .then(response => response.ok ? response.json() : Promise.reject(new Error(`HTTP ${response.status}`)))
-        .then(data => {
-            if (!data.success) throw new Error(data.message || 'Unknown error occurred');
-            showAlert(`Task status updated to ${statusText} successfully!`, 'success');
-            setTimeout(() => window.location.reload(), 1500);
-        })
-        .catch(error => {
-            console.error('Error updating task status:', error);
-            showAlert(`Error updating task status: ${error.message}`, 'danger');
-            statusButtons.forEach(btn => {
-                btn.disabled = false;
-                btn.innerHTML = btn.dataset.originalText || btn.innerHTML;
-            });
-        });
-    };
-
-    window.deleteTask = function () {
-        if (!confirm('Are you sure you want to delete this task? This action cannot be undone.')) return;
-
-        const csrfToken = document.querySelector('[name=csrfmiddlewaretoken]')?.value;
-        if (!csrfToken) { showAlert('Security token missing. Please refresh the page and try again.', 'danger'); return; }
-
-        const deleteBtn = document.querySelector('[onclick*="deleteTask"]');
-        if (deleteBtn) {
-            deleteBtn.disabled = true;
-            deleteBtn.innerHTML = '<span class="spinner-border spinner-border-sm me-2"></span>Deleting...';
-        }
-
-        fetch('{% url "tasks:task_delete" task.pk %}', {
-            method: 'POST',
-            headers: { 'X-CSRFToken': csrfToken }
-        })
-        .then(response => {
-            if (!response.ok) throw new Error(`HTTP ${response.status}: ${response.statusText}`);
-            showAlert('Task deleted successfully. Redirecting...', 'success');
-            setTimeout(() => { window.location.href = '{% url "tasks:task_list" %}'; }, 1500);
-        })
-        .catch(error => {
-            console.error('Error deleting task:', error);
-            showAlert('Error deleting task. Please try again.', 'danger');
-            if (deleteBtn) {
-                deleteBtn.disabled = false;
-                deleteBtn.innerHTML = '<i class="bi bi-trash"></i> Delete';
-            }
-        });
-    };
-
-    const commentForm = document.getElementById('commentForm');
-    const commentTextarea = document.getElementById('comment');
-    const commentSubmitBtn = document.getElementById('commentSubmitBtn');
-
-    if (commentForm && commentTextarea && commentSubmitBtn) {
-        function resizeTextarea() {
-            commentTextarea.style.height = 'auto';
-            commentTextarea.style.height = commentTextarea.scrollHeight + 'px';
-        }
-        commentTextarea.addEventListener('input', resizeTextarea);
-        resizeTextarea();
-
-        commentForm.addEventListener('submit', function (e) {
-            const comment = commentTextarea.value.trim();
-            if (comment.length < 5) { e.preventDefault(); showAlert('Comment must be at least 5 characters long.', 'warning'); commentTextarea.focus(); return; }
-            if (comment.length > 1000) { e.preventDefault(); showAlert('Comment cannot exceed 1000 characters.', 'warning'); commentTextarea.focus(); return; }
-
-            const originalText = commentSubmitBtn.innerHTML;
-            commentSubmitBtn.innerHTML = '<span class="spinner-border spinner-border-sm me-2"></span>Posting...';
-            commentSubmitBtn.disabled = true;
-            setTimeout(() => {
-                if (commentSubmitBtn.disabled) {
-                    commentSubmitBtn.innerHTML = originalText;
-                    commentSubmitBtn.disabled = false;
-                }
-            }, 10000);
-        });
-
-        const maxLength = 1000;
-        const counterElement = document.createElement('div');
-        counterElement.className = 'form-text text-end';
-        counterElement.id = 'commentCounter';
-        commentTextarea.parentNode.appendChild(counterElement);
-
-        function updateCharacterCounter() {
-            const currentLength = commentTextarea.value.length;
-            const remaining = maxLength - currentLength;
-            counterElement.textContent = `${currentLength}/${maxLength} characters`;
-            if (remaining < 50) counterElement.className = 'form-text text-end text-danger';
-            else if (remaining < 100) counterElement.className = 'form-text text-end text-warning';
-            else counterElement.className = 'form-text text-end text-muted';
-        }
-        commentTextarea.addEventListener('input', updateCharacterCounter);
-        updateCharacterCounter();
-    }
-
-    document.querySelectorAll('button[onclick*="updateTaskStatus"]').forEach(btn => {
-        btn.dataset.originalText = btn.innerHTML;
-    });
-
-    function showAlert(message, type = 'info') {
+    function showAlert(message, type) {
         document.querySelectorAll('.alert-auto').forEach(a => a.remove());
         const el = document.createElement('div');
         el.className = `alert alert-${type} alert-dismissible fade show alert-auto`;
         el.setAttribute('role', 'alert');
         el.innerHTML = `
-            <i class="bi bi-${getIconForType(type)}" aria-hidden="true"></i>
             ${message}
             <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
         `;
-        const mainContent = document.querySelector('main .container, main');
-        if (mainContent) {
-            mainContent.insertBefore(el, mainContent.firstChild);
-            el.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
+        const main = document.getElementById('main-content') || document.querySelector('main');
+        if (main) {
+            main.insertBefore(el, main.firstChild);
         }
-        setTimeout(() => {
-            if (el.parentNode) {
-                el.classList.remove('show');
-                setTimeout(() => el.remove(), 150);
-            }
-        }, 5000);
-    }
-    function getIconForType(type) {
-        const icons = { success: 'check-circle', danger: 'exclamation-triangle', warning: 'exclamation-triangle', info: 'info-circle' };
-        return icons[type] || 'info-circle';
     }
 
-    function enhanceAccessibility() {
-        document.querySelectorAll('.comment-item').forEach((item, i) => {
-            item.setAttribute('tabindex', '0');
-            item.setAttribute('aria-label', `Comment ${i + 1}`);
+    function getCsrfToken() {
+        return document.querySelector('[name=csrfmiddlewaretoken]')?.value ||
+               document.querySelector('meta[name="csrf-token"]')?.content;
+    }
+
+    const statusSelect = document.getElementById('status-select');
+    if (statusSelect) {
+        statusSelect.addEventListener('change', function () {
+            const csrfToken = getCsrfToken();
+            const newStatus = this.value;
+
+            fetch("{% url 'tasks:update_task_status' task.pk %}", {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                    'X-CSRFToken': csrfToken
+                },
+                body: JSON.stringify({ status: newStatus })
+            })
+            .then(r => r.ok ? r.json() : Promise.reject(new Error(`HTTP ${r.status}`)))
+            .then(data => {
+                if (!data.success) throw new Error(data.error || data.message || 'Unknown error');
+                const label = document.getElementById('status-label');
+                if (label) label.textContent = newStatus.replace(/_/g, ' ').replace(/\b\w/g, c => c.toUpperCase());
+                showAlert('Status updated successfully.', 'success');
+            })
+            .catch(() => showAlert('Error updating status. Please try again.', 'danger'));
         });
-        const progressCircle = document.querySelector('.progress-circle');
-        if (progressCircle) {
-            const percentage = progressCircle.getAttribute('aria-valuenow');
-            progressCircle.setAttribute('aria-label', `Task is ${percentage}% complete`);
-        }
     }
-    enhanceAccessibility();
 
-    document.addEventListener('keydown', function (e) {
-        if (e.altKey && e.key === 'c' && commentTextarea) {
-            e.preventDefault();
-            commentTextarea.focus();
-        }
-    });
+    window.deleteTask = function () {
+        if (!confirm('Are you sure you want to delete this task? This action cannot be undone.')) return;
+
+        const csrfToken = getCsrfToken();
+
+        fetch("{% url 'tasks:task_delete' task.pk %}", {
+            method: 'POST',
+            headers: { 'X-CSRFToken': csrfToken }
+        })
+        .then(r => {
+            if (!r.ok) throw new Error('Delete failed');
+            showAlert('Task deleted successfully.', 'success');
+            setTimeout(() => {
+                window.location.href = "{% url 'tasks:task_list' %}";
+            }, 800);
+        })
+        .catch(() => showAlert('Error deleting task.', 'danger'));
+    };
 })();
 </script>
 {% endblock %}

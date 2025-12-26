@@ -13,6 +13,7 @@ urlpatterns = [
     # Profile management
     path("profile/", views.profile_view, name="profile"),
 
+    # Password change
     path(
         "password/change/",
         auth_views.PasswordChangeView.as_view(
@@ -32,16 +33,11 @@ urlpatterns = [
     path("delete/", views.delete_account_view, name="delete_account"),
 
     # AJAX endpoints
-    path(
-        "api/check-username/",
-        views.check_username_availability,
-        name="check_username",
-    ),
+    path("api/check-username/", views.check_username_availability, name="check_username"),
+
+    # User list API (tests expect this name)
+    path("api/users/", views.user_list_api, name="user_list_api"),
 
     # Dashboard redirect
-    path(
-        "dashboard/",
-        views.dashboard_redirect_view,
-        name="dashboard_redirect",
-    ),
+    path("dashboard/", views.dashboard_redirect_view, name="dashboard_redirect"),
 ]

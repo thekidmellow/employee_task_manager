@@ -1,21 +1,22 @@
-from django.shortcuts import render, redirect
+from datetime import timedelta
+
 from django.contrib.auth.decorators import login_required
 from django.contrib.auth.models import User
 from django.db.models import Q
+from django.shortcuts import render, redirect
 from django.utils import timezone
-from datetime import timedelta
 
 from apps.tasks.models import Task
 
 
 def home_view(request):
-
     total_users = User.objects.count()
     total_tasks = Task.objects.count()
     completed_tasks = Task.objects.filter(status="completed").count()
 
     recent_tasks = Task.objects.select_related(
-        "assigned_to", "created_by"
+        "assigned_to",
+        "created_by",
     ).order_by("-created_at")[:5]
 
     context = {
@@ -31,7 +32,6 @@ def home_view(request):
 
 @login_required
 def dashboard_view(request):
-
     user = request.user
     is_manager = (
         getattr(user, "userprofile", None) and user.userprofile.is_manager
@@ -43,7 +43,6 @@ def dashboard_view(request):
 
 @login_required
 def manager_dashboard_view(request):
-
     user = request.user
     is_manager = (
         getattr(user, "userprofile", None) and user.userprofile.is_manager
@@ -69,9 +68,7 @@ def manager_dashboard_view(request):
     for employee in employees:
         employee_tasks = all_tasks.filter(assigned_to=employee)
         assigned_count = employee_tasks.count()
-        completed_count_emp = employee_tasks.filter(
-            status="completed"
-        ).count()
+        completed_count_emp = employee_tasks.filter(status="completed").count()
         completion_rate = (
             round((completed_count_emp / assigned_count) * 100, 1)
             if assigned_count
@@ -85,9 +82,7 @@ def manager_dashboard_view(request):
                 "completion_rate": completion_rate,
             }
         )
-    team_performance.sort(
-        key=lambda x: x["completion_rate"], reverse=True
-    )
+    team_performance.sort(key=lambda x: x["completion_rate"], reverse=True)
 
     context = {
         "total_tasks": total_tasks,
@@ -104,7 +99,6 @@ def manager_dashboard_view(request):
 
 @login_required
 def employee_dashboard_view(request):
-
     user = request.user
 
     my_tasks = Task.objects.filter(assigned_to=user)
@@ -176,7 +170,6 @@ def employee_dashboard_view(request):
 
 
 def about_view(request):
-
     context = {
         "page_title": "About Employee Task Manager",
         "features": [
@@ -218,16 +211,28 @@ def about_view(request):
 
 
 def contact_view(request):
-
     context = {
         "page_title": "Contact Us",
         "contact_info": {
             "email": "support@employeetaskmanager.com",
             "phone": "+1 (555) 123-4567",
-            "address": (
-                "123 Business St, Suite 100, City, State 12345"
-            ),
+            "address": "123 Business St, Suite 100, City, State 12345",
         },
     }
 
     return render(request, "core/contact.html", context)
+
+
+def custom_404(request, exception):
+    """
+    Custom 404 handler that uses templates/errors/404.html
+    and provides proper landmarks for accessibility tests.
+    """
+    return render(request, "errors/404.html", status=404)
+
+
+def custom_500(request):
+    """
+    Custom 500 handler that uses templates/errors/500.html.
+    """
+    return render(request, "errors/500.html", status=500)
