@@ -92,36 +92,36 @@
     </style>
 </head>
 <body>
-    <div class="error-container">
+    <div class="error-container" role="alert" aria-live="assertive">
         <div class="error-illustration floating-animation">
-            <i class="fas fa-server pulse-animation"></i>
+            <i class="fas fa-server pulse-animation" aria-hidden="true"></i>
         </div>
-        
-        <div class="error-code">500</div>
-        
+
+        <div class="error-code" aria-hidden="true">500</div>
+
         <h1 class="display-5 mb-3">Server Error</h1>
-        
+
         <p class="lead mb-4">
             Oops! Something went wrong on our end. Our technical team has been notified and is working to fix this issue.
         </p>
 
         <div class="error-card">
-            <h3 class="h5 mb-3">What can you do?</h3>
+            <h2 class="h5 mb-3">What can you do?</h2>
             <div class="suggestion-list">
                 <div class="suggestion-item">
-                    <i class="fas fa-refresh me-2"></i>
+                    <i class="fas fa-refresh me-2" aria-hidden="true"></i>
                     Refresh the page in a few minutes
                 </div>
                 <div class="suggestion-item">
-                    <i class="fas fa-arrow-left me-2"></i>
+                    <i class="fas fa-arrow-left me-2" aria-hidden="true"></i>
                     Go back to the previous page
                 </div>
                 <div class="suggestion-item">
-                    <i class="fas fa-home me-2"></i>
+                    <i class="fas fa-home me-2" aria-hidden="true"></i>
                     Return to the homepage
                 </div>
                 <div class="suggestion-item">
-                    <i class="fas fa-envelope me-2"></i>
+                    <i class="fas fa-envelope me-2" aria-hidden="true"></i>
                     Contact support if the problem persists
                 </div>
             </div>
@@ -129,20 +129,22 @@
 
         <div class="d-flex gap-3 justify-content-center mb-4">
             <a href="/" class="btn btn-glass btn-lg">
-                <i class="fas fa-home me-2"></i>Go Home
+                <i class="fas fa-home me-2" aria-hidden="true"></i>Go Home
             </a>
-            <button onclick="location.reload()" class="btn btn-glass btn-lg">
-                <i class="fas fa-refresh me-2"></i>Try Again
+            <button type="button" onclick="location.reload()" class="btn btn-glass btn-lg">
+                <i class="fas fa-refresh me-2" aria-hidden="true"></i>Try Again
             </button>
-            <button onclick="history.back()" class="btn btn-glass btn-lg">
-                <i class="fas fa-arrow-left me-2"></i>Go Back
+            <button type="button" onclick="history.back()" class="btn btn-glass btn-lg">
+                <i class="fas fa-arrow-left me-2" aria-hidden="true"></i>Go Back
             </button>
         </div>
 
         <div class="mt-4">
             <small style="opacity: 0.8;">
-                Error Code: 500 | 
-                <a href="mailto:support@employeetaskmanager.com" style="color: rgba(255,255,255,0.9);">Contact Support</a>
+                Error Code: 500 |
+                <a href="mailto:support@employeetaskmanager.com" style="color: rgba(255,255,255,0.9);">
+                    Contact Support
+                </a>
                 <br>
                 <span id="timestamp"></span>
             </small>
@@ -152,12 +154,12 @@
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
     <script>
         document.getElementById('timestamp').textContent = 'Time: ' + new Date().toLocaleString();
-        
+
         console.error('500 Server Error occurred at:', new Date().toISOString());
-        
+
         let retryCount = 0;
         const maxRetries = 3;
-        
+
         function autoRetry() {
             if (retryCount < maxRetries) {
                 setTimeout(() => {
@@ -167,10 +169,13 @@
                 }, 30000);
             }
         }
-        
+
         document.addEventListener('DOMContentLoaded', function() {
-            document.querySelector('.btn:first-of-type').focus();
-            
+            const firstButton = document.querySelector('.btn-glass, a.btn-glass');
+            if (firstButton) {
+                firstButton.focus();
+            }
+
             document.addEventListener('keydown', function(e) {
                 if (e.key === 'r' || e.key === 'R') {
                     location.reload();

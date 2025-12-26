@@ -64,48 +64,48 @@
         <div class="col-md-3 mb-3">
             <div class="stat-card p-4 text-center">
                 <i class="fas fa-tasks fa-2x text-primary mb-2" aria-hidden="true"></i>
-                <h3 class="h4 mb-1">{{ total_tasks }}</h3>
+                <p class="h4 mb-1">{{ total_tasks }}</p>
                 <p class="text-muted mb-0">Total Tasks</p>
             </div>
         </div>
         <div class="col-md-3 mb-3">
             <div class="stat-card p-4 text-center">
                 <i class="fas fa-clock fa-2x text-warning mb-2" aria-hidden="true"></i>
-                <h3 class="h4 mb-1">{{ pending_tasks }}</h3>
+                <p class="h4 mb-1">{{ pending_tasks }}</p>
                 <p class="text-muted mb-0">Pending Tasks</p>
             </div>
         </div>
         <div class="col-md-3 mb-3">
             <div class="stat-card p-4 text-center">
                 <i class="fas fa-check-circle fa-2x text-success mb-2" aria-hidden="true"></i>
-                <h3 class="h4 mb-1">{{ completed_tasks }}</h3>
+                <p class="h4 mb-1">{{ completed_tasks }}</p>
                 <p class="text-muted mb-0">Completed</p>
             </div>
         </div>
         <div class="col-md-3 mb-3">
             <div class="stat-card p-4 text-center">
                 <i class="fas fa-exclamation-triangle fa-2x text-danger mb-2" aria-hidden="true"></i>
-                <h3 class="h4 mb-1">{{ overdue_tasks }}</h3>
+                <p class="h4 mb-1">{{ overdue_tasks }}</p>
                 <p class="text-muted mb-0">Overdue</p>
             </div>
         </div>
     </div>
 
     <div class="row">
-        <div class="col-lg-8 mb-4">
+        <section class="col-lg-8 mb-4">
             <div class="chart-container">
-                <h3 class="h5 mb-3" id="taskChartHeading">Task Progress Overview</h3>
+                <h2 class="h5 mb-3" id="taskChartHeading">Task Progress Overview</h2>
                 <div class="chart-area">
                     <canvas id="taskChart" aria-labelledby="taskChartHeading">
                         Task progress doughnut chart: Completed, In Progress, Pending, Overdue.
                     </canvas>
                 </div>
             </div>
-        </div>
+        </section>
 
-        <div class="col-lg-4 mb-4">
+        <section class="col-lg-4 mb-4">
             <div class="chart-container">
-                <h3 class="h5 mb-3">Quick Actions</h3>
+                <h2 class="h5 mb-3">Quick Actions</h2>
                 <div class="d-grid gap-2">
                     <a href="{% url 'tasks:task_create' %}" class="btn btn-primary">
                         <i class="fas fa-plus me-2" aria-hidden="true"></i>Create New Task
@@ -118,38 +118,38 @@
                     </button>
                 </div>
             </div>
-        </div>
+        </section>
     </div>
 
     <div class="row">
-        <div class="col-lg-6 mb-4">
+        <section class="col-lg-6 mb-4">
             <div class="chart-container">
-                <h3 class="h5 mb-3">Recent Activity</h3>
+                <h2 class="h5 mb-3">Recent Activity</h2>
                 <div class="recent-activity">
                     {% for activity in recent_activities %}
-                    <div class="activity-item priority-{{ activity.priority }}">
+                    <article class="activity-item priority-{{ activity.priority }}">
                         <small class="text-muted">{{ activity.created_at|timesince }} ago</small>
                         <p class="mb-1"><strong>{{ activity.title }}</strong></p>
                         <p class="text-muted small mb-0">Assigned to {{ activity.assigned_to.get_full_name }}</p>
-                    </div>
+                    </article>
                     {% empty %}
                     <p class="text-muted">No recent activity to display.</p>
                     {% endfor %}
                 </div>
             </div>
-        </div>
+        </section>
 
-        <div class="col-lg-6 mb-4">
+        <section class="col-lg-6 mb-4">
             <div class="chart-container">
-                <h3 class="h5 mb-3">Team Performance</h3>
+                <h2 class="h5 mb-3">Team Performance</h2>
                 <div class="table-responsive">
                     <table class="table table-sm align-middle">
                         <thead>
                             <tr>
-                                <th>Employee</th>
-                                <th>Assigned</th>
-                                <th>Completed</th>
-                                <th>Completion Rate</th>
+                                <th scope="col">Employee</th>
+                                <th scope="col">Assigned</th>
+                                <th scope="col">Completed</th>
+                                <th scope="col">Completion Rate</th>
                             </tr>
                         </thead>
                         <tbody>
@@ -180,7 +180,7 @@
                     </table>
                 </div>
             </div>
-        </div>
+        </section>
     </div>
 </div>
 {% endblock %}
@@ -198,10 +198,10 @@ document.addEventListener('DOMContentLoaded', function () {
         labels: ['Completed', 'In Progress', 'Pending', 'Overdue'],
         datasets: [{
           data: [
-            {{ completed_tasks|default_if_none:"0"|default:"0" }},
-            {{ in_progress_tasks|default_if_none:"0"|default:"0" }},
-            {{ pending_tasks|default_if_none:"0"|default:"0" }},
-            {{ overdue_tasks|default_if_none:"0"|default:"0" }}
+            {{ completed_tasks|default:"0" }},
+            {{ in_progress_tasks|default:"0" }},
+            {{ pending_tasks|default:"0" }},
+            {{ overdue_tasks|default:"0" }}
           ],
           backgroundColor: ['#28a745', '#007bff', '#ffc107', '#dc3545'],
           borderWidth: 2

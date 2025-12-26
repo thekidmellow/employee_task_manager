@@ -1,0 +1,349 @@
+.
+├── __pycache__
+│   ├── locustfile.cpython-312.pyc
+│   └── manage.cpython-312.pyc
+├── apps
+│   ├── __init__.py
+│   ├── __pycache__
+│   │   └── __init__.cpython-312.pyc
+│   ├── __testutils__
+│   │   ├── __pycache__
+│   │   └── factories.py
+│   ├── accounts
+│   │   ├── __init__.py
+│   │   ├── __pycache__
+│   │   ├── admin.py
+│   │   ├── apps.py
+│   │   ├── forms.py
+│   │   ├── migrations
+│   │   ├── models.py
+│   │   ├── tests
+│   │   ├── urls.py
+│   │   └── views.py
+│   ├── core
+│   │   ├── __init__.py
+│   │   ├── __pycache__
+│   │   ├── admin.py
+│   │   ├── apps.py
+│   │   ├── migrations
+│   │   ├── models.py
+│   │   ├── tests
+│   │   ├── urls.py
+│   │   └── views.py
+│   └── tasks
+│       ├── __init__.py
+│       ├── __pycache__
+│       ├── admin.py
+│       ├── apps.py
+│       ├── forms.py
+│       ├── migrations
+│       ├── models.py
+│       ├── tests
+│       ├── urls.py
+│       └── views.py
+├── coverage
+│   ├── clover.xml
+│   ├── coverage-final.json
+│   ├── lcov-report
+│   │   ├── base.css
+│   │   ├── block-navigation.js
+│   │   ├── favicon.png
+│   │   ├── index.html
+│   │   ├── main.js.html
+│   │   ├── prettify.css
+│   │   ├── prettify.js
+│   │   ├── sort-arrow-sprite.png
+│   │   └── sorter.js
+│   └── lcov.info
+├── employee_task_manager
+│   ├── __init__.py
+│   ├── __pycache__
+│   │   ├── __init__.cpython-312.pyc
+│   │   ├── settings.cpython-312.pyc
+│   │   ├── tests.cpython-312.pyc
+│   │   ├── urls.cpython-312.pyc
+│   │   └── wsgi.cpython-312.pyc
+│   ├── asgi.py
+│   ├── env.py
+│   ├── settings.py
+│   ├── tests.py
+│   ├── urls.py
+│   └── wsgi.py
+├── erd.svg
+├── htmlcov
+│   ├── class_index.html
+│   ├── coverage_html_cb_6fb7b396.js
+│   ├── favicon_32_cb_58284776.png
+│   ├── function_index.html
+│   ├── index.html
+│   ├── keybd_closed_cb_ce680311.png
+│   ├── locustfile_py.html
+│   ├── manage_py.html
+│   ├── status.json
+│   ├── style_cb_6b508a39.css
+│   ├── style_cb_81f8c14c.css
+│   ├── z_14bf83e2a4686d21___init___py.html
+│   ├── z_14bf83e2a4686d21_locustfile_py.html
+│   ├── z_1e83172f897ac670___init___py.html
+│   ├── z_1e83172f897ac670_admin_py.html
+│   ├── z_1e83172f897ac670_apps_py.html
+│   ├── z_1e83172f897ac670_forms_py.html
+│   ├── z_1e83172f897ac670_models_py.html
+│   ├── z_1e83172f897ac670_tests_py.html
+│   ├── z_1e83172f897ac670_urls_py.html
+│   ├── z_1e83172f897ac670_views_py.html
+│   ├── z_2fb88fcd999f34e1___init___py.html
+│   ├── z_322c4d2e79d79139_factories_py.html
+│   ├── z_3796a5de99c86080___init___py.html
+│   ├── z_3796a5de99c86080_forms_py.html
+│   ├── z_3796a5de99c86080_models_py.html
+│   ├── z_3796a5de99c86080_test_forms_basic_py.html
+│   ├── z_3796a5de99c86080_test_forms_cov_py.html
+│   ├── z_3796a5de99c86080_test_forms_paths_py.html
+│   ├── z_3796a5de99c86080_test_forms_py.html
+│   ├── z_3796a5de99c86080_test_legacy_py.html
+│   ├── z_3796a5de99c86080_test_views_basic_py.html
+│   ├── z_3796a5de99c86080_test_views_coverage_py.html
+│   ├── z_3796a5de99c86080_test_views_more_py.html
+│   ├── z_3796a5de99c86080_test_views_py.html
+│   ├── z_53bae6a4517aa448___init___py.html
+│   ├── z_53bae6a4517aa448_admin_py.html
+│   ├── z_53bae6a4517aa448_apps_py.html
+│   ├── z_53bae6a4517aa448_forms_py.html
+│   ├── z_53bae6a4517aa448_models_py.html
+│   ├── z_53bae6a4517aa448_tests_py.html
+│   ├── z_53bae6a4517aa448_urls_py.html
+│   ├── z_53bae6a4517aa448_views_py.html
+│   ├── z_577ba8984a510615___init___py.html
+│   ├── z_577ba8984a510615_test_compatibility_py.html
+│   ├── z_71720a9b41b71e67___init___py.html
+│   ├── z_71720a9b41b71e67_asgi_py.html
+│   ├── z_71720a9b41b71e67_settings_py.html
+│   ├── z_71720a9b41b71e67_tests_py.html
+│   ├── z_71720a9b41b71e67_urls_py.html
+│   ├── z_71720a9b41b71e67_wsgi_py.html
+│   ├── z_7683014bf39fff12___init___py.html
+│   ├── z_7683014bf39fff12_test_dashboards_py.html
+│   ├── z_7683014bf39fff12_test_legacy_py.html
+│   ├── z_7683014bf39fff12_test_views_py.html
+│   ├── z_78b74e63455bf0b8___init___py.html
+│   ├── z_78b74e63455bf0b8_0001_initial_py.html
+│   ├── z_78b74e63455bf0b8_0002_task_estimated_hours_py.html
+│   ├── z_78b74e63455bf0b8_0003_remove_task_estimated_hours_py.html
+│   ├── z_78b74e63455bf0b8_0004_task_estimated_hours_task_notes_py.html
+│   ├── z_97bd5d8b7d78a506___init___py.html
+│   ├── z_97bd5d8b7d78a506_forms_py.html
+│   ├── z_97bd5d8b7d78a506_models_py.html
+│   ├── z_97bd5d8b7d78a506_test_api_and_status_py.html
+│   ├── z_97bd5d8b7d78a506_test_forms_basic_py.html
+│   ├── z_97bd5d8b7d78a506_test_forms_cov_py.html
+│   ├── z_97bd5d8b7d78a506_test_forms_paths_py.html
+│   ├── z_97bd5d8b7d78a506_test_legacy_py.html
+│   ├── z_97bd5d8b7d78a506_test_models_basic_py.html
+│   ├── z_97bd5d8b7d78a506_test_views_coverage_py.html
+│   ├── z_97bd5d8b7d78a506_test_views_more_py.html
+│   ├── z_97bd5d8b7d78a506_test_views_py.html
+│   ├── z_97bd5d8b7d78a506_utils_py.html
+│   ├── z_9e189ee61a034fc9___init___py.html
+│   ├── z_a40f6d277e0496df___init___py.html
+│   ├── z_a40f6d277e0496df_test_user_workflows_py.html
+│   ├── z_a44f0ac069e85531___init___py.html
+│   ├── z_a44f0ac069e85531_test_accessibility_py.html
+│   ├── z_a44f0ac069e85531_test_api_py.html
+│   ├── z_a44f0ac069e85531_test_database_py.html
+│   ├── z_a44f0ac069e85531_test_security_py.html
+│   ├── z_a44f0ac069e85531_test_urls_py.html
+│   ├── z_e2ebc24378d878c1___init___py.html
+│   ├── z_e2ebc24378d878c1_0001_initial_py.html
+│   ├── z_f23e86575cf2f261___init___py.html
+│   ├── z_f23e86575cf2f261_admin_py.html
+│   ├── z_f23e86575cf2f261_apps_py.html
+│   ├── z_f23e86575cf2f261_models_py.html
+│   ├── z_f23e86575cf2f261_tests_py.html
+│   ├── z_f23e86575cf2f261_urls_py.html
+│   └── z_f23e86575cf2f261_views_py.html
+├── images
+│   ├── apps:accounts:admin.py_valid.png
+│   ├── apps:accounts:forms.py_valid.png
+│   ├── apps:accounts:models.py_valid.png
+│   ├── apps:accounts:tests.py_valid.png
+│   ├── apps:accounts:urls.py_valid.png
+│   ├── apps:accounts:views.py_valid.png
+│   ├── apps:core:tests.py_valid.png
+│   ├── apps:core:urls.py_valid.png
+│   ├── apps:core:views.py_valid.png
+│   ├── apps:tasks:admin.py_valid.png
+│   ├── apps:tasks:forms.py_valid.png
+│   ├── apps:tasks:models.py_valid.png
+│   ├── apps:tasks:tests.py_valid.png
+│   ├── apps:tasks:urls.py_valid.png
+│   ├── apps:tasks:views.py_valid.png
+│   ├── base_html.png
+│   ├── browser_home_responsive.png
+│   ├── browser_size_home_responsive.png
+│   ├── browser_size_profile_compatible.png
+│   ├── chrome_dashboard_compatible.png
+│   ├── Chrome_home_compatible.png
+│   ├── chrome_profile_compatiblepng.png
+│   ├── chrome_tasks_compatible.png
+│   ├── coverage_html.png
+│   ├── css_validation.png
+│   ├── employee_dashboard_html.png
+│   ├── erd.png
+│   ├── firefox_dashboard_compatiblepng.png
+│   ├── firefox_home_compatible.png
+│   ├── firefox_profile_compatible.png
+│   ├── firefox_tasks_compatible.png
+│   ├── jshint_validator.png
+│   ├── lighthouse_report_createnewtask.png
+│   ├── lighthouse_report_dashboard.png
+│   ├── lighthouse_report_edittask.png
+│   ├── lighthouse_report_home.png
+│   ├── lighthouse_report_login.png
+│   ├── lighthouse_report_profile.png
+│   ├── lighthouse_report_register.png
+│   ├── lighthouse_report_tasks.png
+│   ├── lighthouse_report_viewtask.png
+│   ├── login_html.png
+│   ├── manage.py_valid.png
+│   ├── manager_dashboard_html.png
+│   ├── mobile_home_responsive.png
+│   ├── mobile_profile_responsive.png
+│   ├── password_change_done_html.png
+│   ├── password_change_html.png
+│   ├── profile_html.png
+│   ├── register_html.png
+│   ├── safari_create_compatible.png
+│   ├── safari_dashboard_compatible.png
+│   ├── safari_home_compatible.png
+│   ├── safari_profile_compatible.png
+│   ├── safari_tasks_compatible.png
+│   ├── settings.py_valid.png
+│   ├── tablet_home_responsive.png
+│   ├── tablet_profile_responsive.png
+│   ├── task_detail_html.png
+│   ├── task_form_html.png
+│   ├── task_list_html.png
+│   ├── test_all_green.png
+│   ├── tests.py_valid.png
+│   ├── urls.py_valid.png
+│   ├── us_dashboardandreports_6.png
+│   ├── us_dashboardandreports_7.png
+│   ├── us_taskmanagement_3.png
+│   ├── us_updatetaskstatus_5.png
+│   ├── us_userlogin_2.png
+│   ├── us_usermanagement_1.png
+│   ├── us_viewtask_4.png
+│   ├── wireframe_dashboard_browser.png
+│   ├── wireframe_dashbord_mobile.png
+│   ├── wireframe_home_mobile.png
+│   ├── wireframe_home.png
+│   ├── wireframe_tasks_browser.png
+│   └── wireframe_tasks_mobile.png
+├── locustfile.py
+├── manage.py
+├── package-lock.json
+├── package.json
+├── Procfile
+├── pytest.ini
+├── README.md
+├── requirements-testing.txt
+├── requirements.txt
+├── run_all_tests.sh
+├── static
+│   ├── css
+│   │   └── style.css
+│   ├── favicon.ico
+│   └── js
+│       ├── main.js
+│       └── tests
+├── staticfiles
+│   ├── admin
+│   │   ├── css
+│   │   ├── img
+│   │   └── js
+│   ├── css
+│   │   └── style.css
+│   └── js
+│       └── main.js
+├── structure.txt
+├── templates
+│   ├── accounts
+│   │   └── profile.html
+│   ├── base.html
+│   ├── core
+│   │   ├── employee_dashboard.html
+│   │   ├── home.html
+│   │   └── manager_dashboard.html
+│   ├── errors
+│   │   ├── 404.html
+│   │   └── 500.html
+│   ├── registration
+│   │   ├── login.html
+│   │   ├── password_change_done.html
+│   │   ├── password_change.html
+│   │   └── register.html
+│   └── tasks
+│       ├── task_detail.html
+│       ├── task_form.html
+│       └── task_list.html
+├── test_results
+│   ├── accessibility_tests.log
+│   ├── api_tests.log
+│   ├── browser_tests.log
+│   ├── database_tests.log
+│   ├── integration_tests.log
+│   ├── js_coverage.log
+│   ├── js_tests.log
+│   ├── js-coverage
+│   │   ├── base.css
+│   │   ├── block-navigation.js
+│   │   ├── clover.xml
+│   │   ├── coverage-final.json
+│   │   ├── favicon.png
+│   │   ├── index.html
+│   │   ├── lcov-report
+│   │   ├── lcov.info
+│   │   ├── prettify.css
+│   │   ├── prettify.js
+│   │   ├── sort-arrow-sprite.png
+│   │   └── sorter.js
+│   ├── npm_install.log
+│   ├── performance_tests.log
+│   ├── security_tests.log
+│   └── unit_tests.log
+└── tests
+    ├── __init__.py
+    ├── __pycache__
+    │   ├── __init__.cpython-312.pyc
+    │   ├── test_accessibility.cpython-312-pytest-8.4.1.pyc
+    │   ├── test_accessibility.cpython-312-pytest-8.4.2.pyc
+    │   ├── test_accessibility.cpython-312.pyc
+    │   ├── test_api.cpython-312-pytest-8.4.1.pyc
+    │   ├── test_api.cpython-312-pytest-8.4.2.pyc
+    │   ├── test_api.cpython-312.pyc
+    │   ├── test_database.cpython-312-pytest-8.4.1.pyc
+    │   ├── test_database.cpython-312-pytest-8.4.2.pyc
+    │   ├── test_database.cpython-312.pyc
+    │   ├── test_security.cpython-312-pytest-8.4.1.pyc
+    │   ├── test_security.cpython-312-pytest-8.4.2.pyc
+    │   └── test_security.cpython-312.pyc
+    ├── browser
+    │   ├── __init__.py
+    │   ├── __pycache__
+    │   └── test_compatibility.py
+    ├── django_tests.py
+    ├── integration
+    │   ├── __init__.py
+    │   ├── __pycache__
+    │   └── test_user_workflows.py
+    ├── performance
+    │   ├── __init__.py
+    │   ├── __pycache__
+    │   └── locustfile.py
+    ├── test_accessibility.py
+    ├── test_api.py
+    ├── test_database.py
+    └── test_security.py
+
+52 directories, 295 files

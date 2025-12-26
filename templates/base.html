@@ -3,94 +3,99 @@
 <html lang="en">
 
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <meta name="description"
-        content="{% block meta_description %}Employee Task Manager - Efficient task management system for teams{% endblock %}">
-    <meta name="keywords"
-        content="{% block meta_keywords %}task management, employee productivity, team collaboration{% endblock %}">
-    <meta name="author" content="Employee Task Manager Team">
+    <meta charset="utf-8">
     <title>{% block title %}Employee Task Manager{% endblock %}</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
-    <link rel="icon" type="image/x-icon" href="{% static 'favicon.ico' %}">
+    {% block meta_description %}
+    <meta name="description"
+        content="Employee Task Manager helps teams organize tasks, track progress, and improve productivity.">
+    {% endblock %}
 
-    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet"
-        integrity="sha384-T3c6CoIi6uLrA9TneNEoa7RxnatzjcDSCmG1MXxSR1GAsXEV/Dwwykc2MPK8M2HN" crossorigin="anonymous">
-    <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.1/font/bootstrap-icons.css" rel="stylesheet">
+    <meta name="keywords" content="employee task manager, task tracking, team productivity, project management">
+    <link rel="icon" href="{% static 'favicon.ico' %}" type="image/x-icon">
 
+    <meta name="csrf-token" content="{{ csrf_token }}">
+
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.10.5/font/bootstrap-icons.css" rel="stylesheet">
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" rel="stylesheet">
     <link rel="stylesheet" href="{% static 'css/style.css' %}">
 
     {% block extra_css %}{% endblock %}
 </head>
 
-<body>
-    <a href="#main-content" class="visually-hidden-focusable skip-link">Skip to main content</a>
+<body class="d-flex flex-column min-vh-100">
+
+    <a href="#main-content" class="visually-hidden-focusable btn btn-link">Skip to main content</a>
 
     <nav class="navbar navbar-expand-lg navbar-dark bg-primary" aria-label="Main navigation">
         <div class="container">
-            <a class="navbar-brand" href="{% url 'core:home' %}" aria-label="Employee Task Manager Home">
-                <i class="bi bi-check-square" aria-hidden="true"></i>
-                Task Manager
+            <a class="navbar-brand" href="/">
+                <i class="bi bi-check2-square" aria-hidden="true"></i>
+                Employee Task Manager
             </a>
 
-            <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav"
-                aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation menu">
+            <button class="navbar-toggler" type="button" data-bs-toggle="collapse"
+                data-bs-target="#navbarSupportedContent" aria-controls="navbarSupportedContent" aria-expanded="false"
+                aria-label="Toggle navigation">
                 <span class="navbar-toggler-icon"></span>
             </button>
 
-            <div class="collapse navbar-collapse" id="navbarNav">
-                <ul class="navbar-nav me-auto">
-                    {% if user.is_authenticated %}
+            <div class="collapse navbar-collapse" id="navbarSupportedContent">
+                <ul class="navbar-nav me-auto mb-2 mb-lg-0">
                     <li class="nav-item">
-                        <a class="nav-link" href="{% url 'tasks:task_list' %}" aria-label="View tasks">
-                            <i class="bi bi-list-task" aria-hidden="true"></i> Tasks
-                        </a>
+                        <a class="nav-link {% if request.path == '/' %}active{% endif %}" href="/">Home</a>
                     </li>
 
-                    {% if user.userprofile.is_manager %}
+                    {% if user.is_authenticated %}
                     <li class="nav-item">
-                        <a class="nav-link" href="{% url 'core:manager_dashboard' %}" aria-label="Manager dashboard">
-                            <i class="bi bi-speedometer2" aria-hidden="true"></i> Dashboard
-                        </a>
+                        <a class="nav-link{% if request.path|slice:':11' == '/dashboard/' %} active{% endif %}"
+                            href="/dashboard/manager/">Dashboard</a>
                     </li>
+
                     <li class="nav-item">
-                        <a class="nav-link" href="{% url 'tasks:task_create' %}" aria-label="Create new task">
-                            <i class="bi bi-plus-circle" aria-hidden="true"></i> Create Task
-                        </a>
+                        <a class="nav-link {% if request.resolver_match.app_name == 'tasks' and request.resolver_match.url_name == 'task_list' %}active{% endif %}"
+                            href="{% url 'tasks:task_list' %}">Tasks</a>
                     </li>
-                    {% else %}
+
+                    {% if can_create_task %}
                     <li class="nav-item">
-                        <a class="nav-link" href="{% url 'core:employee_dashboard' %}" aria-label="My dashboard">
-                            <i class="bi bi-person-workspace" aria-hidden="true"></i> My Dashboard
-                        </a>
+                        <a class="nav-link {% if request.resolver_match.app_name == 'tasks' and request.resolver_match.url_name == 'task_create' %}active{% endif %}"
+                            href="{% url 'tasks:task_create' %}">Create Task</a>
                     </li>
                     {% endif %}
+
                     {% endif %}
                 </ul>
 
-                <ul class="navbar-nav">
+                <ul class="navbar-nav ms-auto mb-2 mb-lg-0">
                     {% if user.is_authenticated %}
                     <li class="nav-item dropdown">
-                        <a class="nav-link dropdown-toggle" href="#" id="navbarDropdown" role="button"
-                            data-bs-toggle="dropdown" aria-expanded="false" aria-label="User menu">
+                        <a class="nav-link dropdown-toggle" href="#" id="userMenu" role="button"
+                            data-bs-toggle="dropdown" aria-expanded="false">
                             <i class="bi bi-person-circle" aria-hidden="true"></i>
                             {{ user.get_full_name|default:user.username }}
-                            <span class="badge bg-secondary ms-1">{{ user.userprofile.get_role_display }}</span>
                         </a>
-                        <ul class="dropdown-menu dropdown-menu-end" aria-labelledby="navbarDropdown">
+                        <ul class="dropdown-menu dropdown-menu-end" aria-labelledby="userMenu">
                             <li>
-                                <a class="dropdown-item" href="{% url 'accounts:profile' %}" aria-label="View profile">
+                                <a class="dropdown-item" href="{% url 'accounts:profile' %}">
                                     <i class="bi bi-person" aria-hidden="true"></i> Profile
+                                </a>
+                            </li>
+                            <li>
+                                <a class="dropdown-item" href="{% url 'password_change' %}">
+                                    <i class="bi bi-key" aria-hidden="true"></i> Change Password
                                 </a>
                             </li>
                             <li>
                                 <hr class="dropdown-divider">
                             </li>
                             <li>
-                                <form action="{% url 'accounts:logout' %}" method="post" class="dropdown-item p-0 m-0">
+                                <form action="{% url 'logout' %}" method="post" class="d-inline">
                                     {% csrf_token %}
-                                    <button type="submit" class="btn btn-link dropdown-item text-start w-100">
-                                        <i class="bi bi-box-arrow-right me-2" aria-hidden="true"></i> Logout
+                                    <button type="submit" class="dropdown-item">
+                                        <i class="bi bi-box-arrow-right" aria-hidden="true"></i> Logout
                                     </button>
                                 </form>
                             </li>
@@ -98,15 +103,8 @@
                     </li>
                     {% else %}
                     <li class="nav-item">
-                        {# Use namespaced login URL and preserve `next` so users return to current page after login #}
-                        <a class="nav-link" href="{% url 'accounts:login' %}?next={{ request.get_full_path|urlencode }}"
-                            aria-label="Login to your account">
+                        <a class="nav-link" href="{% url 'login' %}">
                             <i class="bi bi-box-arrow-in-right" aria-hidden="true"></i> Login
-                        </a>
-                    </li>
-                    <li class="nav-item">
-                        <a class="nav-link" href="{% url 'accounts:register' %}" aria-label="Create new account">
-                            <i class="bi bi-person-plus" aria-hidden="true"></i> Register
                         </a>
                     </li>
                     {% endif %}
@@ -115,15 +113,13 @@
         </div>
     </nav>
 
-    <main id="main-content" class="container mt-4" tabindex="-1">
+    <main id="main-content" class="container mt-4 flex-grow-1" tabindex="-1">
         {% if messages %}
-        <div class="messages-container" role="alert" aria-live="polite">
+        <div class="mt-2" aria-live="polite" aria-atomic="true">
             {% for message in messages %}
-            <div class="alert alert-{{ message.tags }} alert-dismissible fade show" role="alert">
-                <i class="bi bi-{% if message.tags == 'success' %}check-circle{% elif message.tags == 'error' %}exclamation-triangle{% else %}info-circle{% endif %}"
-                    aria-hidden="true"></i>
+            <div class="alert {{ message.tags }} alert-dismissible fade show" role="alert">
                 {{ message }}
-                <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close message"></button>
+                <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
             </div>
             {% endfor %}
         </div>
@@ -133,31 +129,33 @@
     </main>
 
     <footer class="bg-dark text-light py-4 mt-5">
-        <div class="container">
-            <div class="row">
-                <div class="col-md-6">
-                    <h5><i class="bi bi-check-square" aria-hidden="true"></i> Employee Task Manager</h5>
-                    <p class="mb-0">Streamlining team productivity and task management.</p>
-                </div>
-                <div class="col-md-6 text-md-end">
-                    <p class="mb-0">
-                        <small>&copy; 2024 Task Manager. Built with Django &amp; Bootstrap.</small>
-                    </p>
-                    {% if user.is_authenticated %}
-                    <small class="text-muted">
-                        Logged in as {{ user.username }} ({{ user.userprofile.get_role_display }})
-                    </small>
-                    {% endif %}
-                </div>
-            </div>
+        <div class="container text-center">
+            <p class="mb-1">&copy; {{ now|date:"Y" }} Employee Task Manager. All rights reserved.</p>
+            <p class="mb-0">
+                <a href="/" class="text-decoration-none text-light">Home</a>
+                <span class="text-muted mx-2">|</span>
+                <a href="mailto:support@employeetaskmanager.com" class="text-decoration-none text-light">Contact Support</a>
+            </p>
         </div>
     </footer>
 
-    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"
-        integrity="sha384-C6RzsynM9kWDrMNeT87bh95OGNyZPhcTNXj1NW7RuBCsyN/o0jlpcV8Qyq46cDfL"
-        crossorigin="anonymous"></script>
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"
+        type="text/javascript"></script>
+    <script type="text/javascript" src="{% static 'js/main.js' %}" defer></script>
 
-    <script src="{% static 'js/main.js' %}"></script>
+    <script type="text/javascript">
+      (function () {
+        var toggler = document.querySelector('.navbar-toggler');
+        var collapse = document.getElementById('navbarSupportedContent');
+        if (!toggler || !collapse) return;
+
+        toggler.addEventListener('click', function () {
+          collapse.classList.toggle('show');
+          var expanded = toggler.getAttribute('aria-expanded') === 'true';
+          toggler.setAttribute('aria-expanded', String(!expanded));
+        });
+      })();
+    </script>
 
     {% block extra_js %}{% endblock %}
 </body>

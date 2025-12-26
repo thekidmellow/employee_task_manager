@@ -8,7 +8,7 @@ BASE_DIR = Path(__file__).resolve().parent.parent
 config = AutoConfig(search_path=BASE_DIR)
 
 SECRET_KEY = config("SECRET_KEY", default="dev-only")
-DEBUG = config("DEBUG", default=False, cast=bool)
+DEBUG = config("DEBUG", default=True, cast=bool)
 
 ALLOWED_HOSTS = [
     "localhost",
@@ -57,6 +57,8 @@ TEMPLATES = [
                 "django.template.context_processors.request",
                 "django.contrib.auth.context_processors.auth",
                 "django.contrib.messages.context_processors.messages",
+                "apps.core.context_processors.can_create_task",
+                "apps.core.context_processors.user_permissions",
             ],
         },
     },

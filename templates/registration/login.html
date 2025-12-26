@@ -2,8 +2,11 @@
 {% load static %}
 
 {% block title %}Login - Employee Task Manager{% endblock %}
-{% block meta_description %}Login to your Employee Task Manager account. Secure access to your tasks, dashboard, and
-team collaboration tools.{% endblock %}
+
+{% block meta_description %}
+<meta name="description"
+      content="Login to your Employee Task Manager account. Secure access to your tasks, dashboard, and team collaboration tools.">
+{% endblock %}
 
 {% block content %}
 <div class="row justify-content-center">
@@ -18,15 +21,17 @@ team collaboration tools.{% endblock %}
 
             <div class="card-body p-4">
                 {% if messages %}
-                {% for message in messages %}
-                <div class="alert alert-{{ message.tags }} mb-3" role="alert">{{ message }}</div>
-                {% endfor %}
+                    {% for message in messages %}
+                        <div class="alert alert-{{ message.tags }} mb-3" role="alert">
+                            {{ message }}
+                        </div>
+                    {% endfor %}
                 {% endif %}
 
                 {% if form.non_field_errors %}
-                <div class="alert alert-danger mb-3" role="alert">
-                    {{ form.non_field_errors.0 }}
-                </div>
+                    <div class="alert alert-danger mb-3" role="alert">
+                        {{ form.non_field_errors.0 }}
+                    </div>
                 {% endif %}
 
                 <form method="post" id="loginForm" action="{% url 'accounts:login' %}" novalidate>
@@ -37,11 +42,19 @@ team collaboration tools.{% endblock %}
                         <label for="id_username" class="form-label">
                             <i class="bi bi-person" aria-hidden="true"></i> Username
                         </label>
-                        <input type="text" class="form-control{% if form.username.errors %} is-invalid{% endif %}"
-                            id="id_username" name="username" value="{{ form.data.username|default:'' }}"
-                            autocomplete="username" required>
+                        <input
+                            type="text"
+                            class="form-control{% if form.username.errors %} is-invalid{% endif %}"
+                            id="id_username"
+                            name="username"
+                            value="{{ form.data.username|default:'' }}"
+                            autocomplete="username"
+                            required
+                        >
                         {% if form.username.errors %}
-                        <div class="invalid-feedback d-block">{{ form.username.errors.0 }}</div>
+                            <div class="invalid-feedback d-block">
+                                {{ form.username.errors.0 }}
+                            </div>
                         {% endif %}
                     </div>
 
@@ -50,28 +63,51 @@ team collaboration tools.{% endblock %}
                             <i class="bi bi-lock" aria-hidden="true"></i> Password
                         </label>
                         <div class="input-group">
-                            <input type="password"
-                                class="form-control{% if form.password.errors %} is-invalid{% endif %}" id="id_password"
-                                name="password" autocomplete="current-password" required>
-                            <button class="btn btn-outline-secondary" type="button" id="togglePassword"
-                                aria-label="Toggle password visibility">
+                            <input
+                                type="password"
+                                class="form-control{% if form.password.errors %} is-invalid{% endif %}"
+                                id="id_password"
+                                name="password"
+                                autocomplete="current-password"
+                                required
+                            >
+                            <button
+                                class="btn btn-outline-secondary"
+                                type="button"
+                                id="togglePassword"
+                                aria-label="Toggle password visibility"
+                            >
                                 <i class="bi bi-eye" id="toggleIcon" aria-hidden="true"></i>
                             </button>
                         </div>
                         {% if form.password.errors %}
-                        <div class="invalid-feedback d-block">{{ form.password.errors.0 }}</div>
+                            <div class="invalid-feedback d-block">
+                                {{ form.password.errors.0 }}
+                            </div>
                         {% endif %}
                     </div>
 
                     <div class="mb-3 form-check">
                         {% if request.method == 'POST' and request.POST.remember_me %}
-                        <input type="checkbox" class="form-check-input" id="rememberMe" name="remember_me" checked>
+                            <input
+                                type="checkbox"
+                                class="form-check-input"
+                                id="rememberMe"
+                                name="remember_me"
+                                checked
+                            >
                         {% else %}
-                        <input type="checkbox" class="form-check-input" id="rememberMe" name="remember_me">
+                            <input
+                                type="checkbox"
+                                class="form-check-input"
+                                id="rememberMe"
+                                name="remember_me"
+                            >
                         {% endif %}
-                        <label class="form-check-label" for="rememberMe">Remember me for 30 days</label>
+                        <label class="form-check-label" for="rememberMe">
+                            Remember me for 30 days
+                        </label>
                     </div>
-
 
                     <div class="d-grid">
                         <button type="submit" class="btn btn-primary btn-lg" id="submitBtn">
@@ -98,8 +134,10 @@ team collaboration tools.{% endblock %}
         </div>
 
         <div class="card mt-3 border-info">
-            <div class="card-header bg-info text-white">
-                <small><i class="bi bi-info-circle" aria-hidden="true"></i> Demo Credentials</small>
+            <div class="card-header bg-info text-dark">
+                <small>
+                    <i class="bi bi-info-circle" aria-hidden="true"></i> Demo Credentials
+                </small>
             </div>
             <div class="card-body py-2">
                 <small class="text-muted">

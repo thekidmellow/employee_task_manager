@@ -81,27 +81,28 @@
                 <div class="progress-circle mx-auto mb-3" style="--progress: {{ completion_percentage }}">
                     <span class="progress-text">{{ completion_percentage }}%</span>
                 </div>
-                <h4 class="h6 text-muted">Completion Rate</h4>
+                <!-- was h4; this is more “label-like” than structural heading -->
+                <p class="h6 text-muted mb-0">Completion Rate</p>
             </div>
         </div>
         <div class="col-md-3 mb-3">
             <div class="task-card p-4 text-center">
-                <i class="fas fa-tasks fa-2x text-primary mb-2"></i>
-                <h3 class="h4 mb-1">{{ my_tasks_count }}</h3>
+                <i class="fas fa-tasks fa-2x text-primary mb-2" aria-hidden="true"></i>
+                <p class="h4 mb-1">{{ my_tasks_count }}</p>
                 <p class="text-muted mb-0">My Tasks</p>
             </div>
         </div>
         <div class="col-md-3 mb-3">
             <div class="task-card p-4 text-center">
-                <i class="fas fa-clock fa-2x text-warning mb-2"></i>
-                <h3 class="h4 mb-1">{{ pending_count }}</h3>
+                <i class="fas fa-clock fa-2x text-warning mb-2" aria-hidden="true"></i>
+                <p class="h4 mb-1">{{ pending_count }}</p>
                 <p class="text-muted mb-0">Pending</p>
             </div>
         </div>
         <div class="col-md-3 mb-3">
             <div class="task-card p-4 text-center">
-                <i class="fas fa-exclamation-triangle fa-2x text-danger mb-2"></i>
-                <h3 class="h4 mb-1">{{ overdue_count }}</h3>
+                <i class="fas fa-exclamation-triangle fa-2x text-danger mb-2" aria-hidden="true"></i>
+                <p class="h4 mb-1">{{ overdue_count }}</p>
                 <p class="text-muted mb-0">Overdue</p>
             </div>
         </div>
@@ -111,20 +112,21 @@
         <div class="col-lg-8 mb-4">
             <div class="task-card p-4">
                 <div class="d-flex justify-content-between align-items-center mb-3">
-                    <h3 class="h5 mb-0">Today's Priorities</h3>
+                    <!-- section heading under the page h1 -->
+                    <h2 class="h5 mb-0">Today's Priorities</h2>
                     <a href="{% url 'tasks:task_list' %}" class="btn btn-outline-primary btn-sm">View All</a>
                 </div>
                 
                 {% if todays_tasks %}
                     {% for task in todays_tasks %}
-                    <div class="task-card priority-{{ task.priority }} p-3 mb-3">
+                    <article class="task-card priority-{{ task.priority }} p-3 mb-3">
                         <div class="row align-items-center">
                             <div class="col-md-8">
-                                <h4 class="h6 mb-1">
+                                <h3 class="h6 mb-1">
                                     <a href="{% url 'tasks:task_detail' task.id %}" class="text-decoration-none">
                                         {{ task.title }}
                                     </a>
-                                </h4>
+                                </h3>
                                 <p class="text-muted small mb-2">{{ task.description|truncatechars:100 }}</p>
                                 <div class="d-flex align-items-center gap-2">
                                     <span class="status-badge bg-{{ task.get_status_color }} text-white">
@@ -134,7 +136,7 @@
                                         {{ task.get_priority_display }}
                                     </span>
                                     <small class="text-muted">
-                                        <i class="far fa-clock me-1"></i>
+                                        <i class="far fa-clock me-1" aria-hidden="true"></i>
                                         Due: {{ task.due_date|date:"M d, Y" }}
                                     </small>
                                 </div>
@@ -154,12 +156,12 @@
                                 </a>
                             </div>
                         </div>
-                    </div>
+                    </article>
                     {% endfor %}
                 {% else %}
                     <div class="text-center py-4">
-                        <i class="fas fa-check-circle fa-3x text-success mb-3"></i>
-                        <h4>No tasks due today!</h4>
+                        <i class="fas fa-check-circle fa-3x text-success mb-3" aria-hidden="true"></i>
+                        <h2 class="h5">No tasks due today!</h2>
                         <p class="text-muted">You're all caught up. Great job!</p>
                     </div>
                 {% endif %}
@@ -167,20 +169,20 @@
         </div>
 
         <div class="col-lg-4">
-            <div class="task-card p-4 mb-4">
-                <h3 class="h5 mb-3">Quick Actions</h3>
+            <section class="task-card p-4 mb-4">
+                <h2 class="h5 mb-3">Quick Actions</h2>
                 <div class="d-grid gap-2">
                     <a href="{% url 'tasks:task_list' %}" class="btn btn-primary">
-                        <i class="fas fa-list me-2"></i>View My Tasks
+                        <i class="fas fa-list me-2" aria-hidden="true"></i>View My Tasks
                     </a>
-                    <button class="btn btn-outline-primary" onclick="refreshDashboard()">
-                        <i class="fas fa-sync me-2"></i>Refresh Dashboard
+                    <button class="btn btn-outline-primary" type="button" onclick="refreshDashboard()">
+                        <i class="fas fa-sync me-2" aria-hidden="true"></i>Refresh Dashboard
                     </button>
                 </div>
-            </div>
+            </section>
 
-            <div class="task-card p-4">
-                <h3 class="h5 mb-3">Recent Updates</h3>
+            <section class="task-card p-4">
+                <h2 class="h5 mb-3">Recent Updates</h2>
                 <div style="max-height: 300px; overflow-y: auto;">
                     {% for activity in recent_activities %}
                     <div class="border-bottom pb-2 mb-2">
@@ -194,14 +196,14 @@
                     <p class="text-muted text-center">No recent updates.</p>
                     {% endfor %}
                 </div>
-            </div>
+            </section>
         </div>
     </div>
 
-    <div class="row mt-4">
+    <section class="row mt-4">
         <div class="col-12">
             <div class="task-card p-4">
-                <h3 class="h5 mb-3">Weekly Progress</h3>
+                <h2 class="h5 mb-3">Weekly Progress</h2>
                 <div class="row">
                     {% for day in weekly_progress %}
                     <div class="col text-center">
@@ -210,15 +212,14 @@
                                 <span class="progress-text small">{{ day.completion_rate }}%</span>
                             </div>
                         </div>
-                        <small class="text-muted">{{ day.day_name }}</small>
-                        <br>
+                        <small class="text-muted d-block">{{ day.day_name }}</small>
                         <small class="text-muted">{{ day.completed }}/{{ day.total }}</small>
                     </div>
                     {% endfor %}
                 </div>
             </div>
         </div>
-    </div>
+    </section>
 </section>
 {% endblock %}
 

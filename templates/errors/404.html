@@ -39,73 +39,73 @@
 }
 
 .suggestion-link {
-    color: #007bff;
+    color: #0a58ca;
     text-decoration: none;
     transition: color 0.2s ease-in-out;
 }
 
 .suggestion-link:hover {
-    color: #0056b3;
+    color: #004085;
     text-decoration: underline;
 }
 </style>
 {% endblock %}
 
 {% block content %}
-<main class="container py-5">
+<section class="container py-5" aria-labelledby="error-heading">
     <div class="error-container">
-        <div class="col-lg-8">
-            <div class="error-illustration">
+        <div class="col-lg-8 mx-auto">
+            <div class="error-illustration" aria-hidden="true">
                 <i class="fas fa-search"></i>
             </div>
-            <div class="error-code">404</div>
-            <h1 class="display-5 mb-3">Page Not Found</h1>
+
+            <div class="error-code" aria-hidden="true">404</div>
+
+            <h1 id="error-heading" class="display-5 mb-3">Page Not Found</h1>
             <p class="lead text-muted mb-4">
                 Sorry, the page you're looking for doesn't exist or has been moved.
             </p>
 
             <div class="d-flex gap-3 justify-content-center mb-4">
                 <a href="{% url 'core:home' %}" class="btn btn-primary">
-                    <i class="fas fa-home me-2"></i>Go Home
+                    <i class="fas fa-home me-2" aria-hidden="true"></i>Go Home
                 </a>
-                <button onclick="history.back()" class="btn btn-outline-secondary">
-                    <i class="fas fa-arrow-left me-2"></i>Go Back
+                <button type="button" onclick="history.back()" class="btn btn-outline-secondary">
+                    <i class="fas fa-arrow-left me-2" aria-hidden="true"></i>Go Back
                 </button>
             </div>
 
             <div class="suggestions-card p-4">
-                <h3 class="h5 mb-3">Try these instead:</h3>
-                <ul class="list-unstyled">
+                <h2 class="h5 mb-3">Try these instead:</h2>
+                <ul class="list-unstyled mb-0">
                     <li class="mb-2">
-                        <i class="fas fa-home text-primary me-2"></i>
+                        <i class="fas fa-home text-primary me-2" aria-hidden="true"></i>
                         <a href="{% url 'core:home' %}" class="suggestion-link">Home Page</a>
                     </li>
                     {% if user.is_authenticated %}
                         <li class="mb-2">
-                            <i class="fas fa-tachometer-alt text-success me-2"></i>
-                            <a href="{% url 'core:dashboard' %}" class="suggestion-link">Dashboard</a>
+                            <i class="fas fa-tachometer-alt text-success me-2" aria-hidden="true"></i>
+                            {% if user.userprofile.is_manager %}
+                                <a href="{% url 'core:manager_dashboard' %}" class="suggestion-link">Manager Dashboard</a>
+                            {% else %}
+                                <a href="{% url 'core:employee_dashboard' %}" class="suggestion-link">My Dashboard</a>
+                            {% endif %}
                         </li>
                         <li class="mb-2">
-                            <i class="fas fa-tasks text-info me-2"></i>
+                            <i class="fas fa-tasks text-info me-2" aria-hidden="true"></i>
                             <a href="{% url 'tasks:task_list' %}" class="suggestion-link">My Tasks</a>
                         </li>
-                        {% if user.groups.first.name == 'Managers' %}
-                            <li class="mb-2">
-                                <i class="fas fa-plus text-warning me-2"></i>
-                                <a href="{% url 'tasks:task_create' %}" class="suggestion-link">Create New Task</a>
-                            </li>
-                        {% endif %}
                         <li class="mb-2">
-                            <i class="fas fa-user text-secondary me-2"></i>
+                            <i class="fas fa-user text-secondary me-2" aria-hidden="true"></i>
                             <a href="{% url 'accounts:profile' %}" class="suggestion-link">My Profile</a>
                         </li>
                     {% else %}
                         <li class="mb-2">
-                            <i class="fas fa-sign-in-alt text-success me-2"></i>
+                            <i class="fas fa-sign-in-alt text-success me-2" aria-hidden="true"></i>
                             <a href="{% url 'accounts:login' %}" class="suggestion-link">Login</a>
                         </li>
                         <li class="mb-2">
-                            <i class="fas fa-user-plus text-info me-2"></i>
+                            <i class="fas fa-user-plus text-info me-2" aria-hidden="true"></i>
                             <a href="{% url 'accounts:register' %}" class="suggestion-link">Register</a>
                         </li>
                     {% endif %}
@@ -114,13 +114,13 @@
 
             <div class="mt-4">
                 <small class="text-muted">
-                    Error Code: 404 | 
+                    Error Code: 404 |
                     <a href="mailto:support@employeetaskmanager.com" class="text-muted">Contact Support</a>
                 </small>
             </div>
         </div>
     </div>
-</main>
+</section>
 {% endblock %}
 
 {% block extra_js %}
@@ -128,13 +128,16 @@
 console.warn('404 Error: Page not found - ' + window.location.href);
 
 document.addEventListener('DOMContentLoaded', function() {
-    document.querySelector('.btn-primary').focus();
-    
+    const primaryButton = document.querySelector('.btn-primary');
+    if (primaryButton) {
+        primaryButton.focus();
+    }
+
     const errorCode = document.querySelector('.error-code');
     if (errorCode) {
         errorCode.style.opacity = '0';
         errorCode.style.transform = 'scale(0.8)';
-        
+
         setTimeout(() => {
             errorCode.style.transition = 'all 0.5s ease-out';
             errorCode.style.opacity = '1';

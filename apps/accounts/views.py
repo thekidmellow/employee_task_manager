@@ -12,7 +12,6 @@ from apps.tasks.models import Task
 
 
 def custom_login_view(request):
-
     next_url = request.GET.get("next") or request.POST.get("next") or "/"
 
     if request.user.is_authenticated:
@@ -25,15 +24,11 @@ def custom_login_view(request):
             login(request, user)
 
             remember_me = request.POST.get("remember_me") == "on"
-            request.session.set_expiry(
-                60 * 60 * 24 * 30 if remember_me else 0
-            )
+            request.session.set_expiry(60 * 60 * 24 * 30 if remember_me else 0)
 
-            # Prefer explicit next
             if next_url and next_url != "/":
                 return redirect(next_url)
 
-            # Role-based default
             if user.groups.filter(name="Managers").exists():
                 return redirect("core:manager_dashboard")
             return redirect("core:employee_dashboard")
@@ -51,8 +46,17 @@ def custom_login_view(request):
 
 def register_view(request):
 
-    if request.user.is_authenticated:
-        return redirect("core:dashboard")
+    if request.user.is_authenticated and request.method != "POST":
+        form = UserRegistrationForm()
+        return render(
+            request,
+            "registration/register.html",
+            {
+                "form": form,
+                "page_title": "Create Your Account",
+                "already_authenticated": True,
+            },
+        )
 
     if request.method == "POST":
         form = UserRegistrationForm(request.POST)
@@ -93,23 +97,16 @@ def register_view(request):
 
 @login_required
 def profile_view(request):
-
     user = request.user
     profile = getattr(user, "userprofile", None)
 
     if request.method == "POST":
         form = UserProfileForm(request.POST, instance=profile)
         if form.is_valid():
-            # Save profile fields
             profile = form.save()
 
-            # Update User fields from extra form inputs
-            user.first_name = form.cleaned_data.get(
-                "first_name", user.first_name
-            )
-            user.last_name = form.cleaned_data.get(
-                "last_name", user.last_name
-            )
+            user.first_name = form.cleaned_data.get("first_name", user.first_name)
+            user.last_name = form.cleaned_data.get("last_name", user.last_name)
             email = form.cleaned_data.get("email")
             if email is not None:
                 user.email = email
@@ -129,12 +126,9 @@ def profile_view(request):
                     }
                 )
 
-            messages.success(
-                request,
-                "Your profile has been updated successfully!",
-            )
+            messages.success(request, "Your profile has been updated successfully!")
             return redirect("accounts:profile")
-        # Invalid form
+
         if request.headers.get("X-Requested-With") == "XMLHttpRequest":
             return JsonResponse(
                 {
@@ -158,18 +152,10 @@ def profile_view(request):
         "total_tasks": user_tasks.count(),
         "completed_tasks": user_tasks.filter(status="completed").count(),
         "pending_tasks": user_tasks.filter(status="pending").count(),
-        "in_progress_tasks": user_tasks.filter(
-            status="in_progress"
-        ).count(),
+        "in_progress_tasks": user_tasks.filter(status="in_progress").count(),
     }
     user_stats["completion_rate"] = (
-        round(
-            (
-                user_stats["completed_tasks"] / user_stats["total_tasks"]
-            )
-            * 100,
-            1,
-        )
+        round((user_stats["completed_tasks"] / user_stats["total_tasks"]) * 100, 1)
         if user_stats["total_tasks"]
         else 0
     )
@@ -187,16 +173,13 @@ def profile_view(request):
 
 @require_http_methods(["GET", "POST"])
 def check_username_availability(request):
-
     if request.method == "GET":
         username = request.GET.get("username", "").strip()
     else:
         username = request.POST.get("username", "").strip()
 
     if not username:
-        return JsonResponse(
-            {"available": False, "message": "Username is required"}
-        )
+        return JsonResponse({"available": False, "message": "Username is required"})
     if len(username) < 3:
         return JsonResponse(
             {
@@ -210,14 +193,11 @@ def check_username_availability(request):
         return JsonResponse(
             {"available": False, "message": "This username is already taken"}
         )
-    return JsonResponse(
-        {"available": True, "message": "Username is available"}
-    )
+    return JsonResponse({"available": True, "message": "Username is available"})
 
 
 @login_required
 def dashboard_redirect_view(request):
-
     user = request.user
     if user.groups.filter(name="Managers").exists():
         return redirect("core:manager_dashboard")
@@ -226,7 +206,6 @@ def dashboard_redirect_view(request):
 
 @login_required
 def change_password_view(request):
-
     from django.contrib.auth.forms import PasswordChangeForm
     from django.contrib.auth import update_session_auth_hash
 
@@ -235,10 +214,7 @@ def change_password_view(request):
         if form.is_valid():
             user = form.save()
             update_session_auth_hash(request, user)
-            messages.success(
-                request,
-                "Your password has been changed successfully!",
-            )
+            messages.success(request, "Your password has been changed successfully!")
             return redirect("accounts:profile")
     else:
         form = PasswordChangeForm(request.user)
@@ -255,12 +231,10 @@ def change_password_view(request):
 
 @login_required
 def delete_account_view(request):
-
     if request.method == "POST":
         pending_tasks = (
             Task.objects.filter(
-                assigned_to=request.user,
-                status__in=["pending", "in_progress"],
+                assigned_to=request.user, status__in=["pending", "in_progress"]
             ).count()
         )
 
@@ -299,3 +273,19 @@ def delete_account_view(request):
             "page_title": "Delete Account",
         },
     )
+
+
+@login_required
+def user_list_api(request):
+    """
+    Minimal user list for assignment/autocomplete.
+    Security: Managers only; expose non-sensitive fields only.
+    """
+    is_manager = request.user.groups.filter(name="Managers").exists()
+    if not is_manager:
+        return JsonResponse({"detail": "Forbidden"}, status=403)
+
+    users = User.objects.all().order_by("username").values(
+        "id", "username", "first_name", "last_name"
+    )
+    return JsonResponse({"users": list(users)}, status=200)
