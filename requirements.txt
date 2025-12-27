@@ -8,3 +8,4 @@ python-decouple==3.8
 sqlparse==0.5.3
 whitenoise==6.9.0
 coverage==7.10.7
+django-extensions==3.2.3
