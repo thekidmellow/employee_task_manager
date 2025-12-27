@@ -1,6 +1,7 @@
 from django.test import SimpleTestCase
 from apps.tasks import forms
 
+
 class TaskFormPathsTests(SimpleTestCase):
     def test_task_form_invalid_then_try_minimal_valid(self):
         TaskForm = getattr(forms, "TaskForm", None)

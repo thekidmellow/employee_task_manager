@@ -37,12 +37,14 @@ class TaskViewsMoreTests(TestCase):
 
     def test_task_detail_exists(self):
         self.client.login(username="mgr", password="pass12345")
-        r = self.client.get(reverse("tasks:task_detail", kwargs={"task_id": self.task.id}))
+        r = self.client.get(reverse("tasks:task_detail",
+                            kwargs={"task_id": self.task.id}))
         self.assertIn(r.status_code, (200, 302))
 
     def test_task_detail_not_found(self):
         self.client.login(username="mgr", password="pass12345")
-        r = self.client.get(reverse("tasks:task_detail", kwargs={"task_id": 999999}))
+        r = self.client.get(reverse("tasks:task_detail",
+                            kwargs={"task_id": 999999}))
         self.assertIn(r.status_code, (404, 302))
 
     def test_task_create_get(self):
@@ -65,7 +67,8 @@ class TaskViewsMoreTests(TestCase):
 
     def test_task_update_get(self):
         self.client.login(username="mgr", password="pass12345")
-        r = self.client.get(reverse("tasks:task_update", kwargs={"task_id": self.task.id}))
+        r = self.client.get(reverse("tasks:task_update",
+                            kwargs={"task_id": self.task.id}))
         self.assertIn(r.status_code, (200, 302, 403))
 
     def test_task_update_invalid_post(self):
@@ -84,7 +87,8 @@ class TaskViewsMoreTests(TestCase):
         """
         self.client.login(username="mgr", password="pass12345")
         url = reverse("tasks:task_update", kwargs={"task_id": self.task.id})
-        r = self.client.post(url, data={"title": "Edited", "description": "D"}, follow=True)
+        r = self.client.post(
+            url, data={"title": "Edited", "description": "D"}, follow=True)
         self.assertIn(r.status_code, (200, 302, 403))
 
         self.task.refresh_from_db()
@@ -107,7 +111,8 @@ class TaskViewsMoreTests(TestCase):
 
     def test_update_task_status(self):
         self.client.login(username="mgr", password="pass12345")
-        url = reverse("tasks:update_task_status", kwargs={"task_id": self.task.id})
+        url = reverse("tasks:update_task_status",
+                      kwargs={"task_id": self.task.id})
         trials = [
             ("form", {"status": "in_progress"}),
             ("form", {"new_status": "in_progress"}),

@@ -33,7 +33,8 @@ urlpatterns = [
     path("delete/", views.delete_account_view, name="delete_account"),
 
     # AJAX endpoints
-    path("api/check-username/", views.check_username_availability, name="check_username"),
+    path("api/check-username/", views.check_username_availability,
+         name="check_username"),
 
     # User list API (tests expect this name)
     path("api/users/", views.user_list_api, name="user_list_api"),

@@ -18,7 +18,8 @@ def reverse_or_skip(name, fallback=None):
 
 class TaskViewsTests(TestCase):
     def setUp(self):
-        self.user = make_user(username="bob", email="u@example.com", password="pass12345", is_manager=True)
+        self.user = make_user(
+            username="bob", email="u@example.com", password="pass12345", is_manager=True)
         self.client.login(username="bob", password="pass12345")
         self.task = make_task(assigned_to=self.user, created_by=self.user)
 

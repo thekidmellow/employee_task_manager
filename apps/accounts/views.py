@@ -105,7 +105,8 @@ def profile_view(request):
         if form.is_valid():
             profile = form.save()
 
-            user.first_name = form.cleaned_data.get("first_name", user.first_name)
+            user.first_name = form.cleaned_data.get(
+                "first_name", user.first_name)
             user.last_name = form.cleaned_data.get("last_name", user.last_name)
             email = form.cleaned_data.get("email")
             if email is not None:
@@ -126,7 +127,8 @@ def profile_view(request):
                     }
                 )
 
-            messages.success(request, "Your profile has been updated successfully!")
+            messages.success(
+                request, "Your profile has been updated successfully!")
             return redirect("accounts:profile")
 
         if request.headers.get("X-Requested-With") == "XMLHttpRequest":
@@ -155,7 +157,8 @@ def profile_view(request):
         "in_progress_tasks": user_tasks.filter(status="in_progress").count(),
     }
     user_stats["completion_rate"] = (
-        round((user_stats["completed_tasks"] / user_stats["total_tasks"]) * 100, 1)
+        round((user_stats["completed_tasks"] /
+              user_stats["total_tasks"]) * 100, 1)
         if user_stats["total_tasks"]
         else 0
     )
@@ -214,7 +217,8 @@ def change_password_view(request):
         if form.is_valid():
             user = form.save()
             update_session_auth_hash(request, user)
-            messages.success(request, "Your password has been changed successfully!")
+            messages.success(
+                request, "Your password has been changed successfully!")
             return redirect("accounts:profile")
     else:
         form = PasswordChangeForm(request.user)

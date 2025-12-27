@@ -98,7 +98,8 @@ class SecurityTests(TestCase):
         task = Task.objects.filter(title__contains="XSS Test").first()
         self.assertIsNotNone(task)
 
-        response = self.client.get(reverse("tasks:task_detail", args=[task.id]))
+        response = self.client.get(
+            reverse("tasks:task_detail", args=[task.id]))
         content = response.content.decode('utf-8')
 
         self.assertIn('&lt;script&gt;', content)
@@ -107,7 +108,8 @@ class SecurityTests(TestCase):
         self.assertNotIn('<script>alert', content)
         self.assertNotIn('<script >', content)
 
-        self.assertIn('type="text/javascript"', content)
+        self.assertIn('&lt;script&gt;alert(&quot;XSS&quot;)&lt;/script&gt;', content)
+        self.assertIn('<script src="https://cdn.jsdelivr.net/npm/bootstrap', content)
 
     def test_unauthorized_access_prevention(self):
         self.client.login(username="testemployee", password="testpass123")
@@ -132,7 +134,8 @@ class SecurityTests(TestCase):
     def test_object_level_permissions(self):
         self.client.login(username="otheremployee", password="testpass123")
 
-        response = self.client.get(reverse("tasks:task_detail", args=[self.task.id]))
+        response = self.client.get(
+            reverse("tasks:task_detail", args=[self.task.id]))
         self.assertEqual(response.status_code, 403)
 
         response = self.client.post(
@@ -181,7 +184,8 @@ class SecurityTests(TestCase):
             },
         )
 
-        self.assertTrue(User.objects.filter(username="strongpassuser").exists())
+        self.assertTrue(User.objects.filter(
+            username="strongpassuser").exists())
 
     def test_file_upload_security(self):
         pass
@@ -216,7 +220,8 @@ class SecurityTests(TestCase):
             due_date=timezone.now() + timedelta(days=7),
         )
 
-        response = self.client.get(reverse("tasks:task_detail", args=[other_task.id]))
+        response = self.client.get(
+            reverse("tasks:task_detail", args=[other_task.id]))
 
         self.assertEqual(response.status_code, 403)
 

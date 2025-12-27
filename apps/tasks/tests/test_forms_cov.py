@@ -8,7 +8,8 @@ User = get_user_model()
 
 class TaskFormsCoverageTests(TestCase):
     def setUp(self):
-        self.mgr = User.objects.create_user(username="mgr", password="pass12345")
+        self.mgr = User.objects.create_user(
+            username="mgr", password="pass12345")
         managers, _ = Group.objects.get_or_create(name="Managers")
         self.mgr.groups.add(managers)
 

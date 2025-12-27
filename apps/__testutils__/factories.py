@@ -18,7 +18,8 @@ def make_user(username="u1", email="u1@example.com", password="pass12345", is_ma
 
 def make_task(**overrides):
     if "assigned_to" not in overrides:
-        overrides["assigned_to"] = make_user(username="assignee", email="assignee@example.com")
+        overrides["assigned_to"] = make_user(
+            username="assignee", email="assignee@example.com")
     if "created_by" not in overrides:
         overrides["created_by"] = overrides["assigned_to"]
     defaults = dict(

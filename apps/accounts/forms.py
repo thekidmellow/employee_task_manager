@@ -59,7 +59,8 @@ class UserRegistrationForm(UserCreationForm):
     class Meta:
         model = User
 
-        fields = ('username', 'first_name', 'last_name', 'email', 'password1', 'password2')
+        fields = ('username', 'first_name', 'last_name',
+                  'email', 'password1', 'password2')
         widgets = {
             'username': forms.TextInput(attrs={
                 'class': 'form-control',
@@ -90,11 +91,13 @@ class UserRegistrationForm(UserCreationForm):
 
         username = self.cleaned_data.get('username') or ""
         if len(username) < 3:
-            raise ValidationError("Username must be at least 3 characters long.")
+            raise ValidationError(
+                "Username must be at least 3 characters long.")
         # Allow letters, numbers, underscores and hyphens
         allowed = username.replace('_', '').replace('-', '')
         if not allowed.isalnum():
-            raise ValidationError("Username can only contain letters, numbers, hyphens, and underscores.")
+            raise ValidationError(
+                "Username can only contain letters, numbers, hyphens, and underscores.")
         return username
 
     def save(self, commit=True):
@@ -168,5 +171,6 @@ class UserProfileForm(forms.ModelForm):
         if phone:
             digits_only = ''.join(filter(str.isdigit, phone))
             if len(digits_only) < 10 or len(digits_only) > 15:
-                raise ValidationError("Phone number must be between 10 and 15 digits.")
+                raise ValidationError(
+                    "Phone number must be between 10 and 15 digits.")
         return phone

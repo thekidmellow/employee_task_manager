@@ -140,7 +140,8 @@ class DatabasePerformanceTests(TestCase):
         self.assertLess(bulk_create_time, 2.0)
 
         start_time = time.time()
-        Task.objects.filter(title__startswith="Bulk Task").update(priority="high")
+        Task.objects.filter(
+            title__startswith="Bulk Task").update(priority="high")
         bulk_update_time = time.time() - start_time
         self.assertLess(bulk_update_time, 1.0)
 
@@ -160,7 +161,8 @@ class DatabasePerformanceTests(TestCase):
 
         for query in connection.queries:
             if float(query.get("time", 0)) > 0.1:
-                print(f"Slow query ({query['time']}s): {query['sql'][:100]}...")
+                print(
+                    f"Slow query ({query['time']}s): {query['sql'][:100]}...")
 
     def test_index_usage(self):
         with connection.cursor() as cursor:

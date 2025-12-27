@@ -8,7 +8,8 @@ User = get_user_model()
 
 class CoreDashboardTests(TestCase):
     def setUp(self):
-        self.manager = User.objects.create_user(username="mgr", password="pass12345")
+        self.manager = User.objects.create_user(
+            username="mgr", password="pass12345")
         g, _ = Group.objects.get_or_create(name="Managers")
         self.manager.groups.add(g)
         self.client.login(username="mgr", password="pass12345")

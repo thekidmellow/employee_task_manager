@@ -12,7 +12,8 @@ urlpatterns = [
 
     # APIs / actions
     path("update-status/", views.update_task_status, name="update_status_ajax"),
-    path("<int:task_id>/update-status/", views.update_task_status, name="update_task_status"),
+    path("<int:task_id>/update-status/",
+         views.update_task_status, name="update_task_status"),
     path("api/stats/", views.task_stats_api, name="task_stats_api"),
     path("api/users/", views.user_list_api, name="user_list_api"),
     path("api/comments/", views.task_comment_api, name="task_comment_api"),

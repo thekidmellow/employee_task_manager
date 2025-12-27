@@ -53,13 +53,15 @@ def task_list_view(request):
     qs = Task.objects.select_related("assigned_to", "created_by")
 
     if not _is_manager(request.user):
-        qs = qs.filter(Q(assigned_to=request.user) | Q(created_by=request.user))
+        qs = qs.filter(Q(assigned_to=request.user)
+                       | Q(created_by=request.user))
 
     now = timezone.now()
     pending_count = qs.filter(status="pending").count()
     in_progress_count = qs.filter(status="in_progress").count()
     completed_count = qs.filter(status="completed").count()
-    overdue_count = qs.exclude(status="completed").filter(due_date__lt=now).count()
+    overdue_count = qs.exclude(status="completed").filter(
+        due_date__lt=now).count()
 
     return render(
         request,
@@ -200,7 +202,8 @@ def update_task_status(request, task_id=None):
 def task_stats_api(request):
     qs = Task.objects.all()
     if not _is_manager(request.user):
-        qs = qs.filter(Q(assigned_to=request.user) | Q(created_by=request.user))
+        qs = qs.filter(Q(assigned_to=request.user)
+                       | Q(created_by=request.user))
 
     now = timezone.now()
 
@@ -208,7 +211,8 @@ def task_stats_api(request):
     pending_tasks = qs.filter(status="pending").count()
     in_progress_tasks = qs.filter(status="in_progress").count()
     completed_tasks = qs.filter(status="completed").count()
-    overdue_tasks = qs.exclude(status="completed").filter(due_date__lt=now).count()
+    overdue_tasks = qs.exclude(status="completed").filter(
+        due_date__lt=now).count()
 
     priority_distribution = {k: 0 for k, _ in Task.PRIORITY_CHOICES}
     for row in qs.values("priority").annotate(count=Count("id")):
@@ -277,7 +281,8 @@ def task_comment_api(request):
             {"success": False, "error": "Comment model missing text field"}, status=500
         )
 
-    create_kwargs = {"task": task, "user": request.user, text_field: comment_text}
+    create_kwargs = {"task": task,
+                     "user": request.user, text_field: comment_text}
     created = TaskComment.objects.create(**create_kwargs)
 
     return JsonResponse(

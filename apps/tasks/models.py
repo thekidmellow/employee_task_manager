@@ -24,10 +24,12 @@ class Task(models.Model):
 
     title = models.CharField(
         max_length=200,
-        validators=[MinLengthValidator(5, "Title must be at least 5 characters long")],
+        validators=[MinLengthValidator(
+            5, "Title must be at least 5 characters long")],
     )
     description = models.TextField(
-        validators=[MinLengthValidator(10, "Description must be at least 10 characters long")],
+        validators=[MinLengthValidator(
+            10, "Description must be at least 10 characters long")],
     )
     assigned_to = models.ForeignKey(
         User,
@@ -41,8 +43,10 @@ class Task(models.Model):
         related_name="created_tasks",
         help_text="Manager who created this task",
     )
-    status = models.CharField(max_length=20, choices=STATUS_CHOICES, default="pending")
-    priority = models.CharField(max_length=10, choices=PRIORITY_CHOICES, default="medium")
+    status = models.CharField(
+        max_length=20, choices=STATUS_CHOICES, default="pending")
+    priority = models.CharField(
+        max_length=10, choices=PRIORITY_CHOICES, default="medium")
     due_date = models.DateTimeField()
 
     estimated_hours = models.DecimalField(
@@ -157,10 +161,12 @@ class Task(models.Model):
 
 
 class TaskComment(models.Model):
-    task = models.ForeignKey(Task, on_delete=models.CASCADE, related_name="comments")
+    task = models.ForeignKey(
+        Task, on_delete=models.CASCADE, related_name="comments")
     user = models.ForeignKey(User, on_delete=models.CASCADE)
     comment = models.TextField(
-        validators=[MinLengthValidator(5, "Comment must be at least 5 characters long")]
+        validators=[MinLengthValidator(
+            5, "Comment must be at least 5 characters long")]
     )
     created_at = models.DateTimeField(auto_now_add=True)
 

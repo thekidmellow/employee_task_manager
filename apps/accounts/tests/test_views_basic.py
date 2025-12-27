@@ -8,7 +8,8 @@ User = get_user_model()
 
 class AccountsBasicViewTests(TestCase):
     def setUp(self):
-        self.user = User.objects.create_user(username="u", password="pass12345")
+        self.user = User.objects.create_user(
+            username="u", password="pass12345")
         Group.objects.get_or_create(name="Managers")
         Group.objects.get_or_create(name="Employees")
 
@@ -28,4 +29,5 @@ class AccountsBasicViewTests(TestCase):
     def test_dashboard_redirect_logged_in(self):
         self.client.login(username="u", password="pass12345")
         r = self.client.get(reverse("accounts:dashboard_redirect"))
-        self.assertIn(r.status_code, (302, 200))  # redirect to correct dashboard
+        # redirect to correct dashboard
+        self.assertIn(r.status_code, (302, 200))

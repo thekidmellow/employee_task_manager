@@ -19,7 +19,10 @@
         box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
         transition: transform 0.2s ease-in-out;
     }
-    .stat-card:hover { transform: translateY(-2px); }
+
+    .stat-card:hover {
+        transform: translateY(-2px);
+    }
 
     .chart-container {
         background: white;
@@ -28,24 +31,37 @@
         padding: 1.5rem;
     }
 
-    .recent-activity { max-height: 400px; overflow-y: auto; }
+    .recent-activity {
+        max-height: 400px;
+        overflow-y: auto;
+    }
 
     .activity-item {
         border-left: 3px solid #007bff;
         padding-left: 1rem;
         margin-bottom: 1rem;
     }
-    .priority-high { border-left-color: #dc3545; }
-    .priority-medium { border-left-color: #ffc107; }
-    .priority-low { border-left-color: #28a745; }
 
-    .chart-area{
+    .priority-high {
+        border-left-color: #dc3545;
+    }
+
+    .priority-medium {
+        border-left-color: #ffc107;
+    }
+
+    .priority-low {
+        border-left-color: #28a745;
+    }
+
+    .chart-area {
         position: relative;
         width: 100%;
         height: 320px;
         max-height: 55vh;
     }
-    .chart-container canvas{
+
+    .chart-container canvas {
         width: 100% !important;
         height: 100% !important;
         display: block;
@@ -128,8 +144,8 @@
                 <div class="recent-activity">
                     {% for activity in recent_activities %}
                     <article class="activity-item priority-{{ activity.priority }}">
+                        <h3 class="h6 mb-1">{{ activity.title }}</h3>
                         <small class="text-muted">{{ activity.created_at|timesince }} ago</small>
-                        <p class="mb-1"><strong>{{ activity.title }}</strong></p>
                         <p class="text-muted small mb-0">Assigned to {{ activity.assigned_to.get_full_name }}</p>
                     </article>
                     {% empty %}
@@ -160,11 +176,9 @@
                                 <td>{{ employee.completed_count }}</td>
                                 <td>
                                     <div class="progress" style="height: 20px;">
-                                        <div class="progress-bar"
-                                            role="progressbar"
+                                        <div class="progress-bar" role="progressbar"
                                             style="width: {{ employee.completion_rate }}%"
-                                            aria-valuenow="{{ employee.completion_rate }}"
-                                            aria-valuemin="0"
+                                            aria-valuenow="{{ employee.completion_rate }}" aria-valuemin="0"
                                             aria-valuemax="100">
                                             {{ employee.completion_rate }}%
                                         </div>
@@ -188,39 +202,39 @@
 {% block extra_js %}
 <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
 <script>
-document.addEventListener('DOMContentLoaded', function () {
-  const canvas = document.getElementById('taskChart');
-  if (canvas) {
-    const ctx = canvas.getContext('2d');
-    new Chart(ctx, {
-      type: 'doughnut',
-      data: {
-        labels: ['Completed', 'In Progress', 'Pending', 'Overdue'],
-        datasets: [{
-          data: [
-            {{ completed_tasks|default:"0" }},
-            {{ in_progress_tasks|default:"0" }},
-            {{ pending_tasks|default:"0" }},
-            {{ overdue_tasks|default:"0" }}
-          ],
-          backgroundColor: ['#28a745', '#007bff', '#ffc107', '#dc3545'],
-          borderWidth: 2
-        }]
-      },
-      options: {
-        responsive: true,
-        maintainAspectRatio: false,
-        plugins: { legend: { position: 'bottom' } }
-      }
-    });
-  }
+    document.addEventListener('DOMContentLoaded', function () {
+        const canvas = document.getElementById('taskChart');
+        if (canvas) {
+            const ctx = canvas.getContext('2d');
+            new Chart(ctx, {
+                type: 'doughnut',
+                data: {
+                    labels: ['Completed', 'In Progress', 'Pending', 'Overdue'],
+                    datasets: [{
+                        data: [
+                            {{ completed_tasks|default:0 }},
+                            {{ in_progress_tasks|default:0 }},
+                            {{ pending_tasks|default:0 }},
+                            {{ overdue_tasks|default:0 }}
+                        ],
+                        backgroundColor: ['#28a745', '#007bff', '#ffc107', '#dc3545'],
+                        borderWidth: 2
+                    }]
+                },
+                options: {
+                    responsive: true,
+                    maintainAspectRatio: false,
+                    plugins: { legend: { position: 'bottom' } }
+                }
+            });
+        }
 
-  const reportBtn = document.getElementById('generateReportBtn');
-  if (reportBtn) {
-    reportBtn.addEventListener('click', function () {
-      alert('Report generation feature coming soon!');
+        const reportBtn = document.getElementById('generateReportBtn');
+        if (reportBtn) {
+            reportBtn.addEventListener('click', function () {
+                alert('Report generation feature coming soon!');
+            });
+        }
     });
-  }
-});
 </script>
 {% endblock %}
