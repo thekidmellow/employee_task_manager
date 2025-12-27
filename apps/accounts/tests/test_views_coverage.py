@@ -15,7 +15,8 @@ class AccountsViewCoverageTests(TestCase):
     def test_login_get_and_invalid_post(self):
         url = reverse("accounts:login")
         self.assertEqual(self.client.get(url).status_code, 200)
-        bad = self.client.post(url, data={"username": "u", "password": "wrong"})
+        bad = self.client.post(
+            url, data={"username": "u", "password": "wrong"})
         self.assertIn(bad.status_code, (200, 302))
 
     def test_profile_requires_login_then_ok(self):
@@ -25,7 +26,8 @@ class AccountsViewCoverageTests(TestCase):
         self.assertEqual(self.client.get(url).status_code, 200)
 
     def test_register_get(self):
-        self.assertEqual(self.client.get(reverse("accounts:register")).status_code, 200)
+        self.assertEqual(self.client.get(
+            reverse("accounts:register")).status_code, 200)
 
     def test_dashboard_redirect(self):
         self.client.login(username="u", password="pass12345")

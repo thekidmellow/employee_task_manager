@@ -123,7 +123,8 @@ class TaskCreationForm(forms.ModelForm):
         if not self.instance.pk and not self.cleaned_data.get("status"):
             obj.status = "pending"
 
-        chosen = self.cleaned_data.get("assignee") or self.cleaned_data.get("assigned_to")
+        chosen = self.cleaned_data.get(
+            "assignee") or self.cleaned_data.get("assigned_to")
         if chosen is not None:
             obj.assigned_to = chosen
 
@@ -134,7 +135,8 @@ class TaskCreationForm(forms.ModelForm):
     def clean_title(self):
         title = self.cleaned_data.get("title", "").strip()
         if len(title) < 5:
-            raise ValidationError("Task title must be at least 5 characters long.")
+            raise ValidationError(
+                "Task title must be at least 5 characters long.")
         if len(title) > 200:
             raise ValidationError("Task title cannot exceed 200 characters.")
         forbidden_words = ["spam", "test123", "dummy"]
@@ -145,9 +147,11 @@ class TaskCreationForm(forms.ModelForm):
     def clean_description(self):
         description = self.cleaned_data.get("description", "").strip()
         if len(description) < 10:
-            raise ValidationError("Task description must be at least 10 characters long.")
+            raise ValidationError(
+                "Task description must be at least 10 characters long.")
         if len(description) > 2000:
-            raise ValidationError("Task description cannot exceed 2000 characters.")
+            raise ValidationError(
+                "Task description cannot exceed 2000 characters.")
         return description
 
     def clean_due_date(self):
@@ -156,7 +160,8 @@ class TaskCreationForm(forms.ModelForm):
             return None
 
         if timezone.is_naive(due_date):
-            due_date = timezone.make_aware(due_date, timezone.get_current_timezone())
+            due_date = timezone.make_aware(
+                due_date, timezone.get_current_timezone())
 
         at_midnight = (0, 0, 0, 0)
         if (
@@ -165,13 +170,15 @@ class TaskCreationForm(forms.ModelForm):
             due_date.second,
             due_date.microsecond,
         ) == at_midnight:
-            due_date = due_date.replace(hour=23, minute=59, second=0, microsecond=0)
+            due_date = due_date.replace(
+                hour=23, minute=59, second=0, microsecond=0)
 
         now = timezone.now()
         if due_date <= now:
             raise ValidationError("Due date must be in the future.")
         if due_date > now + timedelta(days=365):
-            raise ValidationError("Due date cannot be more than 1 year in the future.")
+            raise ValidationError(
+                "Due date cannot be more than 1 year in the future.")
 
         return due_date
 
@@ -183,7 +190,8 @@ class TaskCreationForm(forms.ModelForm):
         status = cleaned_data.get("status")
 
         if not self.instance.pk and status == "completed":
-            raise ValidationError("New tasks cannot be created with completed status.")
+            raise ValidationError(
+                "New tasks cannot be created with completed status.")
 
         if priority == "urgent" and due_date:
             if due_date > timezone.now() + timedelta(days=3):
@@ -208,7 +216,8 @@ class TaskUpdateForm(forms.ModelForm):
         self.fields["status"].label = "Task Status"
         self.fields["status"].help_text = "Update the current status of this task"
         self.fields["status"].widget.attrs.setdefault("id", "id_status")
-        self.fields["status"].widget.attrs.setdefault("aria-describedby", "id_status_helptext")
+        self.fields["status"].widget.attrs.setdefault(
+            "aria-describedby", "id_status_helptext")
 
     def clean_status(self):
         new_status = self.cleaned_data.get("status")
@@ -262,7 +271,8 @@ class TaskCommentForm(forms.ModelForm):
     def clean_comment(self):
         comment = self.cleaned_data.get("comment", "").strip()
         if len(comment) < 5:
-            raise ValidationError("Comment must be at least 5 characters long.")
+            raise ValidationError(
+                "Comment must be at least 5 characters long.")
         if len(comment) > 1000:
             raise ValidationError("Comment cannot exceed 1000 characters.")
         return comment
@@ -316,7 +326,8 @@ class TaskFilterForm(forms.Form):
                         is_superuser=False
                     ).exclude(groups__name="Managers")
             else:
-                self.fields["assigned_to"].queryset = User.objects.filter(id=user.id)
+                self.fields["assigned_to"].queryset = User.objects.filter(
+                    id=user.id)
                 self.fields["assigned_to"].initial = user
                 self.fields["assigned_to"].widget.attrs["disabled"] = True
 

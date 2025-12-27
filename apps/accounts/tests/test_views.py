@@ -7,7 +7,8 @@ User = get_user_model()
 
 class AccountsViewTests(TestCase):
     def setUp(self):
-        self.user = User.objects.create_user(username="alice", email="a@example.com", password="pass12345")
+        self.user = User.objects.create_user(
+            username="alice", email="a@example.com", password="pass12345")
 
     def test_profile_requires_login(self):
         # TODO: change to your real URL name if different

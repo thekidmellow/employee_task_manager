@@ -9,7 +9,8 @@ User = get_user_model()
 
 class TaskApiAndStatusTests(TestCase):
     def setUp(self):
-        self.user = make_user(username="mgr", email="mgr@example.com", password="pass12345", is_manager=True)
+        self.user = make_user(
+            username="mgr", email="mgr@example.com", password="pass12345", is_manager=True)
         self.client.login(username="mgr", password="pass12345")
         self.task = make_task(assigned_to=self.user, created_by=self.user)
 
@@ -24,7 +25,8 @@ class TaskApiAndStatusTests(TestCase):
 
     def test_update_task_status_post(self):
         self.client.login(username="mgr", password="pass12345")
-        url = reverse("tasks:update_task_status", kwargs={"task_id": self.task.id})
+        url = reverse("tasks:update_task_status",
+                      kwargs={"task_id": self.task.id})
         trials = [
             ("form", {"status": "in_progress"}),
             ("form", {"new_status": "in_progress"}),
@@ -42,7 +44,7 @@ class TaskApiAndStatusTests(TestCase):
             else:
                 resp = self.client.post(
                     url, data=data, HTTP_X_REQUESTED_WITH="XMLHttpRequest"
-                )    
+                )
             if resp.status_code in (200, 204, 302):
                 r = resp
                 break
@@ -52,4 +54,4 @@ class TaskApiAndStatusTests(TestCase):
         if r.status_code in (200, 204, 302):
             self.task.refresh_from_db()
             self.assertIn(getattr(self.task, "status", "pending"),
-                        ("pending", "in_progress", "completed"))
+                          ("pending", "in_progress", "completed"))

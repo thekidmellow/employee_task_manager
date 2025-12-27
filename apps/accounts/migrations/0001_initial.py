@@ -29,7 +29,8 @@ class Migration(migrations.Migration):
                 (
                     "role",
                     models.CharField(
-                        choices=[("manager", "Manager"), ("employee", "Employee")],
+                        choices=[("manager", "Manager"),
+                                  ("employee", "Employee")],
                         default="employee",
                         max_length=10,
                     ),
@@ -38,7 +39,8 @@ class Migration(migrations.Migration):
                     "phone_number",
                     models.CharField(blank=True, max_length=15, null=True),
                 ),
-                ("department", models.CharField(blank=True, max_length=100, null=True)),
+                ("department", models.CharField(
+                    blank=True, max_length=100, null=True)),
                 ("created_at", models.DateTimeField(auto_now_add=True)),
                 ("updated_at", models.DateTimeField(auto_now=True)),
                 (

@@ -1,3 +1,4 @@
+/* jshint esversion: 6 */
 window.True = true;
 window.False = false;
 

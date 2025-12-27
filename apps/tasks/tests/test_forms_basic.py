@@ -1,6 +1,7 @@
 from django.test import SimpleTestCase
 from apps.tasks import forms
 
+
 class TasksFormsTests(SimpleTestCase):
     def test_forms_import(self):
         self.assertTrue(hasattr(forms, "__file__"))
