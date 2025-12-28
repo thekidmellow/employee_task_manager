@@ -322,7 +322,7 @@ Wireframes were created during the planning phase to visualize the user interfac
 <details>
 <summary><strong>Home Page - Desktop</strong></summary>
 
-![Home Page Wireframe](docs/wireframes/wireframe_home_browser.png)
+![Home Page Wireframe](https://raw.githubusercontent.com/thekidmellow/employee_task_manager/main/docs/wireframes/wireframe_home_browser.png)
 
 **Features:**
 - Clean hero section with clear call-to-action
@@ -336,7 +336,7 @@ Wireframes were created during the planning phase to visualize the user interfac
 <details>
 <summary><strong>Dashboard - Desktop</strong></summary>
 
-![Dashboard Wireframe](docs/wireframes/wireframe_dashboard_browser.png)
+![Dashboard Wireframe](https://raw.githubusercontent.com/thekidmellow/employee_task_manager/main/docs/wireframes/wireframe_dashboard_browser.png)
 
 **Features:**
 - Real-time task statistics (completion rate, pending, overdue)
