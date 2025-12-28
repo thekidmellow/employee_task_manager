@@ -780,7 +780,6 @@ flake8 --exclude=migrations,venv,.venv,env,__pycache__,.git \
 | Google Chrome | 143+ | ✅ PASS | Selenium WebDriver |
 | Mozilla Firefox | Latest | ✅ PASS | Selenium WebDriver |
 | Safari | Latest | ✅ PASS | Manual Testing |
-| Microsoft Edge | Latest | ✅ PASS | Manual Testing |
 
 **All functionality works correctly across all browsers:**
 - ✅ Forms and validation
