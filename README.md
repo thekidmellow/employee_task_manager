@@ -37,6 +37,8 @@ A comprehensive Full-Stack Django web application for managing employee tasks wi
 
 The Employee Task Manager is a professional web application designed to streamline task management within organizations. Built with Django and following Agile methodologies, it provides a robust platform for managers to assign tasks and employees to track their work progress efficiently.
 
+![Employee Task Manager Mockup](docs/validation/mockup.png)
+
 ### Key Highlights
 
 ✅ **Role-Based Access Control** - Separate interfaces for Managers and Employees  
@@ -322,7 +324,7 @@ Wireframes were created during the planning phase to visualize the user interfac
 <details>
 <summary><strong>Home Page - Desktop</strong></summary>
 
-![Home Page Wireframe](https://raw.githubusercontent.com/thekidmellow/employee_task_manager/main/docs/wireframes/wireframe_home_browser.png)
+![Home Page Wireframe](docs/wireframes/wireframe_home_browser.png)
 
 **Features:**
 - Clean hero section with clear call-to-action
@@ -336,7 +338,7 @@ Wireframes were created during the planning phase to visualize the user interfac
 <details>
 <summary><strong>Dashboard - Desktop</strong></summary>
 
-![Dashboard Wireframe](https://raw.githubusercontent.com/thekidmellow/employee_task_manager/main/docs/wireframes/wireframe_dashboard_browser.png)
+![Dashboard Wireframe](docs/wireframes/wireframe_dashboard_browser.png)
 
 **Features:**
 - Real-time task statistics (completion rate, pending, overdue)
@@ -839,6 +841,8 @@ aria-live="polite" (dynamic updates)
 
 ## ⚡ Performance
 
+![Lighthouse](docs/validation/Lighthouse-performance.png)
+
 ### Lighthouse Audit Scores
 
 | Metric | Score | Status |
@@ -1146,10 +1150,10 @@ This project demonstrates comprehensive coverage of all required learning outcom
 
 ### Developer
 
-**Your Name**
-- GitHub: [@yourusername](https://github.com/yourusername)
-- LinkedIn: [Your Name](https://linkedin.com/in/yourname)
-- Email: your.email@example.com
+**David Ujo**
+- GitHub: [@thekidmellow](https://github.com/thekidmellow)
+- LinkedIn: [David Ujo](https://linkedin.com/in/artbydavidujo)
+- Email: thekidmellow@gmail.com
 
 ### Technologies & Frameworks
 
@@ -1186,7 +1190,7 @@ This project is licensed under the MIT License - see the [LICENSE](LICENSE) file
 
 - **Issues:** [GitHub Issues](https://github.com/yourusername/employee-task-manager/issues)
 - **Discussions:** [GitHub Discussions](https://github.com/yourusername/employee-task-manager/discussions)
-- **Email:** your.email@example.com
+- **Email:** thekidmellow@gmail.com
 
 ### Contributing
 

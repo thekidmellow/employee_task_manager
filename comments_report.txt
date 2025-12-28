@@ -1,0 +1,137 @@
+=== PYTHON COMMENTS ===
+apps/tasks/tests/test_views_more.py:95:        # Accept either outcome: saved title OR unchanged.
+apps/tasks/tests/test_views_more.py:109:        # Accept either outcome to stabilize coverage across environments.
+apps/tasks/tests/test_forms_paths.py:14:        # Adjust keys to your required fields; this runs clean() branches
+apps/tasks/tests/test_forms_basic.py:13:        # invalid
+apps/tasks/tests/test_forms_basic.py:16:        # minimal valid — adjust keys to your required fields
+apps/tasks/tests/test_forms_basic.py:19:        # Depending on required fields, this may still be invalid; that's fine—adjust as needed.
+apps/tasks/urls.py:13:    # APIs / actions
+apps/core/tests/test_views.py:7:        # TODO: change "home" to whatever your home url name is if needed
+apps/core/tests/test_views.py:10:        # TODO: adjust template if needed
+apps/__init__.py:1:# Apps package
+apps/accounts/tests/test_forms.py:7:        # Just verifies forms module loads
+apps/accounts/tests/test_views_basic.py:32:        # redirect to correct dashboard
+apps/accounts/tests/test_forms_paths.py:13:        # Try a minimal valid shape if you know required fields, e.g.:
+apps/accounts/tests/test_forms_paths.py:14:        # f2 = Candidate(data={...}); f2.is_valid()
+apps/accounts/tests/test_views.py:14:        # TODO: change to your real URL name if different
+apps/accounts/tests/test_views.py:24:        # TODO: adjust template name if different
+apps/accounts/tests/test_forms_basic.py:10:        # Replace ExampleForm with a real form from apps/accounts/forms.py
+apps/accounts/forms.py:96:        # Allow letters, numbers, underscores and hyphens
+apps/accounts/urls.py:8:    # Authentication
+apps/accounts/urls.py:13:    # Profile management
+apps/accounts/urls.py:16:    # Password change
+apps/accounts/urls.py:35:    # AJAX endpoints
+apps/accounts/urls.py:39:    # User list API (tests expect this name)
+apps/accounts/urls.py:42:    # Dashboard redirect
+employee_task_manager/__init__.py:1:# Employee Task Manager Project
+=== JS COMMENTS ===
+static/js/tests/accessibility.test.js:76:      // Test tab order
+static/js/tests/accessibility.test.js:80:      // Simulate tab navigation
+static/js/tests/accessibility.test.js:93:      // Check required ARIA attributes
+static/js/tests/accessibility.test.js:109:      // Check live region attributes
+static/js/tests/accessibility.test.js:114:      // Simulate error message update
+static/js/tests/accessibility.test.js:127:      // Show modal
+static/js/tests/accessibility.test.js:130:      // Check modal attributes
+static/js/tests/accessibility.test.js:135:      // Focus should be on confirm button (has autofocus)
+static/js/tests/accessibility.test.js:139:      // Test tab trapping (mock implementation)
+static/js/tests/accessibility.test.js:143:      // Simulate tab forward
+static/js/tests/accessibility.test.js:148:      // Simulate tab forward again (should wrap to first element)
+static/js/tests/accessibility.test.js:157:      // Mock keyboard shortcut handler
+static/js/tests/accessibility.test.js:159:        // Ctrl+N for new task
+static/js/tests/accessibility.test.js:168:      // Simulate Ctrl+N
+static/js/tests/accessibility.test.js:184:      // Simulate task creation success
+static/js/tests/accessibility.test.js:189:      // Simulate error announcement
+static/js/tests/accessibility.test.js:196:      // This test would normally use actual color values
+static/js/tests/accessibility.test.js:197:      // Here we simulate checking for sufficient contrast
+static/js/tests/accessibility.test.js:201:      // Mock color contrast check
+static/js/tests/accessibility.test.js:203:        // WCAG AA requires 4.5:1 ratio for normal text
+static/js/tests/accessibility.test.js:204:        // This is a simplified mock
+static/js/tests/accessibility.test.js:215:      // Check that error is properly associated
+static/js/tests/accessibility.test.js:219:      // Simulate validation error
+static/js/tests/accessibility.test.js:229:      // Add skip link to DOM
+static/js/tests/accessibility.test.js:237:      // Simulate skip link activation
+static/js/tests/accessibility.test.js:240:      // JSDOM needs the target to be tabbable to allow focus()
+static/js/tests/accessibility.test.js:242:      // Focus should move to main content
+static/js/tests/accessibility.test.js:251:      // Check that buttons have descriptive labels
+static/js/tests/accessibility.test.js:261:      // Simulate client-side validation
+static/js/tests/accessibility.test.js:264:      // Show error
+static/js/tests/accessibility.test.js:269:      // Check accessibility of error state
+static/js/tests/accessibility.test.js:274:      // Clear error when valid
+static/js/tests/ajax.test.js:1:// AJAX operations and API interaction tests
+static/js/tests/ajax.test.js:6:      // Reset fetch mock
+static/js/tests/ajax.test.js:9:      // Set up basic DOM structure
+static/js/tests/ajax.test.js:25:      // Mock successful response
+static/js/tests/ajax.test.js:34:      // Simulate AJAX call (assuming updateTaskStatus function exists)
+static/js/tests/ajax.test.js:66:      // Mock delayed response
+static/js/tests/ajax.test.js:76:      // Simulate showing loading state
+static/js/tests/ajax.test.js:80:      // Simulate AJAX call completion
+static/js/tests/ajax.test.js:88:      // Mock failed response
+static/js/tests/ajax.test.js:99:        // Simulate error handling
+static/js/tests/ajax.test.js:109:      // Mock CSRF token retrieval
+static/js/tests/ajax.test.js:123:      // Mock statistics response
+static/js/tests/ajax.test.js:151:      // Mock debounced search function
+static/js/tests/ajax.test.js:159:      // Simulate rapid typing
+static/js/tests/ajax.test.js:167:      // Clear previous timeouts (simulating debounce behavior)
+static/js/tests/ajax.test.js:170:      // Check that only the last search was executed
+static/js/tests/ajax.test.js:179:      // Mock comment submission response
+static/js/tests/ui.test.js:1:// UI interaction and component tests
+static/js/tests/ui.test.js:63:      // Initial state - collapsed
+static/js/tests/ui.test.js:66:      // Simulate click
+static/js/tests/ui.test.js:69:      // After click - should show (assuming Bootstrap JS is working)
+static/js/tests/ui.test.js:70:      // This would normally be handled by Bootstrap's JavaScript
+static/js/tests/ui.test.js:78:      // Simulate mouse enter
+static/js/tests/ui.test.js:82:      // Add hover class (this would be done by CSS or JS)
+static/js/tests/ui.test.js:86:      // Simulate mouse leave
+static/js/tests/ui.test.js:90:      // Remove hover class
+static/js/tests/ui.test.js:101:      // Simulate delete button click
+static/js/tests/ui.test.js:104:      // Show modal
+static/js/tests/ui.test.js:108:      // Test cancel action
+static/js/tests/ui.test.js:113:      // Test confirm action
+static/js/tests/ui.test.js:118:      // Simulate task removal
+static/js/tests/ui.test.js:130:      // Set active page
+static/js/tests/ui.test.js:136:      // Click on page 2
+static/js/tests/ui.test.js:139:      // Update active state
+static/js/tests/ui.test.js:151:      // Simulate filter changes
+static/js/tests/ui.test.js:155:      // Trigger change events
+static/js/tests/ui.test.js:162:      // Test filter reset
+static/js/tests/ui.test.js:185:      // Simulate starting a task
+static/js/tests/ui.test.js:188:      // Update status (this would normally trigger AJAX)
+static/js/tests/ui.test.js:209:      // Simulate search
+static/js/tests/ui.test.js:212:      // Filter results (this would normally be done by a search function)
+static/js/tests/ui.test.js:224:      // Check that only matching items are visible
+static/js/tests/ui.test.js:233:      // Simulate mobile viewport
+static/js/tests/ui.test.js:240:      // Trigger resize event
+static/js/tests/ui.test.js:243:      // On mobile, navbar should have mobile class (this would be added by CSS or JS)
+static/js/tests/ui.test.js:247:      // Simulate desktop viewport
+static/js/tests/ui.test.js:254:      // On desktop, remove mobile class
+static/js/tests/forms.test.js:1:// Form validation and interaction tests
+static/js/tests/forms.test.js:6:      // Set up a basic form structure
+static/js/tests/forms.test.js:22:      // Initial state should be password
+static/js/tests/forms.test.js:25:      // Simulate password toggle click
+static/js/tests/forms.test.js:28:      // After toggle, should be text (assuming the function exists)
+static/js/tests/forms.test.js:29:      // Note: This test assumes togglePasswordVisibility function exists
+static/js/tests/forms.test.js:41:      // Test empty form submission
+static/js/tests/forms.test.js:54:      // Test short username
+static/js/tests/forms.test.js:59:      // Test valid username
+static/js/tests/forms.test.js:68:      // Test weak password
+static/js/tests/forms.test.js:73:      // Test strong password
+static/js/tests/forms.test.js:83:      // Simulate user input
+static/js/tests/forms.test.js:86:      // Trigger validation (assuming validateField function exists)
+static/js/tests/forms.test.js:98:      // Simulate form submission loading state
+static/js/tests/forms.test.js:130:      // Test priority change
+static/js/tests/forms.test.js:133:      // Simulate priority preview update
+static/js/tests/forms.test.js:154:      // Test future date (valid)
+static/js/tests/forms.test.js:159:      // Test past date (invalid)
+static/js/tests/forms.test.js:168:      // Initial height
+static/js/tests/forms.test.js:171:      // Add long content
+static/js/tests/forms.test.js:174:      // Simulate auto-resize (assuming function exists)
+static/js/tests/setup.js:1:// static/js/tests/setup.js  (CommonJS so Jest can run without Babel)
+static/js/tests/setup.js:4:// Lightweight globals your app/tests may touch
+static/js/tests/setup.js:9:// Very small jQuery-ish mock (only if your tests touch `$`)
+static/js/tests/setup.js:10:// Remove if not needed.
+static/js/tests/setup.js:27:// Bootstrap mocks (only if referenced)
+static/js/tests/setup.js:35:// Chart.js mock (only if referenced)
+static/js/tests/prep.js:1:// Runs before Jest's test framework is installed.
+static/js/tests/prep.js:2:// Provide a Node-style "global" for libs that expect it.
+static/js/main.js:297:    // ==== Global aliases for older / simpler JS checks in tests ====
+static/js/main.js:298:    // Some browser tests may expect these directly on window.
