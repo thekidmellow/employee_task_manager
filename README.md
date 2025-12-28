@@ -898,6 +898,8 @@ aria-live="polite" (dynamic updates)
 
 ### Security Features: 17/17 PASS ✅
 
+![Security Tests](docs/validation/security-tests.png)
+
 | Security Feature | Status | Implementation |
 |-----------------|--------|----------------|
 | CSRF Protection | ✅ Active | Django middleware + tokens |
@@ -912,6 +914,38 @@ aria-live="polite" (dynamic updates)
 | Rate Limiting | ✅ Active | Prevents brute force |
 | Clickjacking Protection | ✅ Active | X-Frame-Options: DENY |
 | MIME Sniffing Protection | ✅ Active | X-Content-Type-Options |
+
+<details>
+<summary><strong>View Detailed Test Results</strong></summary>
+
+### Test Output:
+```
+test_csrf_protection (tests.test_security.SecurityTests) ... ok
+test_xss_prevention (tests.test_security.SecurityTests) ... ok
+test_sql_injection_prevention (tests.test_security.SecurityTests) ... ok
+test_unauthorized_access (tests.test_security.SecurityTests) ... ok
+test_password_hashing (tests.test_security.SecurityTests) ... ok
+test_session_security (tests.test_security.SecurityTests) ... ok
+test_login_required (tests.test_security.SecurityTests) ... ok
+test_https_redirect (tests.test_security.SecurityTests) ... ok
+test_secure_cookies (tests.test_security.SecurityTests) ... ok
+test_clickjacking_protection (tests.test_security.SecurityTests) ... ok
+test_content_type_nosniff (tests.test_security.SecurityTests) ... ok
+test_xss_protection_header (tests.test_security.SecurityTests) ... ok
+test_permission_based_access (tests.test_security.SecurityTests) ... ok
+test_role_based_authorization (tests.test_security.SecurityTests) ... ok
+test_input_validation (tests.test_security.SecurityTests) ... ok
+test_safe_redirects (tests.test_security.SecurityTests) ... ok
+test_database_query_protection (tests.test_security.SecurityTests) ... ok
+
+----------------------------------------------------------------------
+Ran 17 tests in 58.6s
+
+OK
+```
+
+</details>
+
 
 ### Security Headers
 
