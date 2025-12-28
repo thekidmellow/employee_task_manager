@@ -414,6 +414,8 @@ Wireframes were created during the planning phase to visualize the user interfac
 - **I want to** register an account
 - **So that** I can access the system
 
+![User Registration](docs/validation/us_registration.png)
+
 **Acceptance Criteria:**
 - ✅ Registration form with email, username, password
 - ✅ Role selection (Manager/Employee)
@@ -425,6 +427,8 @@ Wireframes were created during the planning phase to visualize the user interfac
 - **As a** user
 - **I want to** log in to my account
 - **So that** I can access my dashboard
+
+![User Login](docs/validation/us_userlogin.png)
 
 **Acceptance Criteria:**
 - ✅ Login form with username/password
@@ -439,6 +443,8 @@ Wireframes were created during the planning phase to visualize the user interfac
 - **I want to** create tasks
 - **So that** I can assign work to employees
 
+![Create Task](docs/validation/us_taskmanagement.png)
+
 **Acceptance Criteria:**
 - ✅ Task creation form with all fields (title, description, assignee, due date, priority)
 - ✅ Form validation (required fields, date validation)
@@ -449,6 +455,8 @@ Wireframes were created during the planning phase to visualize the user interfac
 - **As an** employee
 - **I want to** view my assigned tasks
 - **So that** I know what work to do
+
+![View Task](docs/validation/us_viewtask.png)
 
 **Acceptance Criteria:**
 - ✅ Dashboard showing all assigned tasks
@@ -461,6 +469,8 @@ Wireframes were created during the planning phase to visualize the user interfac
 - **As an** employee
 - **I want to** update task status
 - **So that** managers can track my progress
+
+![Update Task Status](docs/validation/us_updatetaskstatus.png)
 
 **Acceptance Criteria:**
 - ✅ Status update buttons/dropdown
@@ -475,6 +485,8 @@ Wireframes were created during the planning phase to visualize the user interfac
 - **I want to** see an overview of all tasks
 - **So that** I can monitor team progress
 
+![Manager Dashboard](docs/validation/us_managerdashboard.png)
+
 **Acceptance Criteria:**
 - ✅ All tasks with current status
 - ✅ Filter by employee, status, date
@@ -486,6 +498,8 @@ Wireframes were created during the planning phase to visualize the user interfac
 - **As an** employee
 - **I want to** see my task overview
 - **So that** I can prioritize my work
+
+![Employee Dashboard](docs/validation/us_employeedashboard.png)
 
 **Acceptance Criteria:**
 - ✅ Personal task statistics
