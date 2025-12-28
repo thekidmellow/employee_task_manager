@@ -48,7 +48,7 @@ The Employee Task Manager is a professional web application designed to streamli
 
 ### Live Demo
 
-🔗 **[View Live Application](#)** *(Add your deployment URL)*
+🔗 **[View Live Application](#)** *(https://employee-task-manager-1a83469544d2.herokuapp.com/)*
 
 ---
 
@@ -322,7 +322,7 @@ Wireframes were created during the planning phase to visualize the user interfac
 <details>
 <summary><strong>Home Page - Desktop</strong></summary>
 
-![Home Page Wireframe](docs/wireframes/wireframe_home.png)
+![Home Page Wireframe](docs/wireframes/wireframe_home_browser.png)
 
 **Features:**
 - Clean hero section with clear call-to-action
@@ -506,7 +506,7 @@ Wireframes were created during the planning phase to visualize the user interfac
 ### 1. Clone the Repository
 
 ```bash
-git clone https://github.com/yourusername/employee-task-manager.git
+git clone https://github.com/thekidmellow/employee-task-manager.git
 cd employee-task-manager
 ```
 
@@ -543,7 +543,7 @@ Create a `.env` file in the project root:
 ```env
 # Django Settings
 DEBUG=True
-SECRET_KEY=your-secret-key-here
+SECRET_KEY=secret-key-here
 ALLOWED_HOSTS=localhost,127.0.0.1
 
 # Database (PostgreSQL)
@@ -580,17 +580,17 @@ python manage.py loaddata fixtures/sample_data.json
 python manage.py runserver
 ```
 
-Visit `http://localhost:8000` in your browser.
+Visit `http://employee-task-manager-1a83469544d2.herokuapp.com` in your browser.
 
 ### 7. Create Test Users
 
 **Option 1: Via Admin Panel**
-1. Navigate to `http://localhost:8000/admin`
+1. Navigate to `http://employee-task-manager-1a83469544d2.herokuapp.com/admin`
 2. Login with superuser credentials
 3. Create users and profiles
 
 **Option 2: Via Registration**
-1. Navigate to `http://localhost:8000/register`
+1. Navigate to `http://employee-task-manager-1a83469544d2.herokuapp.com/accounts/register`
 2. Register as Manager or Employee
 
 ---
