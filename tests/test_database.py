@@ -51,10 +51,6 @@ class DatabasePerformanceTests(TestCase):
                 )
 
     def test_n_plus_one_queries(self):
-        """
-        We use select_related to avoid N+1, so this should be a single query
-        even when accessing related fields in a loop.
-        """
         with self.assertNumQueries(1):
             tasks = Task.objects.select_related(
                 "assigned_to",
