@@ -11,6 +11,8 @@ A comprehensive Full-Stack Django web application for managing employee tasks wi
 ![Tests](https://img.shields.io/badge/Tests-233%20Passing-success)
 ![Coverage](https://img.shields.io/badge/Coverage-75%25-green)
 
+![Employee Task Manager Mockup](docs/validation/mockup.png)
+
 ---
 
 ## 📑 Table of Contents
@@ -36,8 +38,6 @@ A comprehensive Full-Stack Django web application for managing employee tasks wi
 ## 🎯 About the Project
 
 The Employee Task Manager is a professional web application designed to streamline task management within organizations. Built with Django and following Agile methodologies, it provides a robust platform for managers to assign tasks and employees to track their work progress efficiently.
-
-![Employee Task Manager Mockup](docs/validation/mockup.png)
 
 ### Key Highlights
 
