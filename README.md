@@ -131,18 +131,15 @@ The Employee Task Manager is a professional web application designed to streamli
 ---
 
 ## 📁 Project Structure
-
 ```
 employee_task_manager/
-├── apps/
+├── apps/                             # Django applications
 │   ├── __testutils__/
 │   │   └── factories.py              # Test data factories
 │   ├── accounts/                     # User authentication app
-│   │   ├── migrations/
-│   │   ├── tests/                    # Account-related tests
-│   │   ├── __init__.py
+│   │   ├── migrations/               # Database migrations
+│   │   ├── tests/                    # Account-related tests (12 test files)
 │   │   ├── admin.py                  # Admin configuration
-│   │   ├── apps.py
 │   │   ├── forms.py                  # User forms (registration, profile)
 │   │   ├── models.py                 # User and UserProfile models
 │   │   ├── urls.py                   # Account URL patterns
@@ -150,56 +147,83 @@ employee_task_manager/
 │   ├── core/                         # Core functionality app
 │   │   ├── migrations/
 │   │   ├── tests/                    # Core functionality tests
-│   │   ├── __init__.py
-│   │   ├── admin.py
-│   │   ├── apps.py
 │   │   ├── context_processors.py     # Template context processors
-│   │   ├── models.py
 │   │   ├── urls.py                   # Core URL patterns
 │   │   └── views.py                  # Dashboard views
-│   ├── tasks/                        # Task management app
-│   │   ├── migrations/
-│   │   ├── tests/                    # Task-related tests
-│   │   ├── __init__.py
-│   │   ├── admin.py                  # Task admin configuration
-│   │   ├── apps.py
-│   │   ├── forms.py                  # Task forms
-│   │   ├── models.py                 # Task and TaskComment models
-│   │   ├── urls.py                   # Task URL patterns
-│   │   └── views.py                  # Task CRUD views
-│   └── __init__.py
-├── docs/                             # Documentation
+│   └── tasks/                        # Task management app
+│       ├── migrations/               # 4 migration files
+│       ├── tests/                    # Task-related tests (13 test files)
+│       ├── admin.py                  # Task admin configuration
+│       ├── forms.py                  # Task forms
+│       ├── models.py                 # Task and TaskComment models
+│       ├── urls.py                   # Task URL patterns
+│       └── views.py                  # Task CRUD views
+├── docs/                             # Documentation and assets
 │   ├── screenshots/                  # Responsive design screenshots
-│   │   ├── desktop-1920.png
-│   │   ├── mobile-320.png
-│   │   ├── mobile-375.png
-│   │   ├── tablet-1024.png
-│   │   └── tablet-768.png
-│   ├── validation/                   # Validation screenshots
-│   │   ├── html validation screenshots
-│   │   ├── css-validation.png
-│   │   ├── js-validation.png
-│   │   ├── python-flake8-validation.png
-│   │   └── test-coverage.png
+│   │   ├── desktop-1920.png          # Desktop view (1920x1080)
+│   │   ├── github-projects-board.png # Agile board screenshot
+│   │   ├── mobile-320.png            # Mobile view (320x568)
+│   │   ├── mobile-375.png            # Mobile view (375x667)
+│   │   ├── tablet-768.png            # Tablet view (768x1024)
+│   │   └── tablet-1024.png           # Tablet landscape (1024x768)
+│   ├── validation/                   # Validation screenshots & evidence
+│   │   ├── base_html.png             # HTML validation - base template
+│   │   ├── login_html.png            # HTML validation - login page
+│   │   ├── register_html.png         # HTML validation - registration
+│   │   ├── manager_dashboard_html.png # HTML validation - manager dashboard
+│   │   ├── profile_html.png          # HTML validation - user profile
+│   │   ├── task_list_html.png        # HTML validation - task list
+│   │   ├── task_detail_html.png      # HTML validation - task details
+│   │   ├── task_form_html.png        # HTML validation - task form
+│   │   ├── password_change_html.png  # HTML validation - password change
+│   │   ├── password_change_done_html.png # HTML validation - password done
+│   │   ├── css_validation.png        # CSS validation (W3C)
+│   │   ├── jshint_validator.png      # JavaScript validation (JSHint)
+│   │   ├── python-flake8-validation.png # Python PEP8 validation
+│   │   ├── test-coverage.png         # Test coverage report
+│   │   ├── security-tests.png        # Security test results
+│   │   ├── browser-compatibility.png # Cross-browser testing
+│   │   ├── Lighthouse-performance.png # Performance audit
+│   │   ├── us_registration.png       # User Story - Registration
+│   │   ├── us_userlogin.png          # User Story - Login
+│   │   ├── us_taskmanagement.png     # User Story - Task Management
+│   │   ├── us_viewtask.png           # User Story - View Tasks
+│   │   ├── us_updatetaskstatus.png   # User Story - Update Status
+│   │   ├── us_managerdashboard.png   # User Story - Manager Dashboard
+│   │   ├── us_employeedashboard.png  # User Story - Employee Dashboard
+│   │   └── mockup.png                # Responsive mockup
 │   └── wireframes/                   # Design wireframes
-│       ├── wireframe_dashboard_browser.png
-│       ├── wireframe_dashbord_mobile.png
-│       ├── wireframe_home_mobile.png
-│       ├── wireframe_home.png
-│       └── wireframe_tasks_browser.png
+│       ├── wireframe_home_browser.png      # Home page - desktop
+│       ├── wireframe_home_mobile.png       # Home page - mobile
+│       ├── wireframe_dashboard_browser.png # Dashboard - desktop
+│       ├── wireframe_dashboard_mobile.png  # Dashboard - mobile
+│       ├── wireframe_tasks_browser.png     # Tasks page - desktop
+│       └── wireframe_tasks_mobile.png      # Tasks page - mobile
 ├── employee_task_manager/            # Main project directory
 │   ├── __init__.py
 │   ├── asgi.py                       # ASGI configuration
 │   ├── settings.py                   # Project settings
 │   ├── urls.py                       # Main URL configuration
 │   └── wsgi.py                       # WSGI configuration
-├── static/                           # Static files
+├── static/                           # Static files (source)
 │   ├── css/
-│   │   └── style.css                 # Custom CSS
+│   │   └── style.css                 # Custom CSS with variables
 │   ├── js/
 │   │   ├── tests/                    # JavaScript tests
+│   │   │   ├── accessibility.test.js # Accessibility tests
+│   │   │   ├── ajax.test.js          # AJAX functionality tests
+│   │   │   ├── forms.test.js         # Form validation tests
+│   │   │   ├── ui.test.js            # UI interaction tests
+│   │   │   ├── setup.js              # Test setup configuration
+│   │   │   └── prep.js               # Test preparation utilities
 │   │   └── main.js                   # Main JavaScript file
-│   └── favicon.ico
+│   └── favicon.ico                   # Site favicon
+├── staticfiles/                      # Collected static files (production)
+│   ├── admin/                        # Django admin static files
+│   ├── css/
+│   │   └── style.css
+│   └── js/
+│       └── main.js
 ├── templates/                        # HTML templates
 │   ├── accounts/
 │   │   └── profile.html              # User profile page
@@ -212,8 +236,8 @@ employee_task_manager/
 │   │   └── 500.html                  # Server Error page
 │   ├── registration/
 │   │   ├── login.html                # Login page
-│   │   ├── password_change_done.html
-│   │   ├── password_change.html
+│   │   ├── password_change.html      # Password change form
+│   │   ├── password_change_done.html # Password change confirmation
 │   │   └── register.html             # Registration page
 │   ├── tasks/
 │   │   ├── task_detail.html          # Task detail view
@@ -222,25 +246,77 @@ employee_task_manager/
 │   └── base.html                     # Base template
 ├── tests/                            # Test suite
 │   ├── browser/                      # Cross-browser tests
-│   │   └── test_compatibility.py
+│   │   └── test_compatibility.py     # Browser compatibility tests
 │   ├── integration/                  # Integration tests
-│   │   └── test_user_workflows.py
+│   │   └── test_user_workflows.py    # End-to-end user workflows
 │   ├── performance/                  # Performance tests
-│   │   └── locustfile.py
-│   ├── test_accessibility.py         # Accessibility tests
+│   │   └── locustfile.py             # Load testing scenarios
+│   ├── django_tests.py               # Django-specific tests
+│   ├── test_accessibility.py         # WCAG 2.1 AA compliance tests
 │   ├── test_api.py                   # API endpoint tests
 │   ├── test_database.py              # Database performance tests
-│   └── test_security.py              # Security tests
+│   └── test_security.py              # Security tests (17 tests)
+├── test_results/                     # Test output and reports
+│   ├── js-coverage/                  # JavaScript coverage reports
+│   │   ├── lcov-report/              # HTML coverage report
+│   │   ├── clover.xml                # Clover format
+│   │   ├── coverage-final.json       # JSON coverage data
+│   │   └── lcov.info                 # LCOV format
+│   ├── accessibility_tests.log       # Accessibility test output
+│   ├── api_tests.log                 # API test output
+│   ├── browser_tests.log             # Browser test output
+│   ├── coverage_report.txt           # Python coverage report
+│   ├── database_tests.log            # Database test output
+│   ├── integration_tests.log         # Integration test output
+│   ├── js_coverage.log               # JS coverage output
+│   ├── js_tests.log                  # JS test output
+│   ├── performance_tests.log         # Performance test output
+│   ├── security_tests.log            # Security test output
+│   └── unit_tests.log                # Unit test output
+├── .env                              # Environment variables (not in git)
+├── .gitignore                        # Git ignore rules
+├── .python-version                   # Python version specification
 ├── erd.svg                           # Database ERD diagram
 ├── manage.py                         # Django management script
+├── package.json                      # Node.js dependencies (Jest)
+├── package-lock.json                 # Locked Node.js dependencies
 ├── Procfile                          # Heroku deployment config
+├── pytest.ini                        # Pytest configuration
+├── README.md                         # Project documentation (this file)
 ├── requirements.txt                  # Python dependencies
 ├── requirements-testing.txt          # Testing dependencies
-├── run_all_tests.sh                  # Comprehensive test runner
-└── README.md                         # This file
+└── run_all_tests.sh                  # Comprehensive test runner script
 ```
 
-**Total:** 45 directories, 258 files
+**Summary:**
+- **60 directories**
+- **299 files**
+- **Comprehensive test coverage** (233 tests across Python and JavaScript)
+- **Professional documentation** with validation evidence and wireframes
+- **Production-ready structure** with separated static files and test results
+
+---
+
+## 🔧 **Key Directories Explained:**
+
+### **`apps/`** - Application Code
+Core business logic organized in Django apps following separation of concerns.
+
+### **`docs/`** - Documentation & Assets
+- **`screenshots/`** - Responsive design evidence (6 files)
+- **`validation/`** - Code validation screenshots (27 files)
+- **`wireframes/`** - Design wireframes (6 files)
+
+### **`static/` vs `staticfiles/`**
+- **`static/`** - Source files for development
+- **`staticfiles/`** - Collected files for production (generated by `collectstatic`)
+
+### **`tests/` vs `test_results/`**
+- **`tests/`** - Test source code
+- **`test_results/`** - Test execution logs and coverage reports
+
+### **`templates/`** - Django Templates
+HTML files organized by app with a shared `base.html` template.
 
 ---
 
