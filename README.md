@@ -363,8 +363,8 @@ Task
 ├── description
 ├── assigned_to (ForeignKey → User)
 ├── created_by (ForeignKey → User)
-├── status (Pending/In Progress/Completed)
-├── priority (Low/Medium/High)
+├── status (Pending/In Progress/Completed/Cancelled)
+├── priority (Low/Medium/High/Urgent)
 ├── due_date
 ├── estimated_hours
 ├── notes
@@ -373,7 +373,7 @@ Task
 └── updated_at
 ```
 
-#### TaskComment Model *(Optional)*
+#### TaskComment Model
 ```python
 TaskComment
 ├── id (PK)
