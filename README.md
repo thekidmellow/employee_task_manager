@@ -323,7 +323,6 @@ Wireframes were created during the planning phase to visualize the user interfac
 
 ### Desktop Wireframes
 
-<details>
 <summary><strong>Home Page - Desktop</strong></summary>
 
 ![Home Page Wireframe](docs/wireframes/wireframe_home_browser.png)
@@ -335,9 +334,6 @@ Wireframes were created during the planning phase to visualize the user interfac
 - Feature highlights section
 - Professional footer with contact information
 
-</details>
-
-<details>
 <summary><strong>Dashboard - Desktop</strong></summary>
 
 ![Dashboard Wireframe](docs/wireframes/wireframe_dashboard_browser.png)
@@ -350,9 +346,6 @@ Wireframes were created during the planning phase to visualize the user interfac
 - Recent updates feed
 - Responsive grid layout
 
-</details>
-
-<details>
 <summary><strong>Task Management - Desktop</strong></summary>
 
 ![Tasks Page Wireframe](docs/wireframes/wireframe_tasks_browser.png)
@@ -365,11 +358,8 @@ Wireframes were created during the planning phase to visualize the user interfac
 - Progress tracking for each task
 - Sortable task list
 
-</details>
-
 ### Mobile Wireframes
 
-<details>
 <summary><strong>Home Page - Mobile</strong></summary>
 
 ![Home Page Mobile Wireframe](docs/wireframes/wireframe_home_mobile.png)
@@ -381,12 +371,9 @@ Wireframes were created during the planning phase to visualize the user interfac
 - Simplified hero section
 - Mobile-first responsive design
 
-</details>
-
-<details>
 <summary><strong>Dashboard - Mobile</strong></summary>
 
-![Dashboard Mobile Wireframe](docs/wireframes/wireframe_dashbord_mobile.png)
+![Dashboard Mobile Wireframe](docs/wireframes/wireframe_dashboard_mobile.png)
 
 **Mobile Optimizations:**
 - Single column layout for statistics
@@ -394,8 +381,6 @@ Wireframes were created during the planning phase to visualize the user interfac
 - Collapsible sections to save space
 - Optimized for one-handed use
 - Swipe-friendly interface elements
-
-</details>
 
 ### Design Principles
 
