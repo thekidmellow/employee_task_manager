@@ -1720,6 +1720,31 @@ This project demonstrates comprehensive coverage of all required learning outcom
 
 ---
 
+## 📝 Note on Documentation
+
+**Minor Visual Updates:**
+
+During the final stages of development, some minor UI improvements and refinements were made to enhance the user experience. These changes include small adjustments to form layouts, button styling, and field arrangements that may not be fully reflected in all documentation screenshots.
+
+**What This Means:**
+- ✅ All **core functionality** remains exactly as documented
+- ✅ All **features work** as described in user stories
+- ✅ The **overall design and layout** are consistent with wireframes
+- ⚠️ Some **minor visual details** in screenshots may differ slightly from the current live application
+
+**Future Updates:**
+Screenshots and validation images will be updated in future iterations to reflect these minor cosmetic changes. These differences are purely aesthetic and do not impact the application's functionality, accessibility, or user experience.
+
+**Examples of Minor Changes:**
+- Form field ordering and grouping
+- Status field visibility in task editing
+- Button placement and styling refinements
+- Spacing and alignment improvements
+
+All changes maintain WCAG 2.1 AA accessibility compliance and responsive design standards across all devices.
+
+---
+
 ## 🙏 Credits
 
 ### Developer
