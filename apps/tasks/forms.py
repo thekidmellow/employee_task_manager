@@ -108,6 +108,11 @@ class TaskCreationForm(forms.ModelForm):
             self.fields["status"].initial = "pending"
             self.fields["status"].widget = forms.HiddenInput()
 
+        else:
+            self.fields["status"].required = True
+            self.fields["status"].label = "Task Status"
+            self.fields["status"].help_text = "Current status of this task"
+
         if self.instance and getattr(self.instance, "assigned_to", None):
             self.fields["assignee"].initial = self.instance.assigned_to
 
